@@ -9,23 +9,23 @@
 #include "../pokeemerald/map_layouts.h"
 
 
-uint8_t* lz77_decompress(const uint8_t *src, uint32_t *out_size) {
-    uint32_t uncompressed_size = src[1] | (src[2] << 8) | (src[3] << 16);
+u8* lz77_decompress(const u8 *src, u32 *out_size) {
+    u32 uncompressed_size = src[1] | (src[2] << 8) | (src[3] << 16); // Extract uncompressed size from header
     if (out_size) *out_size = uncompressed_size;
 
-    uint8_t *dst = malloc(uncompressed_size);
+    u8 *dst = malloc(uncompressed_size);
     if (!dst) return NULL;
 
-    const uint8_t *input = src + 4;  // Skip header
-    uint8_t *write_ptr = dst;
+    const u8 *input = src + 4;  // Skip header
+    u8 *write_ptr = dst;
 
     while ((write_ptr - dst) < uncompressed_size) {
-        uint8_t flags = *input++;
+        u8 flags = *input++;
 
         for (int bit = 0; bit < 8 && (write_ptr - dst) < uncompressed_size; bit++) {
             if (flags & (0x80 >> bit)) {
-                uint8_t byte1 = *input++;
-                uint8_t byte2 = *input++;
+                u8 byte1 = *input++;
+                u8 byte2 = *input++;
                 int offset = ((byte1 & 0xF) << 8) | byte2;
                 int length = (byte1 >> 4) + 3;
                 for (int j = 0; j < length; j++) {
@@ -56,11 +56,11 @@ void write_tile(
 	int pitch = map_width;
 
 	for (size_t i = 0; i < 32; i++) {
-		uint8_t byte = tileNumber[i];
+		u8 byte = tileNumber[i];
 
 		// Extract two pixels from the byte and OR with 0x8000 to set highest bit to 1 for the AGBR1555 format if the color isn't 0 (transparent)
-		uint16_t color0 = 0x0000;
-		uint16_t color1 = 0x0000;
+		u16 color0 = 0x0000;
+		u16 color1 = 0x0000;
 		if(byte & 0x0F) color0 = palette[byte & 0x0F] | 0x8000;   // lower nibble
 		if(byte >> 4)   color1 = palette[byte >> 4] | 0x8000;     // upper nibble
 
@@ -142,8 +142,8 @@ MapSurfaces load_map_surfaces(MapLayout *mapLayout) {
 	u8 *primary_tileset = get_u8_data(mapLayout->primary_tileset->tiles, mapLayout->primary_tileset->dataSize);
 	u8 *secondary_tileset = get_u8_data(mapLayout->secondary_tileset->tiles, mapLayout->secondary_tileset->dataSize);
 
-    uint32_t sizeMain;
-    uint32_t sizeSub;
+    u32 sizeMain;
+    u32 sizeSub;
     u8 *rawMainCharData = lz77_decompress(primary_tileset, &sizeMain);
     u8 *rawSubCharData = lz77_decompress(secondary_tileset, &sizeSub);
 	free(primary_tileset);
@@ -180,6 +180,7 @@ MapSurfaces load_map_surfaces(MapLayout *mapLayout) {
 
     free(rawMainCharData);
     free(rawSubCharData);
+	free(mapLayout->blockdata);
 	free(mapLayout->primary_tileset->metatiles);
 	free(mapLayout->secondary_tileset->metatiles);
 	free(mapLayout->primary_tileset->palettes);

@@ -1,8 +1,8 @@
 #include <SDL3/SDL.h>
+#include <stdlib.h>
 #include "map_loader.h"
 #include "game.h"
-#include "sprite_loader.h"
-#include <stdlib.h>
+//#include "sprite_loader.h"
 
 
 
@@ -44,33 +44,6 @@ void game_init(GameState *state) {
     */
 }
 
-void game_render(const GameState *state) {
-
-    SDL_Renderer *renderer = state->renderer;
-
-    // Clear screen to black
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderClear(renderer);
-
-    
-    
-    //SDL_RenderTexture(renderer, circle_texture, NULL, &dst);
-    SDL_RenderTexture(renderer, state->bg_texture, NULL, &state->camera.rect);
-    //SDL_RenderTexture(renderer, state->player.texture, &state->player.srcRect, &state->player.dstRect);
-    SDL_RenderTexture(renderer, state->fg_texture, NULL, &state->camera.rect);
-
-
-
-    
-
-    // TODO: Draw your game here (tilemap, sprite, etc.)
-
-    SDL_RenderPresent(renderer);
-
-    // Optional delay if not using vsync
-    //SDL_Delay(FRAME_TIME_MS);
-}
-
 void game_update(GameState *state) {
     SDL_PumpEvents();
     const bool *keys = SDL_GetKeyboardState(NULL);
@@ -82,8 +55,26 @@ void game_update(GameState *state) {
     state->input |= ((u16)keys[SDL_SCANCODE_LEFT] << 2);
     state->input |= ((u16)keys[SDL_SCANCODE_RIGHT] << 3);
 
-    // player_update(state);
-    // camera_update(state);
+    player_update(state);
+    camera_update(state);
+
+}
+
+void game_render(const GameState *state) {
+
+    SDL_Renderer *renderer = state->renderer;
+
+    // Clear screen to black
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderClear(renderer);
+
+    
+    SDL_RenderTexture(renderer, state->bg_texture, NULL, &state->camera.rect);
+    //SDL_RenderTexture(renderer, state->player.texture, &state->player.srcRect, &state->player.dstRect);
+    SDL_RenderTexture(renderer, state->fg_texture, NULL, &state->camera.rect);    
+
+
+    SDL_RenderPresent(renderer);
 
 }
     

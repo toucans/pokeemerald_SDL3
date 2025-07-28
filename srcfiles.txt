@@ -1,6 +1,8 @@
 main.c
 src/game.c
 src/map_loader.c
+src/player.c
+src/camera.c
 pokeemerald/maps.c
 pokeemerald/map_layouts.c
 pokeemerald/tilesets.c

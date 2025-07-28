@@ -42,12 +42,6 @@ int main(void) {
 
     game_init(&state);  
     state.currentMap = MapGroups[MAP_GROUP_INDOOR_LITTLEROOT][MAP_LITTLEROOT_TOWN_BRENDANS_HOUSE_1F];
-    u8 *primary_tileset = get_u8_data(state.currentMap->layout->primary_tileset->tiles, 4);
-    for (size_t i = 0; i < 4; i++)
-    {
-        printf("%02x", primary_tileset[i]);
-    }
-    free(primary_tileset);
     
     
     int counter = 0;
@@ -95,7 +89,6 @@ int main(void) {
         
     }
 
-    //SDL_DestroyTray(tray);
     SDL_DestroyRenderer(state.renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();

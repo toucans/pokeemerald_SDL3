@@ -1,7 +1,5 @@
 SRCFILES := $(shell cat srcfiles.txt)
 
-SRCFILES := $(shell cat srcfiles.txt)
-
 SDKROOT := $(shell xcrun --show-sdk-path)
 
 CC := clang
