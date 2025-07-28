@@ -1,5 +1,6 @@
 #pragma once
 #include <SDL3/SDL.h>
+#include "map_loader.h"
 #include "player.h"
 #include "camera.h"
 #include "../pokeemerald/maps.h"
@@ -19,8 +20,8 @@ typedef struct GameState {
     Camera camera;
     const Map *currentMap;
     SDL_Renderer *renderer;
-    SDL_Texture *bg_texture;
-    SDL_Texture *fg_texture;
+    MapTextures mapTextures;
+    MapConnectionsTextures mapConnectionTextures;
 } GameState;
 
 

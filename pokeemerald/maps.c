@@ -657,8 +657,8 @@ const Map SeafloorCavern_Room9 = {
 };
 
 static MapConnection Underwater_Route124_connections[] = {
-    {"MAP_UNDERWATER_ROUTE126", 0, "down"},
-    {"MAP_ROUTE124", 0, "emerge"},
+    {&Underwater_Route126, 0, "down"},
+    {&Route124, 0, "emerge"},
 };
 
 static BgEvent Underwater_Route124_bg_events[] = {
@@ -738,8 +738,8 @@ const Map SouthernIsland_Exterior = {
 };
 
 static MapConnection VerdanturfTown_connections[] = {
-    {"MAP_ROUTE116", -80, "up"},
-    {"MAP_ROUTE117", 0, "right"},
+    {&Route116, -80, "up"},
+    {&Route117, 0, "right"},
 };
 
 static ObjectEvent VerdanturfTown_object_events[] = {
@@ -1165,9 +1165,9 @@ const Map NavelRock_Up2 = {
 };
 
 static MapConnection MossdeepCity_connections[] = {
-    {"MAP_ROUTE125", 0, "up"},
-    {"MAP_ROUTE127", 0, "down"},
-    {"MAP_ROUTE124", -40, "left"},
+    {&Route125, 0, "up"},
+    {&Route127, 0, "down"},
+    {&Route124, -40, "left"},
 };
 
 static ObjectEvent MossdeepCity_object_events[] = {
@@ -1290,8 +1290,8 @@ const Map BattleFrontier_BattlePikeRoomWildMons = {
 };
 
 static MapConnection FallarborTown_connections[] = {
-    {"MAP_ROUTE114", 0, "left"},
-    {"MAP_ROUTE113", 0, "right"},
+    {&Route114, 0, "left"},
+    {&Route113, 0, "right"},
 };
 
 static ObjectEvent FallarborTown_object_events[] = {
@@ -1530,7 +1530,7 @@ const Map SeafloorCavern_Room6 = {
 };
 
 static MapConnection BattleFrontier_OutsideWest_connections[] = {
-    {"MAP_BATTLE_FRONTIER_OUTSIDE_EAST", 0, "right"},
+    {&BattleFrontier_OutsideEast, 0, "right"},
 };
 
 static ObjectEvent BattleFrontier_OutsideWest_object_events[] = {
@@ -1928,7 +1928,7 @@ const Map SeafloorCavern_Room8 = {
 };
 
 static MapConnection Underwater_Route125_connections[] = {
-    {"MAP_ROUTE125", 0, "emerge"},
+    {&Route125, 0, "emerge"},
 };
 
 static WarpEvent Underwater_Route125_warps[] = {
@@ -2172,8 +2172,8 @@ const Map MtPyre_3F = {
 };
 
 static MapConnection Route102_connections[] = {
-    {"MAP_PETALBURG_CITY", -10, "left"},
-    {"MAP_OLDALE_TOWN", 0, "right"},
+    {&PetalburgCity, -10, "left"},
+    {&OldaleTown, 0, "right"},
 };
 
 static ObjectEvent Route102_object_events[] = {
@@ -2355,9 +2355,9 @@ const Map UnusedContestHall1 = {
 };
 
 static MapConnection Route105_connections[] = {
-    {"MAP_ROUTE104", 0, "up"},
-    {"MAP_ROUTE106", 0, "down"},
-    {"MAP_UNDERWATER_ROUTE105", 0, "dive"},
+    {&Route104, 0, "up"},
+    {&Route106, 0, "down"},
+    {&Underwater_Route105, 0, "dive"},
 };
 
 static ObjectEvent Route105_object_events[] = {
@@ -2541,8 +2541,8 @@ const Map NavelRock_Down05 = {
 };
 
 static MapConnection Route133_connections[] = {
-    {"MAP_ROUTE134", 0, "left"},
-    {"MAP_ROUTE132", 0, "right"},
+    {&Route134, 0, "left"},
+    {&Route132, 0, "right"},
 };
 
 static ObjectEvent Route133_object_events[] = {
@@ -2751,8 +2751,8 @@ const Map MagmaHideout_2F_2R = {
 };
 
 static MapConnection Route134_connections[] = {
-    {"MAP_SLATEPORT_CITY", 0, "left"},
-    {"MAP_ROUTE133", 0, "right"},
+    {&SlateportCity, 0, "left"},
+    {&Route133, 0, "right"},
 };
 
 static ObjectEvent Route134_object_events[] = {
@@ -3756,8 +3756,8 @@ const Map SkyPillar_4F = {
 };
 
 static MapConnection SafariZone_Northeast_connections[] = {
-    {"MAP_SAFARI_ZONE_NORTH", 0, "left"},
-    {"MAP_SAFARI_ZONE_SOUTHEAST", 0, "down"},
+    {&SafariZone_North, 0, "left"},
+    {&SafariZone_Southeast, 0, "down"},
 };
 
 static ObjectEvent SafariZone_Northeast_object_events[] = {
@@ -4033,8 +4033,8 @@ const Map ContestHallTough = {
 };
 
 static MapConnection Route132_connections[] = {
-    {"MAP_ROUTE133", 0, "left"},
-    {"MAP_PACIFIDLOG_TOWN", 0, "right"},
+    {&Route133, 0, "left"},
+    {&PacifidlogTown, 0, "right"},
 };
 
 static ObjectEvent Route132_object_events[] = {
@@ -4293,9 +4293,9 @@ const Map SootopolisCity_PokemonCenter_2F = {
 };
 
 static MapConnection Route104_connections[] = {
-    {"MAP_RUSTBORO_CITY", 0, "up"},
-    {"MAP_ROUTE105", 0, "down"},
-    {"MAP_PETALBURG_CITY", 50, "right"},
+    {&RustboroCity, 0, "up"},
+    {&Route105, 0, "down"},
+    {&PetalburgCity, 50, "right"},
 };
 
 static ObjectEvent Route104_object_events[] = {
@@ -4468,8 +4468,8 @@ const Map FortreeCity_PokemonCenter_1F = {
 };
 
 static MapConnection SafariZone_Southwest_connections[] = {
-    {"MAP_SAFARI_ZONE_NORTHWEST", 0, "up"},
-    {"MAP_SAFARI_ZONE_SOUTH", 0, "right"},
+    {&SafariZone_Northwest, 0, "up"},
+    {&SafariZone_South, 0, "right"},
 };
 
 static ObjectEvent SafariZone_Southwest_object_events[] = {
@@ -4512,8 +4512,8 @@ const Map SafariZone_Southwest = {
 };
 
 static MapConnection Route103_connections[] = {
-    {"MAP_OLDALE_TOWN", 0, "down"},
-    {"MAP_ROUTE110", -60, "right"},
+    {&OldaleTown, 0, "down"},
+    {&Route110, -60, "right"},
 };
 
 static ObjectEvent Route103_object_events[] = {
@@ -4936,9 +4936,9 @@ const Map BattlePyramidSquare10 = {
 };
 
 static MapConnection RustboroCity_connections[] = {
-    {"MAP_ROUTE115", 0, "up"},
-    {"MAP_ROUTE104", 0, "down"},
-    {"MAP_ROUTE116", 0, "right"},
+    {&Route115, 0, "up"},
+    {&Route104, 0, "down"},
+    {&Route116, 0, "right"},
 };
 
 static ObjectEvent RustboroCity_object_events[] = {
@@ -5441,9 +5441,9 @@ const Map BattleColosseum_4P = {
 };
 
 static MapConnection SafariZone_South_connections[] = {
-    {"MAP_SAFARI_ZONE_NORTH", 0, "up"},
-    {"MAP_SAFARI_ZONE_SOUTHWEST", 0, "left"},
-    {"MAP_SAFARI_ZONE_SOUTHEAST", 0, "right"},
+    {&SafariZone_North, 0, "up"},
+    {&SafariZone_Southwest, 0, "left"},
+    {&SafariZone_Southeast, 0, "right"},
 };
 
 static ObjectEvent SafariZone_South_object_events[] = {
@@ -5558,7 +5558,7 @@ const Map Route117_PokemonDayCare = {
 };
 
 static MapConnection LavaridgeTown_connections[] = {
-    {"MAP_ROUTE112", -40, "right"},
+    {&Route112, -40, "right"},
 };
 
 static ObjectEvent LavaridgeTown_object_events[] = {
@@ -5907,8 +5907,8 @@ const Map MauvilleCity_Mart = {
 };
 
 static MapConnection FortreeCity_connections[] = {
-    {"MAP_ROUTE119", 0, "left"},
-    {"MAP_ROUTE120", 0, "right"},
+    {&Route119, 0, "left"},
+    {&Route120, 0, "right"},
 };
 
 static ObjectEvent FortreeCity_object_events[] = {
@@ -6161,9 +6161,9 @@ const Map RustboroCity_PokemonCenter_1F = {
 };
 
 static MapConnection Route121_connections[] = {
-    {"MAP_ROUTE122", 20, "down"},
-    {"MAP_ROUTE120", -80, "left"},
-    {"MAP_LILYCOVE_CITY", -10, "right"},
+    {&Route122, 20, "down"},
+    {&Route120, -80, "left"},
+    {&LilycoveCity, -10, "right"},
 };
 
 static ObjectEvent Route121_object_events[] = {
@@ -6280,9 +6280,9 @@ const Map NavelRock_Down10 = {
 };
 
 static MapConnection Route126_connections[] = {
-    {"MAP_ROUTE124", 0, "up"},
-    {"MAP_ROUTE127", 0, "right"},
-    {"MAP_UNDERWATER_ROUTE126", 0, "dive"},
+    {&Route124, 0, "up"},
+    {&Route127, 0, "right"},
+    {&Underwater_Route126, 0, "dive"},
 };
 
 static ObjectEvent Route126_object_events[] = {
@@ -6391,8 +6391,8 @@ const Map MirageTower_1F = {
 };
 
 static MapConnection Route119_connections[] = {
-    {"MAP_ROUTE118", -40, "down"},
-    {"MAP_FORTREE_CITY", 0, "right"},
+    {&Route118, -40, "down"},
+    {&FortreeCity, 0, "right"},
 };
 
 static ObjectEvent Route119_object_events[] = {
@@ -6676,9 +6676,9 @@ const Map SootopolisCity_Gym_1F = {
 };
 
 static MapConnection Route110_connections[] = {
-    {"MAP_MAUVILLE_CITY", 0, "up"},
-    {"MAP_SLATEPORT_CITY", 0, "down"},
-    {"MAP_ROUTE103", 60, "left"},
+    {&MauvilleCity, 0, "up"},
+    {&SlateportCity, 0, "down"},
+    {&Route103, 60, "left"},
 };
 
 static ObjectEvent Route110_object_events[] = {
@@ -6788,7 +6788,7 @@ const Map Route110 = {
 };
 
 static MapConnection BattleFrontier_OutsideEast_connections[] = {
-    {"MAP_BATTLE_FRONTIER_OUTSIDE_WEST", 0, "left"},
+    {&BattleFrontier_OutsideWest, 0, "left"},
 };
 
 static ObjectEvent BattleFrontier_OutsideEast_object_events[] = {
@@ -6875,8 +6875,8 @@ const Map BattleFrontier_OutsideEast = {
 };
 
 static MapConnection Route117_connections[] = {
-    {"MAP_VERDANTURF_TOWN", 0, "left"},
-    {"MAP_MAUVILLE_CITY", 0, "right"},
+    {&VerdanturfTown, 0, "left"},
+    {&MauvilleCity, 0, "right"},
 };
 
 static ObjectEvent Route117_object_events[] = {
@@ -6980,10 +6980,10 @@ const Map SootopolisCity_House3 = {
 };
 
 static MapConnection Route128_connections[] = {
-    {"MAP_ROUTE127", 0, "up"},
-    {"MAP_ROUTE129", 0, "down"},
-    {"MAP_EVER_GRANDE_CITY", -40, "right"},
-    {"MAP_UNDERWATER_ROUTE128", 0, "dive"},
+    {&Route127, 0, "up"},
+    {&Route129, 0, "down"},
+    {&EverGrandeCity, -40, "right"},
+    {&Underwater_Route128, 0, "dive"},
 };
 
 static ObjectEvent Route128_object_events[] = {
@@ -7113,7 +7113,7 @@ const Map SafariZone_RestHouse = {
 };
 
 static MapConnection LittlerootTown_connections[] = {
-    {"MAP_ROUTE101", 0, "up"},
+    {&Route101, 0, "up"},
 };
 
 static ObjectEvent LittlerootTown_object_events[] = {
@@ -7214,8 +7214,8 @@ const Map BattleFrontier_BattleTowerMultiBattleRoom = {
 };
 
 static MapConnection PetalburgCity_connections[] = {
-    {"MAP_ROUTE104", -50, "left"},
-    {"MAP_ROUTE102", 10, "right"},
+    {&Route104, -50, "left"},
+    {&Route102, 10, "right"},
 };
 
 static ObjectEvent PetalburgCity_object_events[] = {
@@ -7729,7 +7729,7 @@ const Map BattleFrontier_BattleArenaLobby = {
 };
 
 static MapConnection EverGrandeCity_connections[] = {
-    {"MAP_ROUTE128", 40, "left"},
+    {&Route128, 40, "left"},
 };
 
 static WarpEvent EverGrandeCity_warps[] = {
@@ -7823,8 +7823,8 @@ const Map SootopolisCity_House2 = {
 };
 
 static MapConnection Route116_connections[] = {
-    {"MAP_VERDANTURF_TOWN", 80, "down"},
-    {"MAP_RUSTBORO_CITY", 0, "left"},
+    {&VerdanturfTown, 80, "down"},
+    {&RustboroCity, 0, "left"},
 };
 
 static ObjectEvent Route116_object_events[] = {
@@ -7981,9 +7981,9 @@ const Map MirageTower_2F = {
 };
 
 static MapConnection Route129_connections[] = {
-    {"MAP_ROUTE128", 0, "up"},
-    {"MAP_ROUTE130", 0, "left"},
-    {"MAP_UNDERWATER_ROUTE129", 0, "dive"},
+    {&Route128, 0, "up"},
+    {&Route130, 0, "left"},
+    {&Underwater_Route129, 0, "dive"},
 };
 
 static ObjectEvent Route129_object_events[] = {
@@ -8056,9 +8056,9 @@ const Map SeafloorCavern_Entrance = {
 };
 
 static MapConnection Route111_connections[] = {
-    {"MAP_MAUVILLE_CITY", 0, "down"},
-    {"MAP_ROUTE113", 0, "left"},
-    {"MAP_ROUTE112", 20, "left"},
+    {&MauvilleCity, 0, "down"},
+    {&Route113, 0, "left"},
+    {&Route112, 20, "left"},
 };
 
 static ObjectEvent Route111_object_events[] = {
@@ -8371,10 +8371,10 @@ const Map AbandonedShip_Corridors_B1F = {
 };
 
 static MapConnection Route127_connections[] = {
-    {"MAP_MOSSDEEP_CITY", 0, "up"},
-    {"MAP_ROUTE128", 0, "down"},
-    {"MAP_ROUTE126", 0, "left"},
-    {"MAP_UNDERWATER_ROUTE127", 0, "dive"},
+    {&MossdeepCity, 0, "up"},
+    {&Route128, 0, "down"},
+    {&Route126, 0, "left"},
+    {&Underwater_Route127, 0, "dive"},
 };
 
 static ObjectEvent Route127_object_events[] = {
@@ -8499,9 +8499,9 @@ const Map IslandCave = {
 };
 
 static MapConnection Route118_connections[] = {
-    {"MAP_ROUTE119", 40, "up"},
-    {"MAP_MAUVILLE_CITY", 0, "left"},
-    {"MAP_ROUTE123", 0, "right"},
+    {&Route119, 40, "up"},
+    {&MauvilleCity, 0, "left"},
+    {&Route123, 0, "right"},
 };
 
 static ObjectEvent Route118_object_events[] = {
@@ -8654,8 +8654,8 @@ const Map Route124_DivingTreasureHuntersHouse = {
 };
 
 static MapConnection Route120_connections[] = {
-    {"MAP_FORTREE_CITY", 0, "left"},
-    {"MAP_ROUTE121", 80, "right"},
+    {&FortreeCity, 0, "left"},
+    {&Route121, 80, "right"},
 };
 
 static ObjectEvent Route120_object_events[] = {
@@ -8841,8 +8841,8 @@ const Map NewMauville_Inside = {
 };
 
 static MapConnection SafariZone_Southeast_connections[] = {
-    {"MAP_SAFARI_ZONE_SOUTH", 0, "left"},
-    {"MAP_SAFARI_ZONE_NORTHEAST", 0, "up"},
+    {&SafariZone_South, 0, "left"},
+    {&SafariZone_Northeast, 0, "up"},
 };
 
 static ObjectEvent SafariZone_Southeast_object_events[] = {
@@ -9221,8 +9221,8 @@ const Map Route121_SafariZoneEntrance = {
 };
 
 static MapConnection SafariZone_Northwest_connections[] = {
-    {"MAP_SAFARI_ZONE_NORTH", 0, "right"},
-    {"MAP_SAFARI_ZONE_SOUTHWEST", 0, "down"},
+    {&SafariZone_North, 0, "right"},
+    {&SafariZone_Southwest, 0, "down"},
 };
 
 static ObjectEvent SafariZone_Northwest_object_events[] = {
@@ -11308,9 +11308,9 @@ const Map AbandonedShip_Rooms2_B1F = {
 };
 
 static MapConnection Underwater_Route127_connections[] = {
-    {"MAP_ROUTE127", 0, "emerge"},
-    {"MAP_UNDERWATER_ROUTE126", 0, "left"},
-    {"MAP_UNDERWATER_ROUTE128", 0, "down"},
+    {&Route127, 0, "emerge"},
+    {&Underwater_Route126, 0, "left"},
+    {&Underwater_Route128, 0, "down"},
 };
 
 static WarpEvent Underwater_Route127_warps[] = {
@@ -11933,7 +11933,7 @@ const Map SeafloorCavern_Room4 = {
 };
 
 static MapConnection Underwater_Route129_connections[] = {
-    {"MAP_ROUTE129", 0, "emerge"},
+    {&Route129, 0, "emerge"},
 };
 
 static WarpEvent Underwater_Route129_warps[] = {
@@ -12908,8 +12908,8 @@ const Map SeafloorCavern_Room5 = {
 };
 
 static MapConnection Underwater_Route128_connections[] = {
-    {"MAP_UNDERWATER_ROUTE127", 0, "up"},
-    {"MAP_ROUTE128", 0, "emerge"},
+    {&Underwater_Route127, 0, "up"},
+    {&Route128, 0, "emerge"},
 };
 
 static WarpEvent Underwater_Route128_warps[] = {
@@ -13137,9 +13137,9 @@ const Map MtChimney_CableCarStation = {
 };
 
 static MapConnection Underwater_Route126_connections[] = {
-    {"MAP_UNDERWATER_ROUTE124", 0, "up"},
-    {"MAP_UNDERWATER_ROUTE127", 0, "right"},
-    {"MAP_ROUTE126", 0, "emerge"},
+    {&Underwater_Route124, 0, "up"},
+    {&Underwater_Route127, 0, "right"},
+    {&Route126, 0, "emerge"},
 };
 
 static WarpEvent Underwater_Route126_warps[] = {
@@ -13789,9 +13789,9 @@ const Map Route119_WeatherInstitute_2F = {
 };
 
 static MapConnection SlateportCity_connections[] = {
-    {"MAP_ROUTE110", 0, "up"},
-    {"MAP_ROUTE109", 0, "down"},
-    {"MAP_ROUTE134", 0, "right"},
+    {&Route110, 0, "up"},
+    {&Route109, 0, "down"},
+    {&Route134, 0, "right"},
 };
 
 static ObjectEvent SlateportCity_object_events[] = {
@@ -14585,8 +14585,8 @@ const Map VerdanturfTown_PokemonCenter_1F = {
 };
 
 static MapConnection Route106_connections[] = {
-    {"MAP_ROUTE105", 0, "up"},
-    {"MAP_DEWFORD_TOWN", 60, "down"},
+    {&Route105, 0, "up"},
+    {&DewfordTown, 60, "down"},
 };
 
 static ObjectEvent Route106_object_events[] = {
@@ -14793,8 +14793,8 @@ const Map UnusedContestHall5 = {
 };
 
 static MapConnection Route101_connections[] = {
-    {"MAP_OLDALE_TOWN", 0, "up"},
-    {"MAP_LITTLEROOT_TOWN", 0, "down"},
+    {&OldaleTown, 0, "up"},
+    {&LittlerootTown, 0, "down"},
 };
 
 static ObjectEvent Route101_object_events[] = {
@@ -14849,8 +14849,8 @@ const Map Route101 = {
 };
 
 static MapConnection Route108_connections[] = {
-    {"MAP_ROUTE107", 0, "left"},
-    {"MAP_ROUTE109", -40, "right"},
+    {&Route107, 0, "left"},
+    {&Route109, -40, "right"},
 };
 
 static ObjectEvent Route108_object_events[] = {
@@ -14929,8 +14929,8 @@ const Map NavelRock_Down01 = {
 };
 
 static MapConnection Route130_connections[] = {
-    {"MAP_ROUTE131", 0, "left"},
-    {"MAP_ROUTE129", 0, "right"},
+    {&Route131, 0, "left"},
+    {&Route129, 0, "right"},
 };
 
 static ObjectEvent Route130_object_events[] = {
@@ -15787,9 +15787,9 @@ const Map SecretBase_YellowCave3 = {
 };
 
 static MapConnection SafariZone_North_connections[] = {
-    {"MAP_SAFARI_ZONE_NORTHWEST", 0, "left"},
-    {"MAP_SAFARI_ZONE_SOUTH", 0, "down"},
-    {"MAP_SAFARI_ZONE_NORTHEAST", 0, "right"},
+    {&SafariZone_Northwest, 0, "left"},
+    {&SafariZone_South, 0, "down"},
+    {&SafariZone_Northeast, 0, "right"},
 };
 
 static ObjectEvent SafariZone_North_object_events[] = {
@@ -15862,8 +15862,8 @@ const Map NavelRock_Down07 = {
 };
 
 static MapConnection Route131_connections[] = {
-    {"MAP_PACIFIDLOG_TOWN", 0, "left"},
-    {"MAP_ROUTE130", 0, "right"},
+    {&PacifidlogTown, 0, "left"},
+    {&Route130, 0, "right"},
 };
 
 static ObjectEvent Route131_object_events[] = {
@@ -15908,8 +15908,8 @@ const Map Route131 = {
 };
 
 static MapConnection Route109_connections[] = {
-    {"MAP_SLATEPORT_CITY", 0, "up"},
-    {"MAP_ROUTE108", 40, "left"},
+    {&SlateportCity, 0, "up"},
+    {&Route108, 40, "left"},
 };
 
 static ObjectEvent Route109_object_events[] = {
@@ -16330,8 +16330,8 @@ const Map SecretBase_Tree3 = {
 };
 
 static MapConnection LilycoveCity_connections[] = {
-    {"MAP_ROUTE121", 10, "left"},
-    {"MAP_ROUTE124", -10, "right"},
+    {&Route121, 10, "left"},
+    {&Route124, -10, "right"},
 };
 
 static ObjectEvent LilycoveCity_object_events[] = {
@@ -16445,8 +16445,8 @@ const Map UnusedContestHall3 = {
 };
 
 static MapConnection Route107_connections[] = {
-    {"MAP_DEWFORD_TOWN", 0, "left"},
-    {"MAP_ROUTE108", 0, "right"},
+    {&DewfordTown, 0, "left"},
+    {&Route108, 0, "right"},
 };
 
 static ObjectEvent Route107_object_events[] = {
@@ -16562,9 +16562,9 @@ const Map BattleFrontier_PokemonCenter_1F = {
 };
 
 static MapConnection Route125_connections[] = {
-    {"MAP_MOSSDEEP_CITY", 0, "down"},
-    {"MAP_ROUTE124", 0, "left"},
-    {"MAP_UNDERWATER_ROUTE125", 0, "dive"},
+    {&MossdeepCity, 0, "down"},
+    {&Route124, 0, "left"},
+    {&Underwater_Route125, 0, "dive"},
 };
 
 static ObjectEvent Route125_object_events[] = {
@@ -16733,8 +16733,8 @@ const Map MagmaHideout_1F = {
 };
 
 static MapConnection Route122_connections[] = {
-    {"MAP_ROUTE121", -20, "up"},
-    {"MAP_ROUTE123", -100, "down"},
+    {&Route121, -20, "up"},
+    {&Route123, -100, "down"},
 };
 
 static WarpEvent Route122_warps[] = {
@@ -16852,8 +16852,8 @@ const Map BattleFrontier_BattlePalaceCorridor = {
 };
 
 static MapConnection Route114_connections[] = {
-    {"MAP_ROUTE115", 40, "left"},
-    {"MAP_FALLARBOR_TOWN", 0, "right"},
+    {&Route115, 40, "left"},
+    {&FallarborTown, 0, "right"},
 };
 
 static ObjectEvent Route114_object_events[] = {
@@ -17020,9 +17020,9 @@ const Map SecretBase_BrownCave4 = {
 };
 
 static MapConnection Route113_connections[] = {
-    {"MAP_ROUTE112", 60, "down"},
-    {"MAP_FALLARBOR_TOWN", 0, "left"},
-    {"MAP_ROUTE111", 0, "right"},
+    {&Route112, 60, "down"},
+    {&FallarborTown, 0, "left"},
+    {&Route111, 0, "right"},
 };
 
 static ObjectEvent Route113_object_events[] = {
@@ -17482,9 +17482,9 @@ const Map LilycoveCity_CoveLilyMotel_2F = {
 };
 
 static MapConnection OldaleTown_connections[] = {
-    {"MAP_ROUTE103", 0, "up"},
-    {"MAP_ROUTE101", 0, "down"},
-    {"MAP_ROUTE102", 0, "left"},
+    {&Route103, 0, "up"},
+    {&Route101, 0, "down"},
+    {&Route102, 0, "left"},
 };
 
 static ObjectEvent OldaleTown_object_events[] = {
@@ -18015,9 +18015,9 @@ const Map SootopolisCity_House6 = {
 };
 
 static MapConnection Route112_connections[] = {
-    {"MAP_ROUTE113", -60, "up"},
-    {"MAP_LAVARIDGE_TOWN", 40, "left"},
-    {"MAP_ROUTE111", -20, "right"},
+    {&Route113, -60, "up"},
+    {&LavaridgeTown, 40, "left"},
+    {&Route111, -20, "right"},
 };
 
 static ObjectEvent Route112_object_events[] = {
@@ -18251,8 +18251,8 @@ const Map RustboroCity_Gym = {
 };
 
 static MapConnection Route115_connections[] = {
-    {"MAP_RUSTBORO_CITY", 0, "down"},
-    {"MAP_ROUTE114", -40, "right"},
+    {&RustboroCity, 0, "down"},
+    {&Route114, -40, "right"},
 };
 
 static ObjectEvent Route115_object_events[] = {
@@ -18488,8 +18488,8 @@ const Map MossdeepCity_Mart = {
 };
 
 static MapConnection Route123_connections[] = {
-    {"MAP_ROUTE122", 100, "up"},
-    {"MAP_ROUTE118", 0, "left"},
+    {&Route122, 100, "up"},
+    {&Route118, 0, "left"},
 };
 
 static ObjectEvent Route123_object_events[] = {
@@ -18697,11 +18697,11 @@ const Map MtPyre_Exterior = {
 };
 
 static MapConnection Route124_connections[] = {
-    {"MAP_ROUTE126", 0, "down"},
-    {"MAP_LILYCOVE_CITY", 10, "left"},
-    {"MAP_ROUTE125", 0, "right"},
-    {"MAP_MOSSDEEP_CITY", 40, "right"},
-    {"MAP_UNDERWATER_ROUTE124", 0, "dive"},
+    {&Route126, 0, "down"},
+    {&LilycoveCity, 10, "left"},
+    {&Route125, 0, "right"},
+    {&MossdeepCity, 40, "right"},
+    {&Underwater_Route124, 0, "dive"},
 };
 
 static ObjectEvent Route124_object_events[] = {
@@ -19819,8 +19819,8 @@ const Map Route113_GlassWorkshop = {
 };
 
 static MapConnection PacifidlogTown_connections[] = {
-    {"MAP_ROUTE132", 0, "left"},
-    {"MAP_ROUTE131", 0, "right"},
+    {&Route132, 0, "left"},
+    {&Route131, 0, "right"},
 };
 
 static ObjectEvent PacifidlogTown_object_events[] = {
@@ -20030,8 +20030,8 @@ const Map SlateportCity_Harbor = {
 };
 
 static MapConnection DewfordTown_connections[] = {
-    {"MAP_ROUTE106", -60, "up"},
-    {"MAP_ROUTE107", 0, "right"},
+    {&Route106, -60, "up"},
+    {&Route107, 0, "right"},
 };
 
 static ObjectEvent DewfordTown_object_events[] = {
@@ -21340,10 +21340,10 @@ const Map MeteorFalls_1F_2R = {
 };
 
 static MapConnection MauvilleCity_connections[] = {
-    {"MAP_ROUTE111", 0, "up"},
-    {"MAP_ROUTE110", 0, "down"},
-    {"MAP_ROUTE117", 0, "left"},
-    {"MAP_ROUTE118", 0, "right"},
+    {&Route111, 0, "up"},
+    {&Route110, 0, "down"},
+    {&Route117, 0, "left"},
+    {&Route118, 0, "right"},
 };
 
 static ObjectEvent MauvilleCity_object_events[] = {
@@ -22134,7 +22134,7 @@ const Map TrainerHill_2F = {
 };
 
 static MapConnection Underwater_Route105_connections[] = {
-    {"MAP_ROUTE105", 0, "emerge"},
+    {&Route105, 0, "emerge"},
 };
 
 static WarpEvent Underwater_Route105_warps[] = {

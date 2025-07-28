@@ -41,7 +41,6 @@ int main(void) {
     SDL_Init(SDL_INIT_VIDEO);
 
     game_init(&state);  
-    state.currentMap = MapGroups[MAP_GROUP_INDOOR_LITTLEROOT][MAP_LITTLEROOT_TOWN_BRENDANS_HOUSE_1F];
     
     
     int counter = 0;

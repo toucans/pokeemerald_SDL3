@@ -130,7 +130,7 @@ void write_cell(
 	}
 }
 
-MapSurfaces load_map_surfaces(MapLayout *mapLayout) {
+MapTextures load_map_textures(GameState *state, MapLayout *mapLayout, SDL_FRect *dstRect) {
 
 	u16 mapWidth = mapLayout->width * 16;
     u16 mapHeight = mapLayout->height * 16;
@@ -186,10 +186,55 @@ MapSurfaces load_map_surfaces(MapLayout *mapLayout) {
 	free(mapLayout->primary_tileset->palettes);
 	free(mapLayout->secondary_tileset->palettes);
 
-	return (MapSurfaces){
-        .bg_surface = bg_surface,
-        .fg_surface = fg_surface
+	SDL_Texture *bg_texture = SDL_CreateTextureFromSurface(state->renderer, bg_surface);
+    SDL_SetTextureScaleMode(bg_texture, SDL_SCALEMODE_NEAREST);
+	SDL_Texture *fg_texture = SDL_CreateTextureFromSurface(state->renderer, fg_surface);
+    SDL_SetTextureScaleMode(fg_texture, SDL_SCALEMODE_NEAREST);
+	SDL_DestroySurface(bg_surface);
+	SDL_DestroySurface(fg_surface);
+	*dstRect = (SDL_FRect){ 
+        (state->player.x + 7) * 16, 
+        (state->player.y + 4.5) * 16, 
+        mapLayout->width * 16.0f, 
+        mapLayout->height * 16.0f
+    };
+
+	return (MapTextures){
+        .bg_texture = bg_texture,
+        .fg_texture = fg_texture
     };
 }
 
+MapConnectionsTextures load_connections_textures(GameState *state) {
+	MapConnectionsTextures mapConnectionTextures;
+	const Map *currentMap = state->currentMap;
+	MapConnection *mapConnections = currentMap->connections;
+	u8 count = 0;
+	for (u8 i = 0; i < currentMap->connections_count; i++)
+	{
+		if (strcmp(mapConnections[i].direction, "dive") != 0 && strcmp(mapConnections[i].direction, "emerge") != 0) {
+			switch (count)
+			{
+			case 0:
+				mapConnectionTextures.mapTextures1 = load_map_textures(state, mapConnections[i].map->layout, &mapConnectionTextures.rect1);
+				break;
+			case 1:
+				mapConnectionTextures.mapTextures2 = load_map_textures(state, mapConnections[i].map->layout, &mapConnectionTextures.rect2);
+				printf("hi2");
+				break;
+			case 2:
+				mapConnectionTextures.mapTextures3 = load_map_textures(state, mapConnections[i].map->layout, &mapConnectionTextures.rect3);
+				break;
+			case 3:
+				mapConnectionTextures.mapTextures4 = load_map_textures(state, mapConnections[i].map->layout, &mapConnectionTextures.rect4);
+				break;
+			default:
+				break;
+			}
+			count++;
+		}
+	}
+	
 
+	return mapConnectionTextures;
+}

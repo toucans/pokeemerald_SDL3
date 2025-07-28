@@ -1,6 +1,5 @@
 #include <SDL3/SDL.h>
 #include <stdlib.h>
-#include "map_loader.h"
 #include "game.h"
 //#include "sprite_loader.h"
 
@@ -12,18 +11,10 @@ void game_init(GameState *state) {
     MapLayout *mapLayout = state->currentMap->layout;
     u16 mapWidth = mapLayout->width * 16;
     u16 mapHeight = mapLayout->height * 16;
-    MapSurfaces mapSurfaces = load_map_surfaces(mapLayout);
-    state->camera.rect = (SDL_FRect){ 
-        (state->player.x + 7) * 16, 
-        (state->player.y + 4.5) * 16, 
-        mapWidth, 
-        mapHeight 
-    };
+    state->mapTextures = load_map_textures(state, state->currentMap->layout, &state->camera.rect);
+    state->mapConnectionTextures = load_connections_textures(state);
     
-    state->bg_texture = SDL_CreateTextureFromSurface(state->renderer, mapSurfaces.bg_surface);
-    SDL_SetTextureScaleMode(state->bg_texture, SDL_SCALEMODE_NEAREST);
-    state->fg_texture = SDL_CreateTextureFromSurface(state->renderer, mapSurfaces.fg_surface);
-    SDL_SetTextureScaleMode(state->fg_texture, SDL_SCALEMODE_NEAREST);
+    
 /*
     SDL_Surface *hero_surface = load_hero_surface();
     state->player.texture = SDL_CreateTextureFromSurface(state->renderer, hero_surface);
@@ -69,10 +60,12 @@ void game_render(const GameState *state) {
     SDL_RenderClear(renderer);
 
     
-    SDL_RenderTexture(renderer, state->bg_texture, NULL, &state->camera.rect);
+    SDL_RenderTexture(renderer, state->mapTextures.bg_texture, NULL, &state->camera.rect);
     //SDL_RenderTexture(renderer, state->player.texture, &state->player.srcRect, &state->player.dstRect);
-    SDL_RenderTexture(renderer, state->fg_texture, NULL, &state->camera.rect);    
+    SDL_RenderTexture(renderer, state->mapTextures.fg_texture, NULL, &state->camera.rect);    
 
+    SDL_RenderTexture(renderer, state->mapConnectionTextures.mapTextures1.bg_texture, NULL, &state->mapConnectionTextures.rect1);
+    SDL_RenderTexture(renderer, state->mapConnectionTextures.mapTextures1.fg_texture, NULL, &state->mapConnectionTextures.rect1);
 
     SDL_RenderPresent(renderer);
 
