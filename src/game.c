@@ -1,13 +1,14 @@
 #include <SDL3/SDL.h>
 #include <stdlib.h>
 #include "game.h"
+#include "map.h"
 //#include "sprite_loader.h"
 
 
 
 void game_init(GameState *state) {
 
-    state->currentMap = MapGroups[MAP_GROUP_TOWNS_AND_ROUTES][MAP_LITTLEROOT_TOWN];
+    state->currentMap = MapGroups[MAP_GROUP_TOWNS_AND_ROUTES][MAP_MAUVILLE_CITY];
     MapLayout *mapLayout = state->currentMap->layout;
     u16 mapWidth = mapLayout->width * 16;
     u16 mapHeight = mapLayout->height * 16;
@@ -48,6 +49,7 @@ void game_update(GameState *state) {
 
     player_update(state);
     camera_update(state);
+    map_update(state);
 
 }
 
@@ -66,6 +68,12 @@ void game_render(const GameState *state) {
 
     SDL_RenderTexture(renderer, state->mapConnectionTextures.mapTextures1.bg_texture, NULL, &state->mapConnectionTextures.rect1);
     SDL_RenderTexture(renderer, state->mapConnectionTextures.mapTextures1.fg_texture, NULL, &state->mapConnectionTextures.rect1);
+    SDL_RenderTexture(renderer, state->mapConnectionTextures.mapTextures2.bg_texture, NULL, &state->mapConnectionTextures.rect2);
+    SDL_RenderTexture(renderer, state->mapConnectionTextures.mapTextures2.fg_texture, NULL, &state->mapConnectionTextures.rect2);
+    SDL_RenderTexture(renderer, state->mapConnectionTextures.mapTextures3.bg_texture, NULL, &state->mapConnectionTextures.rect3);
+    SDL_RenderTexture(renderer, state->mapConnectionTextures.mapTextures3.fg_texture, NULL, &state->mapConnectionTextures.rect3);
+    SDL_RenderTexture(renderer, state->mapConnectionTextures.mapTextures4.bg_texture, NULL, &state->mapConnectionTextures.rect4);
+    SDL_RenderTexture(renderer, state->mapConnectionTextures.mapTextures4.fg_texture, NULL, &state->mapConnectionTextures.rect4);
 
     SDL_RenderPresent(renderer);
 

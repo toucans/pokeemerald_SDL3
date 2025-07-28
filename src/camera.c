@@ -62,11 +62,13 @@ void camera_update(GameState *state) {
                 // printf("main y%f\n", camera->rect.y);
 				break;
 			case 1:
-
+                set_connection_rect(&state->mapConnectionTextures.rect2, &camera->rect, &mapConnections[i]);
 				break;
 			case 2:
+                set_connection_rect(&state->mapConnectionTextures.rect3, &camera->rect, &mapConnections[i]);
 				break;
 			case 3:
+                set_connection_rect(&state->mapConnectionTextures.rect4, &camera->rect, &mapConnections[i]);
 				break;
 			default:
 				break;
