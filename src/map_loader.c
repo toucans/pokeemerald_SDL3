@@ -80,6 +80,7 @@ void write_tile(
 		int surface_x1 = map_x + start_x + tile_x1;
 		int surface_y  = map_y + start_y + tile_y;
 
+		
 		SDLsurfacePixels[surface_y * pitch + surface_x0] = color0;
 		SDLsurfacePixels[surface_y * pitch + surface_x1] = color1;
 	}
@@ -88,8 +89,8 @@ void write_tile(
 void write_cell(
 	u16 cell, 
 	MapLayout *mapLayout,
-	u8 *rawMainCharData, 
-	u8 *rawSubCharData,
+	u8 *primary_tileset_tiles, 
+	u8 *secondary_tileset_tiles,
 	u16 *SDLsurfacePixels, 
 	u16 map_x, 
 	u16 map_y,
@@ -99,37 +100,37 @@ void write_cell(
 	u16 cellNumber = cell & 0b0000001111111111;
 	const u16 *cellData;
 	const u8 *charData;
-	const u16 *colorData;
+	const u16 *palettes;
 	u16 startIndex;
 	if(cellNumber < 512) {
 		cellData = mapLayout->primary_tileset->metatiles;
-		charData = rawMainCharData;
-		colorData = mapLayout->primary_tileset->palettes;
+		charData = primary_tileset_tiles;
+		palettes = mapLayout->primary_tileset->palettes;
 		startIndex = 0;
     } else {
 		cellData = mapLayout->secondary_tileset->metatiles;
-		charData = rawSubCharData;
-		colorData = mapLayout->secondary_tileset->palettes;
+		charData = secondary_tileset_tiles;
+		palettes = mapLayout->secondary_tileset->palettes;
 		startIndex = 512;
     }
-	
 	const u16 *tiles = &cellData[(cellNumber-startIndex)*8];
 
 	u16 map_width = mapLayout->width * 16;
 	for (u8 i = 0; i < 4; i++)
 	{
+		
 		int index = (layer) ? i + 4 : i;
-		if(layer) index = i + 4;
-		int tileIndex = (tiles[index] & 0b0000001111111111)-startIndex;
-		if(tileIndex < 0) tileIndex = 0;
+		int tileIndex = (tiles[index] & 0b0000001111111111) - startIndex;
+
+
+
 		const u8 *tile = &charData[tileIndex*32];
 		u8 h_flip = (tiles[index] & 0b0000010000000000) >> 10;
 		u8 v_flip = (tiles[index] & 0b0000100000000000) >> 11;
-		const u16 *palette = &colorData[(tiles[index] >> 12)*16];
+		const u16 *palette = &palettes[(tiles[index] >> 12)*16];
 		write_tile(tile, h_flip, v_flip, palette, SDLsurfacePixels, i, map_x, map_y, map_width);
 	}
 }
-
 
 
 
@@ -143,10 +144,20 @@ MapSurfaces load_map_surfaces(MapLayout *mapLayout) {
 	u8 *secondary_tileset = get_u8_data(mapLayout->secondary_tileset->tiles, mapLayout->secondary_tileset->dataSize);
 
 	u32 sizeMain, sizeSub;
-	u8 *rawMainCharData = lz77_decompress(primary_tileset, &sizeMain);
-	u8 *rawSubCharData = lz77_decompress(secondary_tileset, &sizeSub);
+	u8 *primary_tileset_tiles = lz77_decompress(primary_tileset, &sizeMain);
+	u8 *secondary_tileset_tiles = lz77_decompress(secondary_tileset, &sizeSub);
 	free(primary_tileset);
 	free(secondary_tileset);
+
+	u8 *combined_tileset = malloc(sizeMain + sizeSub); // Need to combine them for when write_cell accesses secondary_tileset_tiles with negative indexes
+	memcpy(combined_tileset, primary_tileset_tiles, sizeMain);
+	memcpy(combined_tileset + sizeMain, secondary_tileset_tiles, sizeSub);
+	free(primary_tileset_tiles);
+	free(secondary_tileset_tiles);
+	primary_tileset_tiles = combined_tileset;
+	secondary_tileset_tiles = combined_tileset + sizeMain;
+
+
 
 	mapLayout->blockdata = get_u16_data(mapLayout->blockdata_offset, mapLayout->width * mapLayout->height);
 
@@ -162,8 +173,8 @@ MapSurfaces load_map_surfaces(MapLayout *mapLayout) {
 				write_cell(
 					mapLayout->blockdata[map_y * mapLayout->width + map_x],
 					mapLayout,
-					rawMainCharData,
-					rawSubCharData,
+					primary_tileset_tiles,
+					secondary_tileset_tiles,
 					surface->pixels,
 					map_x * 16,
 					map_y * 16,
@@ -173,8 +184,6 @@ MapSurfaces load_map_surfaces(MapLayout *mapLayout) {
 		}
 	}
 
-	free(rawMainCharData);
-	free(rawSubCharData);
 	free(mapLayout->blockdata);
 	free(mapLayout->primary_tileset->metatiles);
 	free(mapLayout->secondary_tileset->metatiles);
@@ -211,35 +220,3 @@ MapTextures load_map_textures(GameState *state, MapLayout *mapLayout, SDL_FRect 
 	};
 }
 
-MapConnectionsTextures load_connections_textures(GameState *state) {
-	MapConnectionsTextures mapConnectionTextures;
-	const Map *currentMap = state->currentMap;
-	MapConnection *mapConnections = currentMap->connections;
-	u8 count = 0;
-	for (u8 i = 0; i < currentMap->connections_count; i++)
-	{
-		if (strcmp(mapConnections[i].direction, "dive") != 0 && strcmp(mapConnections[i].direction, "emerge") != 0) {
-			switch (count)
-			{
-			case 0:
-				mapConnectionTextures.mapTextures1 = load_map_textures(state, mapConnections[i].map->layout, &mapConnectionTextures.rect1);
-				break;
-			case 1:
-				mapConnectionTextures.mapTextures2 = load_map_textures(state, mapConnections[i].map->layout, &mapConnectionTextures.rect2);
-				break;
-			case 2:
-				mapConnectionTextures.mapTextures3 = load_map_textures(state, mapConnections[i].map->layout, &mapConnectionTextures.rect3);
-				break;
-			case 3:
-				mapConnectionTextures.mapTextures4 = load_map_textures(state, mapConnections[i].map->layout, &mapConnectionTextures.rect4);
-				break;
-			default:
-				break;
-			}
-			count++;
-		}
-	}
-	
-
-	return mapConnectionTextures;
-}
