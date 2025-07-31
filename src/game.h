@@ -20,6 +20,7 @@ typedef struct GameState {
     Camera camera;
     const Map *currentMap;
     SDL_Renderer *renderer;
+    MapTextures overworld;
     MapTextures mapTextures;
     MapConnectionsTextures mapConnectionTextures;
 } GameState;

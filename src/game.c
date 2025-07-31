@@ -13,7 +13,15 @@ void game_init(GameState *state) {
     u16 mapWidth = mapLayout->width * 16;
     u16 mapHeight = mapLayout->height * 16;
     state->mapTextures = load_map_textures(state, state->currentMap->layout, &state->camera.rect);
-    state->mapConnectionTextures = load_connections_textures(state);
+
+    overworld_init(state);
+    state->mapTextures = state->overworld;
+    state->camera.rect = (SDL_FRect){
+		(state->player.x + 7) * 16,
+		(state->player.y + 4.5) * 16,
+		OVERWORLD_WIDTH * 16.0f,
+		OVERWORLD_HEIGHT * 16.0f
+	};
     
     
 /*
@@ -66,14 +74,6 @@ void game_render(const GameState *state) {
     //SDL_RenderTexture(renderer, state->player.texture, &state->player.srcRect, &state->player.dstRect);
     SDL_RenderTexture(renderer, state->mapTextures.fg_texture, NULL, &state->camera.rect);    
 
-    SDL_RenderTexture(renderer, state->mapConnectionTextures.mapTextures1.bg_texture, NULL, &state->mapConnectionTextures.rect1);
-    SDL_RenderTexture(renderer, state->mapConnectionTextures.mapTextures1.fg_texture, NULL, &state->mapConnectionTextures.rect1);
-    SDL_RenderTexture(renderer, state->mapConnectionTextures.mapTextures2.bg_texture, NULL, &state->mapConnectionTextures.rect2);
-    SDL_RenderTexture(renderer, state->mapConnectionTextures.mapTextures2.fg_texture, NULL, &state->mapConnectionTextures.rect2);
-    SDL_RenderTexture(renderer, state->mapConnectionTextures.mapTextures3.bg_texture, NULL, &state->mapConnectionTextures.rect3);
-    SDL_RenderTexture(renderer, state->mapConnectionTextures.mapTextures3.fg_texture, NULL, &state->mapConnectionTextures.rect3);
-    SDL_RenderTexture(renderer, state->mapConnectionTextures.mapTextures4.bg_texture, NULL, &state->mapConnectionTextures.rect4);
-    SDL_RenderTexture(renderer, state->mapConnectionTextures.mapTextures4.fg_texture, NULL, &state->mapConnectionTextures.rect4);
 
     SDL_RenderPresent(renderer);
 

@@ -183,6 +183,8 @@ enum TownsAndRoutesMapIds {
     MAP_UNDERWATER_ROUTE129 = 54,
     MAP_UNDERWATER_ROUTE105 = 55,
     MAP_UNDERWATER_ROUTE125 = 56,
+
+    TOWNS_AND_ROUTES_COUNT
 };
 
 enum IndoorLittlerootMapIds {

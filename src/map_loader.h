@@ -5,6 +5,11 @@
 #include "../pokeemerald/map_layouts.h"
 
 typedef struct {
+	SDL_Surface *bg_surface;
+	SDL_Surface *fg_surface;
+} MapSurfaces;
+
+typedef struct {
     SDL_Texture *bg_texture;
     SDL_Texture *fg_texture;
 } MapTextures;
@@ -32,5 +37,7 @@ extern void write_tile(
 	u16 map_width
 );
 struct GameState;
+
+extern MapSurfaces load_map_surfaces(MapLayout *mapLayout);
 extern MapTextures load_map_textures(struct GameState *state, MapLayout *mapLayout, SDL_FRect *dstRect);
 extern MapConnectionsTextures load_connections_textures(struct GameState *state);

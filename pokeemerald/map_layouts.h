@@ -6,6 +6,8 @@ typedef struct {
     const char* name;
     u16 width;
     u16 height;
+    s16 overworld_pos_x;
+    s16 overworld_pos_y;
     Tileset* primary_tileset;
     Tileset* secondary_tileset;
     const char* border_filepath;

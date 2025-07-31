@@ -130,79 +130,85 @@ void write_cell(
 	}
 }
 
-MapTextures load_map_textures(GameState *state, MapLayout *mapLayout, SDL_FRect *dstRect) {
 
+
+
+MapSurfaces load_map_surfaces(MapLayout *mapLayout) {
 	u16 mapWidth = mapLayout->width * 16;
-    u16 mapHeight = mapLayout->height * 16;
-	SDL_Surface * bg_surface = SDL_CreateSurface(mapWidth, mapHeight, SDL_PIXELFORMAT_ABGR1555);
-	SDL_Surface * fg_surface = SDL_CreateSurface(mapWidth, mapHeight, SDL_PIXELFORMAT_ABGR1555);
-
-
+	u16 mapHeight = mapLayout->height * 16;
+	SDL_Surface *bg_surface = SDL_CreateSurface(mapWidth, mapHeight, SDL_PIXELFORMAT_ABGR1555);
+	SDL_Surface *fg_surface = SDL_CreateSurface(mapWidth, mapHeight, SDL_PIXELFORMAT_ABGR1555);
 
 	u8 *primary_tileset = get_u8_data(mapLayout->primary_tileset->tiles, mapLayout->primary_tileset->dataSize);
 	u8 *secondary_tileset = get_u8_data(mapLayout->secondary_tileset->tiles, mapLayout->secondary_tileset->dataSize);
 
-    u32 sizeMain;
-    u32 sizeSub;
-    u8 *rawMainCharData = lz77_decompress(primary_tileset, &sizeMain);
-    u8 *rawSubCharData = lz77_decompress(secondary_tileset, &sizeSub);
+	u32 sizeMain, sizeSub;
+	u8 *rawMainCharData = lz77_decompress(primary_tileset, &sizeMain);
+	u8 *rawSubCharData = lz77_decompress(secondary_tileset, &sizeSub);
 	free(primary_tileset);
 	free(secondary_tileset);
 
 	mapLayout->blockdata = get_u16_data(mapLayout->blockdata_offset, mapLayout->width * mapLayout->height);
 
-	mapLayout->primary_tileset->metatiles = get_u16_data(mapLayout->primary_tileset->metatiles_offset, 512*8);
-	mapLayout->secondary_tileset->metatiles = get_u16_data(mapLayout->secondary_tileset->metatiles_offset, 512*8);
+	mapLayout->primary_tileset->metatiles = get_u16_data(mapLayout->primary_tileset->metatiles_offset, 512 * 8);
+	mapLayout->secondary_tileset->metatiles = get_u16_data(mapLayout->secondary_tileset->metatiles_offset, 512 * 8);
 	mapLayout->primary_tileset->palettes = get_u16_data(mapLayout->primary_tileset->palettes_offset, 256);
 	mapLayout->secondary_tileset->palettes = get_u16_data(mapLayout->secondary_tileset->palettes_offset, 256);
 
-
-	for (u8 layer = 0; layer < 2; layer++)
-	{
+	for (u8 layer = 0; layer < 2; layer++) {
 		SDL_Surface *surface = (layer == 0) ? bg_surface : fg_surface;
-		for (int map_y = 0; map_y < mapLayout->height; map_y++)
-		{
-			for (int map_x = 0; map_x < mapLayout->width; map_x++)
-			{
-				write_cell(mapLayout->blockdata[map_y * mapLayout->width + map_x], 
-					mapLayout, 
-					rawMainCharData, 
-					rawSubCharData, 
-					surface->pixels, 
-					map_x*16, 
-					map_y*16, 
+		for (int map_y = 0; map_y < mapLayout->height; map_y++) {
+			for (int map_x = 0; map_x < mapLayout->width; map_x++) {
+				write_cell(
+					mapLayout->blockdata[map_y * mapLayout->width + map_x],
+					mapLayout,
+					rawMainCharData,
+					rawSubCharData,
+					surface->pixels,
+					map_x * 16,
+					map_y * 16,
 					layer
 				);
 			}
 		}
 	}
 
-
-    free(rawMainCharData);
-    free(rawSubCharData);
+	free(rawMainCharData);
+	free(rawSubCharData);
 	free(mapLayout->blockdata);
 	free(mapLayout->primary_tileset->metatiles);
 	free(mapLayout->secondary_tileset->metatiles);
 	free(mapLayout->primary_tileset->palettes);
 	free(mapLayout->secondary_tileset->palettes);
 
-	SDL_Texture *bg_texture = SDL_CreateTextureFromSurface(state->renderer, bg_surface);
-    SDL_SetTextureScaleMode(bg_texture, SDL_SCALEMODE_NEAREST);
-	SDL_Texture *fg_texture = SDL_CreateTextureFromSurface(state->renderer, fg_surface);
-    SDL_SetTextureScaleMode(fg_texture, SDL_SCALEMODE_NEAREST);
-	SDL_DestroySurface(bg_surface);
-	SDL_DestroySurface(fg_surface);
-	*dstRect = (SDL_FRect){ 
-        (state->player.x + 7) * 16, 
-        (state->player.y + 4.5) * 16, 
-        mapLayout->width * 16.0f, 
-        mapLayout->height * 16.0f
-    };
+	return (MapSurfaces){
+		.bg_surface = bg_surface,
+		.fg_surface = fg_surface
+	};
+}
+
+MapTextures load_map_textures(GameState *state, MapLayout *mapLayout, SDL_FRect *dstRect) {
+	MapSurfaces surfaces = load_map_surfaces(mapLayout);
+
+	SDL_Texture *bg_texture = SDL_CreateTextureFromSurface(state->renderer, surfaces.bg_surface);
+	SDL_SetTextureScaleMode(bg_texture, SDL_SCALEMODE_NEAREST);
+	SDL_Texture *fg_texture = SDL_CreateTextureFromSurface(state->renderer, surfaces.fg_surface);
+	SDL_SetTextureScaleMode(fg_texture, SDL_SCALEMODE_NEAREST);
+
+	SDL_DestroySurface(surfaces.bg_surface);
+	SDL_DestroySurface(surfaces.fg_surface);
+
+	*dstRect = (SDL_FRect){
+		(state->player.x + 7) * 16,
+		(state->player.y + 4.5) * 16,
+		mapLayout->width * 16.0f,
+		mapLayout->height * 16.0f
+	};
 
 	return (MapTextures){
-        .bg_texture = bg_texture,
-        .fg_texture = fg_texture
-    };
+		.bg_texture = bg_texture,
+		.fg_texture = fg_texture
+	};
 }
 
 MapConnectionsTextures load_connections_textures(GameState *state) {
@@ -220,7 +226,6 @@ MapConnectionsTextures load_connections_textures(GameState *state) {
 				break;
 			case 1:
 				mapConnectionTextures.mapTextures2 = load_map_textures(state, mapConnections[i].map->layout, &mapConnectionTextures.rect2);
-				printf("hi2");
 				break;
 			case 2:
 				mapConnectionTextures.mapTextures3 = load_map_textures(state, mapConnections[i].map->layout, &mapConnectionTextures.rect3);

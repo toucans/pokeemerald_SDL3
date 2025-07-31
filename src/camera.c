@@ -2,7 +2,7 @@
 #include "player.h"
 #include <math.h>
 
-#define CAMERA_SPEED 48
+#define CAMERA_SPEED 360
 
 void set_connection_rect(SDL_FRect *dstRect, SDL_FRect *cameraRect, MapConnection *mapConnection) {
     if (strcmp(mapConnection->direction, "up") == 0) {
@@ -43,38 +43,5 @@ void camera_update(GameState *state) {
             camera->move_ended = true;
         }
     }
-
-    const Map *currentMap = state->currentMap;
-	MapConnection *mapConnections = currentMap->connections;
-    u8 count = 0;
-	for (u8 i = 0; i < currentMap->connections_count; i++)
-	{
-		if (strcmp(mapConnections[i].direction, "dive") != 0 && strcmp(mapConnections[i].direction, "emerge") != 0) {
-			switch (count)
-			{
-			case 0:
-                set_connection_rect(&state->mapConnectionTextures.rect1, &camera->rect, &mapConnections[i]);
-                // printf("con w%f\n", state->mapConnectionTextures.rect1.w);
-                // printf("main w%f\n", camera->rect.w);
-                // printf("con x%f\n", state->mapConnectionTextures.rect1.x);
-                // printf("con y%f\n", state->mapConnectionTextures.rect1.y);
-                // printf("main x%f\n", camera->rect.x);
-                // printf("main y%f\n", camera->rect.y);
-				break;
-			case 1:
-                set_connection_rect(&state->mapConnectionTextures.rect2, &camera->rect, &mapConnections[i]);
-				break;
-			case 2:
-                set_connection_rect(&state->mapConnectionTextures.rect3, &camera->rect, &mapConnections[i]);
-				break;
-			case 3:
-                set_connection_rect(&state->mapConnectionTextures.rect4, &camera->rect, &mapConnections[i]);
-				break;
-			default:
-				break;
-			}
-			count++;
-		}
-	}
 
 }
