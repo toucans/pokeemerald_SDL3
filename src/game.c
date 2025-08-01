@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "game.h"
 #include "map.h"
-//#include "sprite_loader.h"
+#include "sprite_loader.h"
 
 
 
@@ -10,21 +10,21 @@ void game_init(GameState *state) {
 
     state->currentMap = MapGroups[MAP_GROUP_TOWNS_AND_ROUTES][MAP_MAUVILLE_CITY];
     MapLayout *mapLayout = state->currentMap->layout;
-    u16 mapWidth = mapLayout->width * 16;
-    u16 mapHeight = mapLayout->height * 16;
-    state->mapTextures = load_map_textures(state, state->currentMap->layout, &state->camera.rect);
 
-    overworld_init(state);
-    state->mapTextures = state->overworld;
+
+    state->player.x = -35;
+    state->player.y = -55;
     state->camera.rect = (SDL_FRect){
 		(state->player.x + 7) * 16,
 		(state->player.y + 4.5) * 16,
 		OVERWORLD_WIDTH * 16.0f,
 		OVERWORLD_HEIGHT * 16.0f
 	};
+    overworld_init(state);
+    state->mapTextures = state->overworld;
     
     
-/*
+
     SDL_Surface *hero_surface = load_hero_surface();
     state->player.texture = SDL_CreateTextureFromSurface(state->renderer, hero_surface);
     SDL_SetTextureScaleMode(state->player.texture, SDL_SCALEMODE_NEAREST);
@@ -41,7 +41,7 @@ void game_init(GameState *state) {
         32
     };
     state->player.facing = FACING_DOWN;
-    */
+    
 }
 
 void game_update(GameState *state) {
@@ -71,7 +71,7 @@ void game_render(const GameState *state) {
 
     
     SDL_RenderTexture(renderer, state->mapTextures.bg_texture, NULL, &state->camera.rect);
-    //SDL_RenderTexture(renderer, state->player.texture, &state->player.srcRect, &state->player.dstRect);
+    SDL_RenderTexture(renderer, state->player.texture, &state->player.srcRect, &state->player.dstRect);
     SDL_RenderTexture(renderer, state->mapTextures.fg_texture, NULL, &state->camera.rect);    
 
 

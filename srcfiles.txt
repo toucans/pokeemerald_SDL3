@@ -4,6 +4,7 @@ src/map_loader.c
 src/player.c
 src/camera.c
 src/map.c
+src/sprite_loader.c
 pokeemerald/maps.c
 pokeemerald/map_layouts.c
 pokeemerald/tilesets.c

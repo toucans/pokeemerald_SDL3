@@ -63,6 +63,7 @@ void write_tile(
 		u16 color1 = 0x0000;
 		if(byte & 0x0F) color0 = palette[byte & 0x0F] | 0x8000;   // lower nibble
 		if(byte >> 4)   color1 = palette[byte >> 4] | 0x8000;     // upper nibble
+		
 
 		// Compute pixel position in 8x8 tile space. 2 pixels per byte
 
@@ -121,7 +122,6 @@ void write_cell(
 		
 		int index = (layer) ? i + 4 : i;
 		int tileIndex = (tiles[index] & 0b0000001111111111) - startIndex;
-
 
 
 		const u8 *tile = &charData[tileIndex*32];

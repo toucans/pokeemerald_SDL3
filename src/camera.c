@@ -4,24 +4,6 @@
 
 #define CAMERA_SPEED 360
 
-void set_connection_rect(SDL_FRect *dstRect, SDL_FRect *cameraRect, MapConnection *mapConnection) {
-    if (strcmp(mapConnection->direction, "up") == 0) {
-        dstRect->x = cameraRect->x + (mapConnection->offset * 16);
-        dstRect->y = cameraRect->y - (mapConnection->map->layout->height * 16);
-    }
-    else if (strcmp(mapConnection->direction, "down") == 0) {
-        dstRect->x = cameraRect->x + (mapConnection->offset * 16);
-        dstRect->y = cameraRect->y + (cameraRect->h);
-    }
-    else if (strcmp(mapConnection->direction, "left") == 0) {
-        dstRect->x = cameraRect->x - (mapConnection->map->layout->width * 16);
-        dstRect->y = cameraRect->y + (mapConnection->offset * 16);
-    }
-    else if (strcmp(mapConnection->direction, "right") == 0) {
-        dstRect->x = cameraRect->x + (cameraRect->w);
-        dstRect->y = cameraRect->y + (mapConnection->offset * 16);
-    }
-}
 
 void camera_update(GameState *state) {
     state->camera.move_ended = false;
