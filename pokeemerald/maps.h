@@ -30,7 +30,7 @@ typedef struct {
     int x;
     int y;
     int elevation;
-    const char *dest_map;
+    const Map *dest_map;
     const char *dest_warp_id;
 } WarpEvent;
 

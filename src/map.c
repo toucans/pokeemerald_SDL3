@@ -2,8 +2,6 @@
 #include "map.h"
 #include <string.h>
 
-//bool direction_exists(MapLayout mapLayout, )
-
 
 void overworld_init(GameState *state) {
 
@@ -38,8 +36,6 @@ void overworld_init(GameState *state) {
         }
     }
 
-    // OPTIONAL: Store these surfaces/textures somewhere for later rendering
-    // or convert them to textures:
     state->overworld.bg_texture = SDL_CreateTextureFromSurface(state->renderer, overworld_bg_surface);
     state->overworld.fg_texture = SDL_CreateTextureFromSurface(state->renderer, overworld_fg_surface);
 

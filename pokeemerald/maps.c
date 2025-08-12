@@ -4,6 +4,9 @@
 #include <types.h>
 #include "map_layouts.h"
 
+const Map Dynamic = {
+    .id = "MAP_DYNAMIC"
+};
 
 const Map ContestHallCute = {
     .id = "MAP_CONTEST_HALL_CUTE",
@@ -37,8 +40,8 @@ static ObjectEvent Route123_BerryMastersHouse_object_events[] = {
 };
 
 static WarpEvent Route123_BerryMastersHouse_warps[] = {
-    {3, 7, 0, "MAP_ROUTE123", "0"},
-    {4, 7, 0, "MAP_ROUTE123", "0"},
+    {3, 7, 0, &Route123, "0"},
+    {4, 7, 0, &Route123, "0"},
 };
 
 const Map Route123_BerryMastersHouse = {
@@ -108,8 +111,8 @@ static ObjectEvent MauvilleCity_Gym_object_events[] = {
 };
 
 static WarpEvent MauvilleCity_Gym_warps[] = {
-    {4, 20, 0, "MAP_MAUVILLE_CITY", "0"},
-    {5, 20, 0, "MAP_MAUVILLE_CITY", "0"},
+    {4, 20, 0, &MauvilleCity, "0"},
+    {5, 20, 0, &MauvilleCity, "0"},
 };
 
 static CoordEvent MauvilleCity_Gym_coords[] = {
@@ -193,9 +196,9 @@ static ObjectEvent Route114_FossilManiacsHouse_object_events[] = {
 };
 
 static WarpEvent Route114_FossilManiacsHouse_warps[] = {
-    {4, 7, 0, "MAP_ROUTE114", "1"},
-    {5, 7, 0, "MAP_ROUTE114", "1"},
-    {4, 1, 0, "MAP_ROUTE114_FOSSIL_MANIACS_TUNNEL", "0"},
+    {4, 7, 0, &Route114, "1"},
+    {5, 7, 0, &Route114, "1"},
+    {4, 1, 0, &Route114_FossilManiacsTunnel, "0"},
 };
 
 static BgEvent Route114_FossilManiacsHouse_bg_events[] = {
@@ -244,9 +247,9 @@ static ObjectEvent BattleFrontier_ExchangeServiceCorner_object_events[] = {
 };
 
 static WarpEvent BattleFrontier_ExchangeServiceCorner_warps[] = {
-    {7, 10, 0, "MAP_BATTLE_FRONTIER_OUTSIDE_EAST", "6"},
-    {6, 10, 0, "MAP_BATTLE_FRONTIER_OUTSIDE_EAST", "6"},
-    {8, 10, 0, "MAP_BATTLE_FRONTIER_OUTSIDE_EAST", "6"},
+    {7, 10, 0, &BattleFrontier_OutsideEast, "6"},
+    {6, 10, 0, &BattleFrontier_OutsideEast, "6"},
+    {8, 10, 0, &BattleFrontier_OutsideEast, "6"},
 };
 
 const Map BattleFrontier_ExchangeServiceCorner = {
@@ -276,7 +279,7 @@ const Map BattleFrontier_ExchangeServiceCorner = {
 };
 
 static WarpEvent MarineCave_Entrance_warps[] = {
-    {14, 1, 3, "MAP_MARINE_CAVE_END", "0"},
+    {14, 1, 3, &MarineCave_End, "0"},
 };
 
 const Map MarineCave_Entrance = {
@@ -317,8 +320,8 @@ static ObjectEvent FortreeCity_Gym_object_events[] = {
 };
 
 static WarpEvent FortreeCity_Gym_warps[] = {
-    {15, 24, 0, "MAP_FORTREE_CITY", "2"},
-    {16, 24, 0, "MAP_FORTREE_CITY", "2"},
+    {15, 24, 0, &FortreeCity, "2"},
+    {16, 24, 0, &FortreeCity, "2"},
 };
 
 static BgEvent FortreeCity_Gym_bg_events[] = {
@@ -353,8 +356,8 @@ const Map FortreeCity_Gym = {
 };
 
 static WarpEvent NavelRock_Up3_warps[] = {
-    {5, 5, 3, "MAP_NAVEL_ROCK_UP2", "1"},
-    {3, 3, 3, "MAP_NAVEL_ROCK_UP4", "0"},
+    {5, 5, 3, &NavelRock_Up2, "1"},
+    {3, 3, 3, &NavelRock_Up4, "0"},
 };
 
 const Map NavelRock_Up3 = {
@@ -384,8 +387,8 @@ const Map NavelRock_Up3 = {
 };
 
 static WarpEvent NavelRock_Up4_warps[] = {
-    {3, 3, 3, "MAP_NAVEL_ROCK_UP3", "1"},
-    {5, 5, 3, "MAP_NAVEL_ROCK_TOP", "0"},
+    {3, 3, 3, &NavelRock_Up3, "1"},
+    {5, 5, 3, &NavelRock_Top, "0"},
 };
 
 const Map NavelRock_Up4 = {
@@ -422,7 +425,7 @@ static ObjectEvent LilycoveCity_LilycoveMuseum_2F_object_events[] = {
 };
 
 static WarpEvent LilycoveCity_LilycoveMuseum_2F_warps[] = {
-    {13, 1, 0, "MAP_LILYCOVE_CITY_LILYCOVE_MUSEUM_1F", "2"},
+    {13, 1, 0, &LilycoveCity_LilycoveMuseum_1F, "2"},
 };
 
 static BgEvent LilycoveCity_LilycoveMuseum_2F_bg_events[] = {
@@ -473,7 +476,7 @@ static ObjectEvent BattleFrontier_Lounge8_object_events[] = {
 };
 
 static WarpEvent BattleFrontier_Lounge8_warps[] = {
-    {4, 9, 0, "MAP_BATTLE_FRONTIER_OUTSIDE_EAST", "10"},
+    {4, 9, 0, &BattleFrontier_OutsideEast, "10"},
 };
 
 const Map BattleFrontier_Lounge8 = {
@@ -507,8 +510,8 @@ static ObjectEvent LilycoveCity_MoveDeletersHouse_object_events[] = {
 };
 
 static WarpEvent LilycoveCity_MoveDeletersHouse_warps[] = {
-    {3, 7, 0, "MAP_LILYCOVE_CITY", "7"},
-    {4, 7, 0, "MAP_LILYCOVE_CITY", "7"},
+    {3, 7, 0, &LilycoveCity, "7"},
+    {4, 7, 0, &LilycoveCity, "7"},
 };
 
 const Map LilycoveCity_MoveDeletersHouse = {
@@ -542,10 +545,10 @@ static ObjectEvent Route110_SeasideCyclingRoadSouthEntrance_object_events[] = {
 };
 
 static WarpEvent Route110_SeasideCyclingRoadSouthEntrance_warps[] = {
-    {1, 5, 0, "MAP_ROUTE110", "4"},
-    {2, 5, 0, "MAP_ROUTE110", "4"},
-    {12, 5, 0, "MAP_ROUTE110", "5"},
-    {13, 5, 0, "MAP_ROUTE110", "5"},
+    {1, 5, 0, &Route110, "4"},
+    {2, 5, 0, &Route110, "4"},
+    {12, 5, 0, &Route110, "5"},
+    {13, 5, 0, &Route110, "5"},
 };
 
 static CoordEvent Route110_SeasideCyclingRoadSouthEntrance_coords[] = {
@@ -623,7 +626,7 @@ static ObjectEvent SeafloorCavern_Room9_object_events[] = {
 };
 
 static WarpEvent SeafloorCavern_Room9_warps[] = {
-    {5, 4, 3, "MAP_SEAFLOOR_CAVERN_ROOM8", "0"},
+    {5, 4, 3, &SeafloorCavern_Room8, "0"},
 };
 
 static CoordEvent SeafloorCavern_Room9_coords[] = {
@@ -703,8 +706,8 @@ static ObjectEvent SouthernIsland_Exterior_object_events[] = {
 };
 
 static WarpEvent SouthernIsland_Exterior_warps[] = {
-    {14, 5, 3, "MAP_SOUTHERN_ISLAND_INTERIOR", "0"},
-    {15, 5, 3, "MAP_SOUTHERN_ISLAND_INTERIOR", "1"},
+    {14, 5, 3, &SouthernIsland_Interior, "0"},
+    {15, 5, 3, &SouthernIsland_Interior, "1"},
 };
 
 static BgEvent SouthernIsland_Exterior_bg_events[] = {
@@ -750,13 +753,13 @@ static ObjectEvent VerdanturfTown_object_events[] = {
 };
 
 static WarpEvent VerdanturfTown_warps[] = {
-    {3, 7, 0, "MAP_VERDANTURF_TOWN_BATTLE_TENT_LOBBY", "0"},
-    {12, 3, 0, "MAP_VERDANTURF_TOWN_MART", "0"},
-    {16, 3, 0, "MAP_VERDANTURF_TOWN_POKEMON_CENTER_1F", "0"},
-    {10, 14, 0, "MAP_VERDANTURF_TOWN_WANDAS_HOUSE", "0"},
-    {8, 1, 0, "MAP_RUSTURF_TUNNEL", "1"},
-    {1, 14, 0, "MAP_VERDANTURF_TOWN_FRIENDSHIP_RATERS_HOUSE", "0"},
-    {17, 15, 0, "MAP_VERDANTURF_TOWN_HOUSE", "0"},
+    {3, 7, 0, &VerdanturfTown_BattleTentLobby, "0"},
+    {12, 3, 0, &VerdanturfTown_Mart, "0"},
+    {16, 3, 0, &VerdanturfTown_PokemonCenter_1F, "0"},
+    {10, 14, 0, &VerdanturfTown_WandasHouse, "0"},
+    {8, 1, 0, &RusturfTunnel, "1"},
+    {1, 14, 0, &VerdanturfTown_FriendshipRatersHouse, "0"},
+    {17, 15, 0, &VerdanturfTown_House, "0"},
 };
 
 static BgEvent VerdanturfTown_bg_events[] = {
@@ -804,9 +807,9 @@ static ObjectEvent OldaleTown_PokemonCenter_1F_object_events[] = {
 };
 
 static WarpEvent OldaleTown_PokemonCenter_1F_warps[] = {
-    {7, 8, 3, "MAP_OLDALE_TOWN", "2"},
-    {6, 8, 3, "MAP_OLDALE_TOWN", "2"},
-    {1, 6, 4, "MAP_OLDALE_TOWN_POKEMON_CENTER_2F", "0"},
+    {7, 8, 3, &OldaleTown, "2"},
+    {6, 8, 3, &OldaleTown, "2"},
+    {1, 6, 4, &OldaleTown_PokemonCenter_2F, "0"},
 };
 
 const Map OldaleTown_PokemonCenter_1F = {
@@ -842,7 +845,7 @@ static ObjectEvent RustboroCity_DevonCorp_3F_object_events[] = {
 };
 
 static WarpEvent RustboroCity_DevonCorp_3F_warps[] = {
-    {2, 1, 0, "MAP_RUSTBORO_CITY_DEVON_CORP_2F", "1"},
+    {2, 1, 0, &RustboroCity_DevonCorp_2F, "1"},
 };
 
 static BgEvent RustboroCity_DevonCorp_3F_bg_events[] = {
@@ -887,9 +890,9 @@ static ObjectEvent LilycoveCity_DepartmentStore_5F_object_events[] = {
 };
 
 static WarpEvent LilycoveCity_DepartmentStore_5F_warps[] = {
-    {13, 1, 0, "MAP_LILYCOVE_CITY_DEPARTMENT_STORE_4F", "1"},
-    {2, 1, 0, "MAP_LILYCOVE_CITY_DEPARTMENT_STORE_ELEVATOR", "0"},
-    {16, 1, 0, "MAP_LILYCOVE_CITY_DEPARTMENT_STORE_ROOFTOP", "0"},
+    {13, 1, 0, &LilycoveCity_DepartmentStore_4F, "1"},
+    {2, 1, 0, &LilycoveCity_DepartmentStoreElevator, "0"},
+    {16, 1, 0, &LilycoveCity_DepartmentStoreRooftop, "0"},
 };
 
 const Map LilycoveCity_DepartmentStore_5F = {
@@ -930,8 +933,8 @@ static ObjectEvent DewfordTown_Gym_object_events[] = {
 };
 
 static WarpEvent DewfordTown_Gym_warps[] = {
-    {5, 27, 0, "MAP_DEWFORD_TOWN", "2"},
-    {6, 27, 0, "MAP_DEWFORD_TOWN", "2"},
+    {5, 27, 0, &DewfordTown, "2"},
+    {6, 27, 0, &DewfordTown, "2"},
 };
 
 static BgEvent DewfordTown_Gym_bg_events[] = {
@@ -972,7 +975,7 @@ static ObjectEvent BattleFrontier_Lounge6_object_events[] = {
 };
 
 static WarpEvent BattleFrontier_Lounge6_warps[] = {
-    {4, 9, 0, "MAP_BATTLE_FRONTIER_OUTSIDE_EAST", "8"},
+    {4, 9, 0, &BattleFrontier_OutsideEast, "8"},
 };
 
 const Map BattleFrontier_Lounge6 = {
@@ -1002,8 +1005,8 @@ const Map BattleFrontier_Lounge6 = {
 };
 
 static WarpEvent TrainerHill_3F_warps[] = {
-    {2, 1, 3, "MAP_TRAINER_HILL_2F", "1"},
-    {12, 1, 3, "MAP_TRAINER_HILL_4F", "0"},
+    {2, 1, 3, &TrainerHill_2F, "1"},
+    {12, 1, 3, &TrainerHill_4F, "0"},
 };
 
 const Map TrainerHill_3F = {
@@ -1039,7 +1042,7 @@ static ObjectEvent BattleFrontier_Lounge1_object_events[] = {
 };
 
 static WarpEvent BattleFrontier_Lounge1_warps[] = {
-    {4, 9, 0, "MAP_BATTLE_FRONTIER_OUTSIDE_EAST", "5"},
+    {4, 9, 0, &BattleFrontier_OutsideEast, "5"},
 };
 
 const Map BattleFrontier_Lounge1 = {
@@ -1069,8 +1072,8 @@ const Map BattleFrontier_Lounge1 = {
 };
 
 static WarpEvent SeafloorCavern_Room7_warps[] = {
-    {3, 23, 3, "MAP_SEAFLOOR_CAVERN_ROOM2", "3"},
-    {5, 1, 3, "MAP_SEAFLOOR_CAVERN_ROOM3", "1"},
+    {3, 23, 3, &SeafloorCavern_Room2, "3"},
+    {5, 1, 3, &SeafloorCavern_Room3, "1"},
 };
 
 const Map SeafloorCavern_Room7 = {
@@ -1104,7 +1107,7 @@ static ObjectEvent SootopolisCity_MysteryEventsHouse_B1F_object_events[] = {
 };
 
 static WarpEvent SootopolisCity_MysteryEventsHouse_B1F_warps[] = {
-    {3, 1, 0, "MAP_SOOTOPOLIS_CITY_MYSTERY_EVENTS_HOUSE_1F", "2"},
+    {3, 1, 0, &SootopolisCity_MysteryEventsHouse_1F, "2"},
 };
 
 const Map SootopolisCity_MysteryEventsHouse_B1F = {
@@ -1134,8 +1137,8 @@ const Map SootopolisCity_MysteryEventsHouse_B1F = {
 };
 
 static WarpEvent NavelRock_Up2_warps[] = {
-    {3, 3, 3, "MAP_NAVEL_ROCK_UP1", "1"},
-    {5, 5, 3, "MAP_NAVEL_ROCK_UP3", "0"},
+    {3, 3, 3, &NavelRock_Up1, "1"},
+    {5, 5, 3, &NavelRock_Up3, "0"},
 };
 
 const Map NavelRock_Up2 = {
@@ -1191,16 +1194,16 @@ static ObjectEvent MossdeepCity_object_events[] = {
 };
 
 static WarpEvent MossdeepCity_warps[] = {
-    {28, 9, 0, "MAP_MOSSDEEP_CITY_HOUSE1", "0"},
-    {38, 9, 0, "MAP_MOSSDEEP_CITY_GYM", "0"},
-    {28, 16, 0, "MAP_MOSSDEEP_CITY_POKEMON_CENTER_1F", "0"},
-    {67, 25, 0, "MAP_MOSSDEEP_CITY_HOUSE2", "0"},
-    {37, 18, 0, "MAP_MOSSDEEP_CITY_MART", "0"},
-    {49, 6, 0, "MAP_MOSSDEEP_CITY_HOUSE3", "0"},
-    {19, 10, 0, "MAP_MOSSDEEP_CITY_STEVENS_HOUSE", "0"},
-    {18, 16, 0, "MAP_MOSSDEEP_CITY_HOUSE4", "1"},
-    {64, 15, 0, "MAP_MOSSDEEP_CITY_SPACE_CENTER_1F", "0"},
-    {36, 24, 0, "MAP_MOSSDEEP_CITY_GAME_CORNER_1F", "0"},
+    {28, 9, 0, &MossdeepCity_House1, "0"},
+    {38, 9, 0, &MossdeepCity_Gym, "0"},
+    {28, 16, 0, &MossdeepCity_PokemonCenter_1F, "0"},
+    {67, 25, 0, &MossdeepCity_House2, "0"},
+    {37, 18, 0, &MossdeepCity_Mart, "0"},
+    {49, 6, 0, &MossdeepCity_House3, "0"},
+    {19, 10, 0, &MossdeepCity_StevensHouse, "0"},
+    {18, 16, 0, &MossdeepCity_House4, "1"},
+    {64, 15, 0, &MossdeepCity_SpaceCenter_1F, "0"},
+    {36, 24, 0, &MossdeepCity_GameCorner_1F, "0"},
 };
 
 static CoordEvent MossdeepCity_coords[] = {
@@ -1302,11 +1305,11 @@ static ObjectEvent FallarborTown_object_events[] = {
 };
 
 static WarpEvent FallarborTown_warps[] = {
-    {15, 15, 0, "MAP_FALLARBOR_TOWN_MART", "0"},
-    {8, 7, 0, "MAP_FALLARBOR_TOWN_BATTLE_TENT_LOBBY", "0"},
-    {14, 7, 0, "MAP_FALLARBOR_TOWN_POKEMON_CENTER_1F", "0"},
-    {6, 17, 0, "MAP_FALLARBOR_TOWN_COZMOS_HOUSE", "0"},
-    {1, 6, 0, "MAP_FALLARBOR_TOWN_MOVE_RELEARNERS_HOUSE", "0"},
+    {15, 15, 0, &FallarborTown_Mart, "0"},
+    {8, 7, 0, &FallarborTown_BattleTentLobby, "0"},
+    {14, 7, 0, &FallarborTown_PokemonCenter_1F, "0"},
+    {6, 17, 0, &FallarborTown_CozmosHouse, "0"},
+    {1, 6, 0, &FallarborTown_MoveRelearnersHouse, "0"},
 };
 
 static BgEvent FallarborTown_bg_events[] = {
@@ -1360,9 +1363,9 @@ static ObjectEvent LilycoveCity_LilycoveMuseum_1F_object_events[] = {
 };
 
 static WarpEvent LilycoveCity_LilycoveMuseum_1F_warps[] = {
-    {9, 13, 0, "MAP_LILYCOVE_CITY", "3"},
-    {10, 13, 0, "MAP_LILYCOVE_CITY", "13"},
-    {16, 1, 0, "MAP_LILYCOVE_CITY_LILYCOVE_MUSEUM_2F", "0"},
+    {9, 13, 0, &LilycoveCity, "3"},
+    {10, 13, 0, &LilycoveCity, "13"},
+    {16, 1, 0, &LilycoveCity_LilycoveMuseum_2F, "0"},
 };
 
 static BgEvent LilycoveCity_LilycoveMuseum_1F_bg_events[] = {
@@ -1415,8 +1418,8 @@ static ObjectEvent MauvilleCity_House2_object_events[] = {
 };
 
 static WarpEvent MauvilleCity_House2_warps[] = {
-    {3, 8, 0, "MAP_MAUVILLE_CITY", "6"},
-    {4, 8, 0, "MAP_MAUVILLE_CITY", "6"},
+    {3, 8, 0, &MauvilleCity, "6"},
+    {4, 8, 0, &MauvilleCity, "6"},
 };
 
 const Map MauvilleCity_House2 = {
@@ -1452,8 +1455,8 @@ static ObjectEvent BattleFrontier_RankingHall_object_events[] = {
 };
 
 static WarpEvent BattleFrontier_RankingHall_warps[] = {
-    {26, 14, 3, "MAP_BATTLE_FRONTIER_OUTSIDE_EAST", "4"},
-    {27, 14, 3, "MAP_BATTLE_FRONTIER_OUTSIDE_EAST", "4"},
+    {26, 14, 3, &BattleFrontier_OutsideEast, "4"},
+    {27, 14, 3, &BattleFrontier_OutsideEast, "4"},
 };
 
 static BgEvent BattleFrontier_RankingHall_bg_events[] = {
@@ -1498,9 +1501,9 @@ const Map BattleFrontier_RankingHall = {
 };
 
 static WarpEvent SeafloorCavern_Room6_warps[] = {
-    {11, 21, 3, "MAP_SEAFLOOR_CAVERN_ROOM2", "2"},
-    {4, 1, 3, "MAP_SEAFLOOR_CAVERN_ROOM3", "2"},
-    {14, 8, 1, "MAP_SEAFLOOR_CAVERN_ENTRANCE", "1"},
+    {11, 21, 3, &SeafloorCavern_Room2, "2"},
+    {4, 1, 3, &SeafloorCavern_Room3, "2"},
+    {14, 8, 1, &SeafloorCavern_Entrance, "1"},
 };
 
 const Map SeafloorCavern_Room6 = {
@@ -1561,17 +1564,17 @@ static ObjectEvent BattleFrontier_OutsideWest_object_events[] = {
 };
 
 static WarpEvent BattleFrontier_OutsideWest_warps[] = {
-    {42, 27, 0, "MAP_BATTLE_FRONTIER_BATTLE_PIKE_LOBBY", "0"},
-    {19, 17, 0, "MAP_BATTLE_FRONTIER_BATTLE_DOME_LOBBY", "0"},
-    {11, 38, 0, "MAP_BATTLE_FRONTIER_BATTLE_FACTORY_LOBBY", "0"},
-    {45, 44, 0, "MAP_BATTLE_FRONTIER_LOUNGE2", "0"},
-    {51, 51, 0, "MAP_BATTLE_FRONTIER_MART", "0"},
-    {44, 5, 0, "MAP_BATTLE_FRONTIER_SCOTTS_HOUSE", "0"},
-    {53, 44, 0, "MAP_BATTLE_FRONTIER_LOUNGE4", "0"},
-    {5, 20, 0, "MAP_BATTLE_FRONTIER_LOUNGE7", "0"},
-    {26, 65, 0, "MAP_BATTLE_FRONTIER_RECEPTION_GATE", "0"},
-    {26, 61, 0, "MAP_BATTLE_FRONTIER_RECEPTION_GATE", "1"},
-    {39, 55, 0, "MAP_ARTISAN_CAVE_B1F", "0"},
+    {42, 27, 0, &BattleFrontier_BattlePikeLobby, "0"},
+    {19, 17, 0, &BattleFrontier_BattleDomeLobby, "0"},
+    {11, 38, 0, &BattleFrontier_BattleFactoryLobby, "0"},
+    {45, 44, 0, &BattleFrontier_Lounge2, "0"},
+    {51, 51, 0, &BattleFrontier_Mart, "0"},
+    {44, 5, 0, &BattleFrontier_ScottsHouse, "0"},
+    {53, 44, 0, &BattleFrontier_Lounge4, "0"},
+    {5, 20, 0, &BattleFrontier_Lounge7, "0"},
+    {26, 65, 0, &BattleFrontier_ReceptionGate, "0"},
+    {26, 61, 0, &BattleFrontier_ReceptionGate, "1"},
+    {39, 55, 0, &ArtisanCave_B1F, "0"},
 };
 
 static BgEvent BattleFrontier_OutsideWest_bg_events[] = {
@@ -1616,9 +1619,9 @@ static ObjectEvent OldaleTown_PokemonCenter_2F_object_events[] = {
 };
 
 static WarpEvent OldaleTown_PokemonCenter_2F_warps[] = {
-    {1, 6, 4, "MAP_OLDALE_TOWN_POKEMON_CENTER_1F", "2"},
-    {5, 1, 3, "MAP_UNION_ROOM", "0"},
-    {9, 1, 3, "MAP_TRADE_CENTER", "0"},
+    {1, 6, 4, &OldaleTown_PokemonCenter_1F, "2"},
+    {5, 1, 3, &UnionRoom, "0"},
+    {9, 1, 3, &TradeCenter, "0"},
 };
 
 const Map OldaleTown_PokemonCenter_2F = {
@@ -1654,8 +1657,8 @@ static ObjectEvent SootopolisCity_Mart_object_events[] = {
 };
 
 static WarpEvent SootopolisCity_Mart_warps[] = {
-    {3, 7, 0, "MAP_SOOTOPOLIS_CITY", "1"},
-    {4, 7, 0, "MAP_SOOTOPOLIS_CITY", "1"},
+    {3, 7, 0, &SootopolisCity, "1"},
+    {4, 7, 0, &SootopolisCity, "1"},
 };
 
 const Map SootopolisCity_Mart = {
@@ -1693,8 +1696,8 @@ static ObjectEvent SlateportCity_BattleTentLobby_object_events[] = {
 };
 
 static WarpEvent SlateportCity_BattleTentLobby_warps[] = {
-    {6, 9, 0, "MAP_SLATEPORT_CITY", "3"},
-    {7, 9, 0, "MAP_SLATEPORT_CITY", "3"},
+    {6, 9, 0, &SlateportCity, "3"},
+    {7, 9, 0, &SlateportCity, "3"},
 };
 
 static BgEvent SlateportCity_BattleTentLobby_bg_events[] = {
@@ -1733,8 +1736,8 @@ static ObjectEvent MauvilleCity_BikeShop_object_events[] = {
 };
 
 static WarpEvent MauvilleCity_BikeShop_warps[] = {
-    {3, 8, 0, "MAP_MAUVILLE_CITY", "2"},
-    {4, 8, 0, "MAP_MAUVILLE_CITY", "2"},
+    {3, 8, 0, &MauvilleCity, "2"},
+    {4, 8, 0, &MauvilleCity, "2"},
 };
 
 static BgEvent MauvilleCity_BikeShop_bg_events[] = {
@@ -1776,7 +1779,7 @@ static ObjectEvent BattleFrontier_Lounge7_object_events[] = {
 };
 
 static WarpEvent BattleFrontier_Lounge7_warps[] = {
-    {4, 9, 0, "MAP_BATTLE_FRONTIER_OUTSIDE_WEST", "7"},
+    {4, 9, 0, &BattleFrontier_OutsideWest, "7"},
 };
 
 const Map BattleFrontier_Lounge7 = {
@@ -1811,8 +1814,8 @@ static ObjectEvent RustboroCity_House1_object_events[] = {
 };
 
 static WarpEvent RustboroCity_House1_warps[] = {
-    {5, 7, 0, "MAP_RUSTBORO_CITY", "7"},
-    {6, 7, 0, "MAP_RUSTBORO_CITY", "7"},
+    {5, 7, 0, &RustboroCity, "7"},
+    {6, 7, 0, &RustboroCity, "7"},
 };
 
 const Map RustboroCity_House1 = {
@@ -1850,9 +1853,9 @@ static ObjectEvent SeafloorCavern_Room1_object_events[] = {
 };
 
 static WarpEvent SeafloorCavern_Room1_warps[] = {
-    {5, 18, 3, "MAP_SEAFLOOR_CAVERN_ENTRANCE", "1"},
-    {17, 13, 3, "MAP_SEAFLOOR_CAVERN_ROOM5", "0"},
-    {6, 2, 3, "MAP_SEAFLOOR_CAVERN_ROOM2", "0"},
+    {5, 18, 3, &SeafloorCavern_Entrance, "1"},
+    {17, 13, 3, &SeafloorCavern_Room5, "0"},
+    {6, 2, 3, &SeafloorCavern_Room2, "0"},
 };
 
 const Map SeafloorCavern_Room1 = {
@@ -1897,8 +1900,8 @@ static ObjectEvent SeafloorCavern_Room8_object_events[] = {
 };
 
 static WarpEvent SeafloorCavern_Room8_warps[] = {
-    {5, 2, 3, "MAP_SEAFLOOR_CAVERN_ROOM9", "0"},
-    {5, 12, 3, "MAP_SEAFLOOR_CAVERN_ROOM3", "0"},
+    {5, 2, 3, &SeafloorCavern_Room9, "0"},
+    {5, 12, 3, &SeafloorCavern_Room3, "0"},
 };
 
 const Map SeafloorCavern_Room8 = {
@@ -1932,8 +1935,8 @@ static MapConnection Underwater_Route125_connections[] = {
 };
 
 static WarpEvent Underwater_Route125_warps[] = {
-    {22, 10, 0, "MAP_UNDERWATER_MARINE_CAVE", "0"},
-    {45, 30, 0, "MAP_UNDERWATER_MARINE_CAVE", "0"},
+    {22, 10, 0, &Underwater_MarineCave, "0"},
+    {45, 30, 0, &Underwater_MarineCave, "0"},
 };
 
 const Map Underwater_Route125 = {
@@ -1970,8 +1973,8 @@ static ObjectEvent Route111_WinstrateFamilysHouse_object_events[] = {
 };
 
 static WarpEvent Route111_WinstrateFamilysHouse_warps[] = {
-    {3, 7, 0, "MAP_ROUTE111", "0"},
-    {4, 7, 0, "MAP_ROUTE111", "0"},
+    {3, 7, 0, &Route111, "0"},
+    {4, 7, 0, &Route111, "0"},
 };
 
 const Map Route111_WinstrateFamilysHouse = {
@@ -2005,8 +2008,8 @@ static ObjectEvent BattleFrontier_Lounge9_object_events[] = {
 };
 
 static WarpEvent BattleFrontier_Lounge9_warps[] = {
-    {1, 9, 0, "MAP_BATTLE_FRONTIER_OUTSIDE_EAST", "11"},
-    {2, 9, 0, "MAP_BATTLE_FRONTIER_OUTSIDE_EAST", "11"},
+    {1, 9, 0, &BattleFrontier_OutsideEast, "11"},
+    {2, 9, 0, &BattleFrontier_OutsideEast, "11"},
 };
 
 const Map BattleFrontier_Lounge9 = {
@@ -2043,30 +2046,30 @@ static ObjectEvent LavaridgeTown_Gym_B1F_object_events[] = {
 };
 
 static WarpEvent LavaridgeTown_Gym_B1F_warps[] = {
-    {10, 18, 3, "MAP_LAVARIDGE_TOWN_GYM_1F", "2"},
-    {0, 17, 3, "MAP_LAVARIDGE_TOWN_GYM_1F", "6"},
-    {8, 9, 3, "MAP_LAVARIDGE_TOWN_GYM_1F", "3"},
-    {5, 14, 3, "MAP_LAVARIDGE_TOWN_GYM_1F", "5"},
-    {4, 18, 3, "MAP_LAVARIDGE_TOWN_GYM_1F", "4"},
-    {5, 9, 3, "MAP_LAVARIDGE_TOWN_GYM_1F", "7"},
-    {2, 15, 3, "MAP_LAVARIDGE_TOWN_GYM_1F", "8"},
-    {3, 14, 3, "MAP_LAVARIDGE_TOWN_GYM_1F", "9"},
-    {1, 14, 3, "MAP_LAVARIDGE_TOWN_GYM_1F", "10"},
-    {0, 10, 3, "MAP_LAVARIDGE_TOWN_GYM_1F", "11"},
-    {3, 10, 3, "MAP_LAVARIDGE_TOWN_GYM_1F", "12"},
-    {0, 6, 3, "MAP_LAVARIDGE_TOWN_GYM_1F", "13"},
-    {3, 6, 3, "MAP_LAVARIDGE_TOWN_GYM_1F", "14"},
-    {5, 6, 3, "MAP_LAVARIDGE_TOWN_GYM_1F", "15"},
-    {2, 3, 3, "MAP_LAVARIDGE_TOWN_GYM_1F", "16"},
-    {5, 2, 3, "MAP_LAVARIDGE_TOWN_GYM_1F", "17"},
-    {7, 2, 3, "MAP_LAVARIDGE_TOWN_GYM_1F", "18"},
-    {8, 6, 3, "MAP_LAVARIDGE_TOWN_GYM_1F", "19"},
-    {10, 6, 3, "MAP_LAVARIDGE_TOWN_GYM_1F", "20"},
-    {12, 3, 3, "MAP_LAVARIDGE_TOWN_GYM_1F", "22"},
-    {4, 16, 3, "MAP_LAVARIDGE_TOWN_GYM_1F", "21"},
-    {14, 6, 3, "MAP_LAVARIDGE_TOWN_GYM_1F", "23"},
-    {13, 17, 3, "MAP_LAVARIDGE_TOWN_GYM_1F", "24"},
-    {12, 12, 3, "MAP_LAVARIDGE_TOWN_GYM_1F", "25"},
+    {10, 18, 3, &LavaridgeTown_Gym_1F, "2"},
+    {0, 17, 3, &LavaridgeTown_Gym_1F, "6"},
+    {8, 9, 3, &LavaridgeTown_Gym_1F, "3"},
+    {5, 14, 3, &LavaridgeTown_Gym_1F, "5"},
+    {4, 18, 3, &LavaridgeTown_Gym_1F, "4"},
+    {5, 9, 3, &LavaridgeTown_Gym_1F, "7"},
+    {2, 15, 3, &LavaridgeTown_Gym_1F, "8"},
+    {3, 14, 3, &LavaridgeTown_Gym_1F, "9"},
+    {1, 14, 3, &LavaridgeTown_Gym_1F, "10"},
+    {0, 10, 3, &LavaridgeTown_Gym_1F, "11"},
+    {3, 10, 3, &LavaridgeTown_Gym_1F, "12"},
+    {0, 6, 3, &LavaridgeTown_Gym_1F, "13"},
+    {3, 6, 3, &LavaridgeTown_Gym_1F, "14"},
+    {5, 6, 3, &LavaridgeTown_Gym_1F, "15"},
+    {2, 3, 3, &LavaridgeTown_Gym_1F, "16"},
+    {5, 2, 3, &LavaridgeTown_Gym_1F, "17"},
+    {7, 2, 3, &LavaridgeTown_Gym_1F, "18"},
+    {8, 6, 3, &LavaridgeTown_Gym_1F, "19"},
+    {10, 6, 3, &LavaridgeTown_Gym_1F, "20"},
+    {12, 3, 3, &LavaridgeTown_Gym_1F, "22"},
+    {4, 16, 3, &LavaridgeTown_Gym_1F, "21"},
+    {14, 6, 3, &LavaridgeTown_Gym_1F, "23"},
+    {13, 17, 3, &LavaridgeTown_Gym_1F, "24"},
+    {12, 12, 3, &LavaridgeTown_Gym_1F, "25"},
 };
 
 const Map LavaridgeTown_Gym_B1F = {
@@ -2100,7 +2103,7 @@ static ObjectEvent CaveOfOrigin_B1F_object_events[] = {
 };
 
 static WarpEvent CaveOfOrigin_B1F_warps[] = {
-    {9, 3, 3, "MAP_CAVE_OF_ORIGIN_1F", "1"},
+    {9, 3, 3, &CaveOfOrigin_1F, "1"},
 };
 
 const Map CaveOfOrigin_B1F = {
@@ -2137,12 +2140,12 @@ static ObjectEvent MtPyre_3F_object_events[] = {
 };
 
 static WarpEvent MtPyre_3F_warps[] = {
-    {10, 1, 3, "MAP_MT_PYRE_2F", "1"},
-    {2, 1, 3, "MAP_MT_PYRE_4F", "1"},
-    {9, 10, 3, "MAP_MT_PYRE_4F", "4"},
-    {1, 12, 3, "MAP_MT_PYRE_4F", "5"},
-    {10, 12, 3, "MAP_MT_PYRE_2F", "2"},
-    {6, 12, 3, "MAP_MT_PYRE_2F", "3"},
+    {10, 1, 3, &MtPyre_2F, "1"},
+    {2, 1, 3, &MtPyre_4F, "1"},
+    {9, 10, 3, &MtPyre_4F, "4"},
+    {1, 12, 3, &MtPyre_4F, "5"},
+    {10, 12, 3, &MtPyre_2F, "2"},
+    {6, 12, 3, &MtPyre_2F, "3"},
 };
 
 const Map MtPyre_3F = {
@@ -2251,7 +2254,7 @@ static ObjectEvent BirthIsland_Harbor_object_events[] = {
 };
 
 static WarpEvent BirthIsland_Harbor_warps[] = {
-    {8, 2, 0, "MAP_BIRTH_ISLAND_EXTERIOR", "0"},
+    {8, 2, 0, &BirthIsland_Exterior, "0"},
 };
 
 const Map BirthIsland_Harbor = {
@@ -2299,7 +2302,7 @@ static ObjectEvent SecretBase_Tree1_object_events[] = {
 };
 
 static WarpEvent SecretBase_Tree1_warps[] = {
-    {5, 7, 0, "MAP_DYNAMIC", "WARP_ID_SECRET_BASE"},
+    {5, 7, 0, &Dynamic, "WARP_ID_SECRET_BASE"},
 };
 
 const Map SecretBase_Tree1 = {
@@ -2372,7 +2375,7 @@ static ObjectEvent Route105_object_events[] = {
 };
 
 static WarpEvent Route105_warps[] = {
-    {9, 20, 0, "MAP_ISLAND_CAVE", "0"},
+    {9, 20, 0, &IslandCave, "0"},
 };
 
 static BgEvent Route105_bg_events[] = {
@@ -2440,8 +2443,8 @@ static ObjectEvent VerdanturfTown_Mart_object_events[] = {
 };
 
 static WarpEvent VerdanturfTown_Mart_warps[] = {
-    {3, 7, 0, "MAP_VERDANTURF_TOWN", "1"},
-    {4, 7, 0, "MAP_VERDANTURF_TOWN", "1"},
+    {3, 7, 0, &VerdanturfTown, "1"},
+    {4, 7, 0, &VerdanturfTown, "1"},
 };
 
 const Map VerdanturfTown_Mart = {
@@ -2478,9 +2481,9 @@ static ObjectEvent FortreeCity_PokemonCenter_2F_object_events[] = {
 };
 
 static WarpEvent FortreeCity_PokemonCenter_2F_warps[] = {
-    {1, 6, 4, "MAP_FORTREE_CITY_POKEMON_CENTER_1F", "2"},
-    {5, 1, 3, "MAP_UNION_ROOM", "0"},
-    {9, 1, 3, "MAP_TRADE_CENTER", "0"},
+    {1, 6, 4, &FortreeCity_PokemonCenter_1F, "2"},
+    {5, 1, 3, &UnionRoom, "0"},
+    {9, 1, 3, &TradeCenter, "0"},
 };
 
 const Map FortreeCity_PokemonCenter_2F = {
@@ -2510,8 +2513,8 @@ const Map FortreeCity_PokemonCenter_2F = {
 };
 
 static WarpEvent NavelRock_Down05_warps[] = {
-    {3, 3, 3, "MAP_NAVEL_ROCK_DOWN04", "1"},
-    {5, 5, 3, "MAP_NAVEL_ROCK_DOWN06", "0"},
+    {3, 3, 3, &NavelRock_Down04, "1"},
+    {5, 5, 3, &NavelRock_Down06, "0"},
 };
 
 const Map NavelRock_Down05 = {
@@ -2603,7 +2606,7 @@ static ObjectEvent SecretBase_YellowCave1_object_events[] = {
 };
 
 static WarpEvent SecretBase_YellowCave1_warps[] = {
-    {5, 7, 0, "MAP_DYNAMIC", "WARP_ID_SECRET_BASE"},
+    {5, 7, 0, &Dynamic, "WARP_ID_SECRET_BASE"},
 };
 
 const Map SecretBase_YellowCave1 = {
@@ -2640,9 +2643,9 @@ static ObjectEvent SlateportCity_PokemonCenter_2F_object_events[] = {
 };
 
 static WarpEvent SlateportCity_PokemonCenter_2F_warps[] = {
-    {1, 6, 4, "MAP_SLATEPORT_CITY_POKEMON_CENTER_1F", "2"},
-    {5, 1, 3, "MAP_UNION_ROOM", "0"},
-    {9, 1, 3, "MAP_TRADE_CENTER", "0"},
+    {1, 6, 4, &SlateportCity_PokemonCenter_1F, "2"},
+    {5, 1, 3, &UnionRoom, "0"},
+    {9, 1, 3, &TradeCenter, "0"},
 };
 
 const Map SlateportCity_PokemonCenter_2F = {
@@ -2679,9 +2682,9 @@ static ObjectEvent SootopolisCity_PokemonCenter_1F_object_events[] = {
 };
 
 static WarpEvent SootopolisCity_PokemonCenter_1F_warps[] = {
-    {7, 8, 3, "MAP_SOOTOPOLIS_CITY", "0"},
-    {6, 8, 3, "MAP_SOOTOPOLIS_CITY", "0"},
-    {1, 6, 4, "MAP_SOOTOPOLIS_CITY_POKEMON_CENTER_2F", "0"},
+    {7, 8, 3, &SootopolisCity, "0"},
+    {6, 8, 3, &SootopolisCity, "0"},
+    {1, 6, 4, &SootopolisCity_PokemonCenter_2F, "0"},
 };
 
 const Map SootopolisCity_PokemonCenter_1F = {
@@ -2720,8 +2723,8 @@ static ObjectEvent MagmaHideout_2F_2R_object_events[] = {
 };
 
 static WarpEvent MagmaHideout_2F_2R_warps[] = {
-    {10, 22, 3, "MAP_MAGMA_HIDEOUT_2F_1R", "0"},
-    {36, 4, 0, "MAP_MAGMA_HIDEOUT_1F", "2"},
+    {10, 22, 3, &MagmaHideout_2F_1R, "0"},
+    {36, 4, 0, &MagmaHideout_1F, "2"},
 };
 
 const Map MagmaHideout_2F_2R = {
@@ -2826,8 +2829,8 @@ const Map BattleFrontier_BattleTowerCorridor = {
 };
 
 static WarpEvent NavelRock_Down02_warps[] = {
-    {5, 5, 3, "MAP_NAVEL_ROCK_DOWN01", "1"},
-    {3, 3, 3, "MAP_NAVEL_ROCK_DOWN03", "0"},
+    {5, 5, 3, &NavelRock_Down01, "1"},
+    {3, 3, 3, &NavelRock_Down03, "0"},
 };
 
 const Map NavelRock_Down02 = {
@@ -2863,8 +2866,8 @@ static ObjectEvent FortreeCity_House5_object_events[] = {
 };
 
 static WarpEvent FortreeCity_House5_warps[] = {
-    {3, 5, 0, "MAP_FORTREE_CITY", "7"},
-    {4, 5, 0, "MAP_FORTREE_CITY", "7"},
+    {3, 5, 0, &FortreeCity, "7"},
+    {4, 5, 0, &FortreeCity, "7"},
 };
 
 const Map FortreeCity_House5 = {
@@ -2899,7 +2902,7 @@ static ObjectEvent MagmaHideout_3F_2R_object_events[] = {
 };
 
 static WarpEvent MagmaHideout_3F_2R_warps[] = {
-    {12, 15, 0, "MAP_MAGMA_HIDEOUT_3F_1R", "1"},
+    {12, 15, 0, &MagmaHideout_3F_1R, "1"},
 };
 
 const Map MagmaHideout_3F_2R = {
@@ -2934,8 +2937,8 @@ static ObjectEvent SlateportCity_House_object_events[] = {
 };
 
 static WarpEvent SlateportCity_House_warps[] = {
-    {3, 7, 0, "MAP_SLATEPORT_CITY", "10"},
-    {4, 7, 0, "MAP_SLATEPORT_CITY", "10"},
+    {3, 7, 0, &SlateportCity, "10"},
+    {4, 7, 0, &SlateportCity, "10"},
 };
 
 const Map SlateportCity_House = {
@@ -2982,9 +2985,9 @@ static ObjectEvent SlateportCity_OceanicMuseum_1F_object_events[] = {
 };
 
 static WarpEvent SlateportCity_OceanicMuseum_1F_warps[] = {
-    {9, 8, 0, "MAP_SLATEPORT_CITY", "5"},
-    {10, 8, 0, "MAP_SLATEPORT_CITY", "7"},
-    {6, 1, 0, "MAP_SLATEPORT_CITY_OCEANIC_MUSEUM_2F", "0"},
+    {9, 8, 0, &SlateportCity, "5"},
+    {10, 8, 0, &SlateportCity, "7"},
+    {6, 1, 0, &SlateportCity_OceanicMuseum_2F, "0"},
 };
 
 static CoordEvent SlateportCity_OceanicMuseum_1F_coords[] = {
@@ -3040,8 +3043,8 @@ static ObjectEvent FortreeCity_House2_object_events[] = {
 };
 
 static WarpEvent FortreeCity_House2_warps[] = {
-    {3, 5, 0, "MAP_FORTREE_CITY", "4"},
-    {4, 5, 0, "MAP_FORTREE_CITY", "4"},
+    {3, 5, 0, &FortreeCity, "4"},
+    {4, 5, 0, &FortreeCity, "4"},
 };
 
 const Map FortreeCity_House2 = {
@@ -3071,8 +3074,8 @@ const Map FortreeCity_House2 = {
 };
 
 static WarpEvent CaveOfOrigin_UnusedRubySapphireMap1_warps[] = {
-    {13, 5, 3, "MAP_CAVE_OF_ORIGIN_1F", "1"},
-    {5, 11, 3, "MAP_CAVE_OF_ORIGIN_UNUSED_RUBY_SAPPHIRE_MAP2", "0"},
+    {13, 5, 3, &CaveOfOrigin_1F, "1"},
+    {5, 11, 3, &CaveOfOrigin_UnusedRubySapphireMap2, "0"},
 };
 
 const Map CaveOfOrigin_UnusedRubySapphireMap1 = {
@@ -3110,9 +3113,9 @@ static ObjectEvent TrainerHill_Entrance_object_events[] = {
 };
 
 static WarpEvent TrainerHill_Entrance_warps[] = {
-    {9, 16, 3, "MAP_ROUTE111", "4"},
-    {10, 16, 3, "MAP_ROUTE111", "4"},
-    {9, 1, 3, "MAP_TRAINER_HILL_1F", "0"},
+    {9, 16, 3, &Route111, "4"},
+    {10, 16, 3, &Route111, "4"},
+    {9, 1, 3, &TrainerHill_1F, "0"},
 };
 
 static CoordEvent TrainerHill_Entrance_coords[] = {
@@ -3155,8 +3158,8 @@ static ObjectEvent Route112_CableCarStation_object_events[] = {
 };
 
 static WarpEvent Route112_CableCarStation_warps[] = {
-    {6, 11, 0, "MAP_ROUTE112", "0"},
-    {7, 11, 0, "MAP_ROUTE112", "1"},
+    {6, 11, 0, &Route112, "0"},
+    {7, 11, 0, &Route112, "1"},
 };
 
 const Map Route112_CableCarStation = {
@@ -3186,8 +3189,8 @@ const Map Route112_CableCarStation = {
 };
 
 static WarpEvent CaveOfOrigin_Entrance_warps[] = {
-    {9, 20, 3, "MAP_SOOTOPOLIS_CITY", "3"},
-    {9, 5, 3, "MAP_CAVE_OF_ORIGIN_1F", "0"},
+    {9, 20, 3, &SootopolisCity, "3"},
+    {9, 5, 3, &CaveOfOrigin_1F, "0"},
 };
 
 const Map CaveOfOrigin_Entrance = {
@@ -3265,7 +3268,7 @@ static ObjectEvent SecretBase_RedCave4_object_events[] = {
 };
 
 static WarpEvent SecretBase_RedCave4_warps[] = {
-    {2, 12, 0, "MAP_DYNAMIC", "WARP_ID_SECRET_BASE"},
+    {2, 12, 0, &Dynamic, "WARP_ID_SECRET_BASE"},
 };
 
 const Map SecretBase_RedCave4 = {
@@ -3303,15 +3306,15 @@ static ObjectEvent SSTidalCorridor_object_events[] = {
 };
 
 static WarpEvent SSTidalCorridor_warps[] = {
-    {4, 9, 3, "MAP_SS_TIDAL_ROOMS", "0"},
-    {7, 9, 3, "MAP_SS_TIDAL_ROOMS", "2"},
-    {10, 9, 3, "MAP_SS_TIDAL_ROOMS", "4"},
-    {13, 9, 3, "MAP_SS_TIDAL_ROOMS", "6"},
-    {4, 3, 3, "MAP_SS_TIDAL_ROOMS", "8"},
-    {7, 3, 3, "MAP_SS_TIDAL_ROOMS", "9"},
-    {10, 3, 3, "MAP_SS_TIDAL_ROOMS", "10"},
-    {13, 3, 3, "MAP_SS_TIDAL_ROOMS", "11"},
-    {16, 2, 3, "MAP_SS_TIDAL_LOWER_DECK", "0"},
+    {4, 9, 3, &SSTidalRooms, "0"},
+    {7, 9, 3, &SSTidalRooms, "2"},
+    {10, 9, 3, &SSTidalRooms, "4"},
+    {13, 9, 3, &SSTidalRooms, "6"},
+    {4, 3, 3, &SSTidalRooms, "8"},
+    {7, 3, 3, &SSTidalRooms, "9"},
+    {10, 3, 3, &SSTidalRooms, "10"},
+    {13, 3, 3, &SSTidalRooms, "11"},
+    {16, 2, 3, &SSTidalLowerDeck, "0"},
 };
 
 static BgEvent SSTidalCorridor_bg_events[] = {
@@ -3365,8 +3368,8 @@ static ObjectEvent VerdanturfTown_BattleTentLobby_object_events[] = {
 };
 
 static WarpEvent VerdanturfTown_BattleTentLobby_warps[] = {
-    {6, 9, 0, "MAP_VERDANTURF_TOWN", "0"},
-    {7, 9, 0, "MAP_VERDANTURF_TOWN", "0"},
+    {6, 9, 0, &VerdanturfTown, "0"},
+    {7, 9, 0, &VerdanturfTown, "0"},
 };
 
 static BgEvent VerdanturfTown_BattleTentLobby_bg_events[] = {
@@ -3441,7 +3444,7 @@ static ObjectEvent SSTidalLowerDeck_object_events[] = {
 };
 
 static WarpEvent SSTidalLowerDeck_warps[] = {
-    {15, 2, 3, "MAP_SS_TIDAL_CORRIDOR", "8"},
+    {15, 2, 3, &SSTidalCorridor, "8"},
 };
 
 static BgEvent SSTidalLowerDeck_bg_events[] = {
@@ -3512,8 +3515,8 @@ static ObjectEvent Route109_SeashoreHouse_object_events[] = {
 };
 
 static WarpEvent Route109_SeashoreHouse_warps[] = {
-    {6, 9, 0, "MAP_ROUTE109", "0"},
-    {7, 9, 0, "MAP_ROUTE109", "0"},
+    {6, 9, 0, &Route109, "0"},
+    {7, 9, 0, &Route109, "0"},
 };
 
 const Map Route109_SeashoreHouse = {
@@ -3584,8 +3587,8 @@ static ObjectEvent RustboroCity_Flat2_2F_object_events[] = {
 };
 
 static WarpEvent RustboroCity_Flat2_2F_warps[] = {
-    {3, 1, 0, "MAP_RUSTBORO_CITY_FLAT2_1F", "2"},
-    {1, 1, 0, "MAP_RUSTBORO_CITY_FLAT2_3F", "0"},
+    {3, 1, 0, &RustboroCity_Flat2_1F, "2"},
+    {1, 1, 0, &RustboroCity_Flat2_3F, "0"},
 };
 
 const Map RustboroCity_Flat2_2F = {
@@ -3633,7 +3636,7 @@ static ObjectEvent SecretBase_RedCave3_object_events[] = {
 };
 
 static WarpEvent SecretBase_RedCave3_warps[] = {
-    {3, 6, 0, "MAP_DYNAMIC", "WARP_ID_SECRET_BASE"},
+    {3, 6, 0, &Dynamic, "WARP_ID_SECRET_BASE"},
 };
 
 const Map SecretBase_RedCave3 = {
@@ -3667,8 +3670,8 @@ static ObjectEvent BattleFrontier_BattleDomeCorridor_object_events[] = {
 };
 
 static WarpEvent BattleFrontier_BattleDomeCorridor_warps[] = {
-    {6, 8, 3, "MAP_BATTLE_FRONTIER_OUTSIDE_WEST", "1"},
-    {7, 8, 3, "MAP_BATTLE_FRONTIER_OUTSIDE_WEST", "1"},
+    {6, 8, 3, &BattleFrontier_OutsideWest, "1"},
+    {7, 8, 3, &BattleFrontier_OutsideWest, "1"},
 };
 
 const Map BattleFrontier_BattleDomeCorridor = {
@@ -3724,9 +3727,9 @@ const Map ShoalCave_HighTideEntranceRoom = {
 };
 
 static WarpEvent SkyPillar_4F_warps[] = {
-    {11, 1, 3, "MAP_SKY_PILLAR_3F", "1"},
-    {7, 1, 3, "MAP_SKY_PILLAR_3F", "2"},
-    {3, 1, 3, "MAP_SKY_PILLAR_5F", "0"},
+    {11, 1, 3, &SkyPillar_3F, "1"},
+    {7, 1, 3, &SkyPillar_3F, "2"},
+    {3, 1, 3, &SkyPillar_5F, "0"},
 };
 
 const Map SkyPillar_4F = {
@@ -3813,32 +3816,32 @@ static ObjectEvent LavaridgeTown_Gym_1F_object_events[] = {
 };
 
 static WarpEvent LavaridgeTown_Gym_1F_warps[] = {
-    {13, 18, 3, "MAP_LAVARIDGE_TOWN", "1"},
-    {14, 18, 3, "MAP_LAVARIDGE_TOWN", "1"},
-    {10, 18, 3, "MAP_LAVARIDGE_TOWN_GYM_B1F", "0"},
-    {8, 9, 3, "MAP_LAVARIDGE_TOWN_GYM_B1F", "2"},
-    {4, 18, 3, "MAP_LAVARIDGE_TOWN_GYM_B1F", "4"},
-    {5, 14, 3, "MAP_LAVARIDGE_TOWN_GYM_B1F", "3"},
-    {0, 17, 3, "MAP_LAVARIDGE_TOWN_GYM_B1F", "1"},
-    {5, 9, 3, "MAP_LAVARIDGE_TOWN_GYM_B1F", "5"},
-    {2, 15, 3, "MAP_LAVARIDGE_TOWN_GYM_B1F", "6"},
-    {3, 14, 3, "MAP_LAVARIDGE_TOWN_GYM_B1F", "7"},
-    {1, 14, 3, "MAP_LAVARIDGE_TOWN_GYM_B1F", "8"},
-    {0, 10, 3, "MAP_LAVARIDGE_TOWN_GYM_B1F", "9"},
-    {3, 10, 3, "MAP_LAVARIDGE_TOWN_GYM_B1F", "10"},
-    {0, 6, 3, "MAP_LAVARIDGE_TOWN_GYM_B1F", "11"},
-    {3, 6, 3, "MAP_LAVARIDGE_TOWN_GYM_B1F", "12"},
-    {5, 6, 3, "MAP_LAVARIDGE_TOWN_GYM_B1F", "13"},
-    {2, 3, 3, "MAP_LAVARIDGE_TOWN_GYM_B1F", "14"},
-    {5, 2, 3, "MAP_LAVARIDGE_TOWN_GYM_B1F", "15"},
-    {7, 2, 3, "MAP_LAVARIDGE_TOWN_GYM_B1F", "16"},
-    {8, 6, 3, "MAP_LAVARIDGE_TOWN_GYM_B1F", "17"},
-    {10, 6, 3, "MAP_LAVARIDGE_TOWN_GYM_B1F", "18"},
-    {4, 16, 0, "MAP_LAVARIDGE_TOWN_GYM_B1F", "20"},
-    {12, 3, 3, "MAP_LAVARIDGE_TOWN_GYM_B1F", "19"},
-    {14, 6, 3, "MAP_LAVARIDGE_TOWN_GYM_B1F", "21"},
-    {13, 17, 3, "MAP_LAVARIDGE_TOWN_GYM_B1F", "22"},
-    {12, 12, 3, "MAP_LAVARIDGE_TOWN_GYM_B1F", "23"},
+    {13, 18, 3, &LavaridgeTown, "1"},
+    {14, 18, 3, &LavaridgeTown, "1"},
+    {10, 18, 3, &LavaridgeTown_Gym_B1F, "0"},
+    {8, 9, 3, &LavaridgeTown_Gym_B1F, "2"},
+    {4, 18, 3, &LavaridgeTown_Gym_B1F, "4"},
+    {5, 14, 3, &LavaridgeTown_Gym_B1F, "3"},
+    {0, 17, 3, &LavaridgeTown_Gym_B1F, "1"},
+    {5, 9, 3, &LavaridgeTown_Gym_B1F, "5"},
+    {2, 15, 3, &LavaridgeTown_Gym_B1F, "6"},
+    {3, 14, 3, &LavaridgeTown_Gym_B1F, "7"},
+    {1, 14, 3, &LavaridgeTown_Gym_B1F, "8"},
+    {0, 10, 3, &LavaridgeTown_Gym_B1F, "9"},
+    {3, 10, 3, &LavaridgeTown_Gym_B1F, "10"},
+    {0, 6, 3, &LavaridgeTown_Gym_B1F, "11"},
+    {3, 6, 3, &LavaridgeTown_Gym_B1F, "12"},
+    {5, 6, 3, &LavaridgeTown_Gym_B1F, "13"},
+    {2, 3, 3, &LavaridgeTown_Gym_B1F, "14"},
+    {5, 2, 3, &LavaridgeTown_Gym_B1F, "15"},
+    {7, 2, 3, &LavaridgeTown_Gym_B1F, "16"},
+    {8, 6, 3, &LavaridgeTown_Gym_B1F, "17"},
+    {10, 6, 3, &LavaridgeTown_Gym_B1F, "18"},
+    {4, 16, 0, &LavaridgeTown_Gym_B1F, "20"},
+    {12, 3, 3, &LavaridgeTown_Gym_B1F, "19"},
+    {14, 6, 3, &LavaridgeTown_Gym_B1F, "21"},
+    {13, 17, 3, &LavaridgeTown_Gym_B1F, "22"},
+    {12, 12, 3, &LavaridgeTown_Gym_B1F, "23"},
 };
 
 static BgEvent LavaridgeTown_Gym_1F_bg_events[] = {
@@ -3873,8 +3876,8 @@ const Map LavaridgeTown_Gym_1F = {
 };
 
 static WarpEvent NavelRock_Down03_warps[] = {
-    {3, 3, 3, "MAP_NAVEL_ROCK_DOWN02", "1"},
-    {5, 5, 3, "MAP_NAVEL_ROCK_DOWN04", "0"},
+    {3, 3, 3, &NavelRock_Down02, "1"},
+    {5, 5, 3, &NavelRock_Down04, "0"},
 };
 
 const Map NavelRock_Down03 = {
@@ -3945,7 +3948,7 @@ const Map BattleFrontier_BattlePikeRoomNormal = {
 };
 
 static WarpEvent SealedChamber_OuterRoom_warps[] = {
-    {10, 2, 3, "MAP_SEALED_CHAMBER_INNER_ROOM", "0"},
+    {10, 2, 3, &SealedChamber_InnerRoom, "0"},
 };
 
 static BgEvent SealedChamber_OuterRoom_bg_events[] = {
@@ -4081,8 +4084,8 @@ static ObjectEvent TrainerHill_Elevator_object_events[] = {
 };
 
 static WarpEvent TrainerHill_Elevator_warps[] = {
-    {1, 6, 3, "MAP_TRAINER_HILL_ROOF", "1"},
-    {2, 6, 3, "MAP_TRAINER_HILL_ROOF", "1"},
+    {1, 6, 3, &TrainerHill_Roof, "1"},
+    {2, 6, 3, &TrainerHill_Roof, "1"},
 };
 
 const Map TrainerHill_Elevator = {
@@ -4112,8 +4115,8 @@ const Map TrainerHill_Elevator = {
 };
 
 static WarpEvent NavelRock_Down04_warps[] = {
-    {5, 5, 3, "MAP_NAVEL_ROCK_DOWN03", "1"},
-    {3, 3, 3, "MAP_NAVEL_ROCK_DOWN05", "0"},
+    {5, 5, 3, &NavelRock_Down03, "1"},
+    {3, 3, 3, &NavelRock_Down05, "0"},
 };
 
 const Map NavelRock_Down04 = {
@@ -4164,19 +4167,19 @@ static ObjectEvent SootopolisCity_object_events[] = {
 };
 
 static WarpEvent SootopolisCity_warps[] = {
-    {43, 31, 0, "MAP_SOOTOPOLIS_CITY_POKEMON_CENTER_1F", "0"},
-    {17, 29, 0, "MAP_SOOTOPOLIS_CITY_MART", "0"},
-    {31, 32, 0, "MAP_SOOTOPOLIS_CITY_GYM_1F", "0"},
-    {31, 16, 3, "MAP_CAVE_OF_ORIGIN_ENTRANCE", "0"},
-    {9, 6, 0, "MAP_SOOTOPOLIS_CITY_HOUSE1", "0"},
-    {45, 6, 0, "MAP_SOOTOPOLIS_CITY_HOUSE2", "0"},
-    {9, 17, 0, "MAP_SOOTOPOLIS_CITY_HOUSE3", "0"},
-    {44, 17, 0, "MAP_SOOTOPOLIS_CITY_HOUSE4", "0"},
-    {9, 26, 0, "MAP_SOOTOPOLIS_CITY_HOUSE5", "0"},
-    {53, 28, 0, "MAP_SOOTOPOLIS_CITY_HOUSE6", "0"},
-    {8, 35, 0, "MAP_SOOTOPOLIS_CITY_HOUSE7", "0"},
-    {48, 25, 0, "MAP_SOOTOPOLIS_CITY_LOTAD_AND_SEEDOT_HOUSE", "0"},
-    {51, 36, 0, "MAP_SOOTOPOLIS_CITY_MYSTERY_EVENTS_HOUSE_1F", "0"},
+    {43, 31, 0, &SootopolisCity_PokemonCenter_1F, "0"},
+    {17, 29, 0, &SootopolisCity_Mart, "0"},
+    {31, 32, 0, &SootopolisCity_Gym_1F, "0"},
+    {31, 16, 3, &CaveOfOrigin_Entrance, "0"},
+    {9, 6, 0, &SootopolisCity_House1, "0"},
+    {45, 6, 0, &SootopolisCity_House2, "0"},
+    {9, 17, 0, &SootopolisCity_House3, "0"},
+    {44, 17, 0, &SootopolisCity_House4, "0"},
+    {9, 26, 0, &SootopolisCity_House5, "0"},
+    {53, 28, 0, &SootopolisCity_House6, "0"},
+    {8, 35, 0, &SootopolisCity_House7, "0"},
+    {48, 25, 0, &SootopolisCity_LotadAndSeedotHouse, "0"},
+    {51, 36, 0, &SootopolisCity_MysteryEventsHouse_1F, "0"},
 };
 
 static BgEvent SootopolisCity_bg_events[] = {
@@ -4222,9 +4225,9 @@ static ObjectEvent MagmaHideout_2F_1R_object_events[] = {
 };
 
 static WarpEvent MagmaHideout_2F_1R_warps[] = {
-    {11, 23, 0, "MAP_MAGMA_HIDEOUT_2F_2R", "0"},
-    {8, 2, 0, "MAP_MAGMA_HIDEOUT_1F", "1"},
-    {17, 33, 3, "MAP_MAGMA_HIDEOUT_3F_1R", "2"},
+    {11, 23, 0, &MagmaHideout_2F_2R, "0"},
+    {8, 2, 0, &MagmaHideout_1F, "1"},
+    {17, 33, 3, &MagmaHideout_3F_1R, "2"},
 };
 
 const Map MagmaHideout_2F_1R = {
@@ -4261,9 +4264,9 @@ static ObjectEvent SootopolisCity_PokemonCenter_2F_object_events[] = {
 };
 
 static WarpEvent SootopolisCity_PokemonCenter_2F_warps[] = {
-    {1, 6, 4, "MAP_SOOTOPOLIS_CITY_POKEMON_CENTER_1F", "2"},
-    {5, 1, 3, "MAP_UNION_ROOM", "0"},
-    {9, 1, 3, "MAP_TRADE_CENTER", "0"},
+    {1, 6, 4, &SootopolisCity_PokemonCenter_1F, "2"},
+    {5, 1, 3, &UnionRoom, "0"},
+    {9, 1, 3, &TradeCenter, "0"},
 };
 
 const Map SootopolisCity_PokemonCenter_2F = {
@@ -4336,14 +4339,14 @@ static ObjectEvent Route104_object_events[] = {
 };
 
 static WarpEvent Route104_warps[] = {
-    {17, 50, 0, "MAP_ROUTE104_MR_BRINEYS_HOUSE", "0"},
-    {5, 18, 0, "MAP_ROUTE104_PRETTY_PETAL_FLOWER_SHOP", "0"},
-    {10, 30, 3, "MAP_PETALBURG_WOODS", "0"},
-    {11, 30, 3, "MAP_PETALBURG_WOODS", "1"},
-    {10, 38, 3, "MAP_PETALBURG_WOODS", "2"},
-    {11, 38, 3, "MAP_PETALBURG_WOODS", "3"},
-    {32, 42, 3, "MAP_PETALBURG_WOODS", "4"},
-    {33, 42, 3, "MAP_PETALBURG_WOODS", "5"},
+    {17, 50, 0, &Route104_MrBrineysHouse, "0"},
+    {5, 18, 0, &Route104_PrettyPetalFlowerShop, "0"},
+    {10, 30, 3, &PetalburgWoods, "0"},
+    {11, 30, 3, &PetalburgWoods, "1"},
+    {10, 38, 3, &PetalburgWoods, "2"},
+    {11, 38, 3, &PetalburgWoods, "3"},
+    {32, 42, 3, &PetalburgWoods, "4"},
+    {33, 42, 3, &PetalburgWoods, "5"},
 };
 
 static CoordEvent Route104_coords[] = {
@@ -4398,8 +4401,8 @@ static ObjectEvent LilycoveCity_Harbor_object_events[] = {
 };
 
 static WarpEvent LilycoveCity_Harbor_warps[] = {
-    {11, 14, 0, "MAP_LILYCOVE_CITY", "12"},
-    {12, 14, 0, "MAP_LILYCOVE_CITY", "12"},
+    {11, 14, 0, &LilycoveCity, "12"},
+    {12, 14, 0, &LilycoveCity, "12"},
 };
 
 const Map LilycoveCity_Harbor = {
@@ -4436,9 +4439,9 @@ static ObjectEvent FortreeCity_PokemonCenter_1F_object_events[] = {
 };
 
 static WarpEvent FortreeCity_PokemonCenter_1F_warps[] = {
-    {7, 8, 3, "MAP_FORTREE_CITY", "0"},
-    {6, 8, 3, "MAP_FORTREE_CITY", "0"},
-    {1, 6, 4, "MAP_FORTREE_CITY_POKEMON_CENTER_2F", "0"},
+    {7, 8, 3, &FortreeCity, "0"},
+    {6, 8, 3, &FortreeCity, "0"},
+    {1, 6, 4, &FortreeCity_PokemonCenter_2F, "0"},
 };
 
 const Map FortreeCity_PokemonCenter_1F = {
@@ -4478,7 +4481,7 @@ static ObjectEvent SafariZone_Southwest_object_events[] = {
 };
 
 static WarpEvent SafariZone_Southwest_warps[] = {
-    {29, 7, 3, "MAP_SAFARI_ZONE_REST_HOUSE", "0"},
+    {29, 7, 3, &SafariZone_RestHouse, "0"},
 };
 
 static BgEvent SafariZone_Southwest_bg_events[] = {
@@ -4540,7 +4543,7 @@ static ObjectEvent Route103_object_events[] = {
 };
 
 static WarpEvent Route103_warps[] = {
-    {45, 6, 0, "MAP_ALTERING_CAVE", "0"},
+    {45, 6, 0, &AlteringCave, "0"},
 };
 
 static BgEvent Route103_bg_events[] = {
@@ -4574,8 +4577,8 @@ const Map Route103 = {
 };
 
 static WarpEvent SkyPillar_Entrance_warps[] = {
-    {6, 16, 3, "MAP_ROUTE131", "0"},
-    {14, 4, 3, "MAP_SKY_PILLAR_OUTSIDE", "0"},
+    {6, 16, 3, &Route131, "0"},
+    {14, 4, 3, &SkyPillar_Outside, "0"},
 };
 
 const Map SkyPillar_Entrance = {
@@ -4611,9 +4614,9 @@ static ObjectEvent SlateportCity_PokemonCenter_1F_object_events[] = {
 };
 
 static WarpEvent SlateportCity_PokemonCenter_1F_warps[] = {
-    {7, 8, 3, "MAP_SLATEPORT_CITY", "0"},
-    {6, 8, 3, "MAP_SLATEPORT_CITY", "0"},
-    {1, 6, 4, "MAP_SLATEPORT_CITY_POKEMON_CENTER_2F", "0"},
+    {7, 8, 3, &SlateportCity, "0"},
+    {6, 8, 3, &SlateportCity, "0"},
+    {1, 6, 4, &SlateportCity_PokemonCenter_2F, "0"},
 };
 
 const Map SlateportCity_PokemonCenter_1F = {
@@ -4671,10 +4674,10 @@ static ObjectEvent LilycoveCity_ContestLobby_object_events[] = {
 };
 
 static WarpEvent LilycoveCity_ContestLobby_warps[] = {
-    {14, 11, 0, "MAP_LILYCOVE_CITY", "4"},
-    {15, 11, 0, "MAP_LILYCOVE_CITY", "4"},
-    {9, 1, 0, "MAP_LILYCOVE_CITY_CONTEST_HALL", "0"},
-    {21, 1, 0, "MAP_LILYCOVE_CITY_CONTEST_HALL", "1"},
+    {14, 11, 0, &LilycoveCity, "4"},
+    {15, 11, 0, &LilycoveCity, "4"},
+    {9, 1, 0, &LilycoveCity_ContestHall, "0"},
+    {21, 1, 0, &LilycoveCity_ContestHall, "1"},
 };
 
 static BgEvent LilycoveCity_ContestLobby_bg_events[] = {
@@ -4723,7 +4726,7 @@ static ObjectEvent MossdeepCity_GameCorner_B1F_object_events[] = {
 };
 
 static WarpEvent MossdeepCity_GameCorner_B1F_warps[] = {
-    {3, 1, 0, "MAP_MOSSDEEP_CITY_GAME_CORNER_1F", "2"},
+    {3, 1, 0, &MossdeepCity_GameCorner_1F, "2"},
 };
 
 const Map MossdeepCity_GameCorner_B1F = {
@@ -4771,7 +4774,7 @@ static ObjectEvent SecretBase_RedCave2_object_events[] = {
 };
 
 static WarpEvent SecretBase_RedCave2_warps[] = {
-    {3, 14, 0, "MAP_DYNAMIC", "WARP_ID_SECRET_BASE"},
+    {3, 14, 0, &Dynamic, "WARP_ID_SECRET_BASE"},
 };
 
 const Map SecretBase_RedCave2 = {
@@ -4811,7 +4814,7 @@ static ObjectEvent SlateportCity_OceanicMuseum_2F_object_events[] = {
 };
 
 static WarpEvent SlateportCity_OceanicMuseum_2F_warps[] = {
-    {6, 1, 0, "MAP_SLATEPORT_CITY_OCEANIC_MUSEUM_1F", "2"},
+    {6, 1, 0, &SlateportCity_OceanicMuseum_1F, "2"},
 };
 
 static BgEvent SlateportCity_OceanicMuseum_2F_bg_events[] = {
@@ -4869,8 +4872,8 @@ static ObjectEvent EverGrandeCity_PhoebesRoom_object_events[] = {
 };
 
 static WarpEvent EverGrandeCity_PhoebesRoom_warps[] = {
-    {6, 13, 3, "MAP_EVER_GRANDE_CITY_HALL1", "1"},
-    {6, 2, 0, "MAP_EVER_GRANDE_CITY_HALL2", "0"},
+    {6, 13, 3, &EverGrandeCity_Hall1, "1"},
+    {6, 2, 0, &EverGrandeCity_Hall2, "0"},
 };
 
 const Map EverGrandeCity_PhoebesRoom = {
@@ -4961,18 +4964,18 @@ static ObjectEvent RustboroCity_object_events[] = {
 };
 
 static WarpEvent RustboroCity_warps[] = {
-    {27, 19, 0, "MAP_RUSTBORO_CITY_GYM", "0"},
-    {13, 30, 0, "MAP_RUSTBORO_CITY_FLAT1_1F", "0"},
-    {16, 45, 0, "MAP_RUSTBORO_CITY_MART", "0"},
-    {16, 38, 0, "MAP_RUSTBORO_CITY_POKEMON_CENTER_1F", "0"},
-    {27, 34, 0, "MAP_RUSTBORO_CITY_POKEMON_SCHOOL", "0"},
-    {11, 15, 0, "MAP_RUSTBORO_CITY_DEVON_CORP_1F", "0"},
-    {12, 15, 0, "MAP_RUSTBORO_CITY_DEVON_CORP_1F", "1"},
-    {33, 19, 0, "MAP_RUSTBORO_CITY_HOUSE1", "0"},
-    {9, 38, 0, "MAP_RUSTBORO_CITY_CUTTERS_HOUSE", "0"},
-    {30, 28, 0, "MAP_RUSTBORO_CITY_HOUSE2", "0"},
-    {5, 51, 0, "MAP_RUSTBORO_CITY_FLAT2_1F", "0"},
-    {26, 46, 0, "MAP_RUSTBORO_CITY_HOUSE3", "0"},
+    {27, 19, 0, &RustboroCity_Gym, "0"},
+    {13, 30, 0, &RustboroCity_Flat1_1F, "0"},
+    {16, 45, 0, &RustboroCity_Mart, "0"},
+    {16, 38, 0, &RustboroCity_PokemonCenter_1F, "0"},
+    {27, 34, 0, &RustboroCity_PokemonSchool, "0"},
+    {11, 15, 0, &RustboroCity_DevonCorp_1F, "0"},
+    {12, 15, 0, &RustboroCity_DevonCorp_1F, "1"},
+    {33, 19, 0, &RustboroCity_House1, "0"},
+    {9, 38, 0, &RustboroCity_CuttersHouse, "0"},
+    {30, 28, 0, &RustboroCity_House2, "0"},
+    {5, 51, 0, &RustboroCity_Flat2_1F, "0"},
+    {26, 46, 0, &RustboroCity_House3, "0"},
 };
 
 static CoordEvent RustboroCity_coords[] = {
@@ -5043,8 +5046,8 @@ static ObjectEvent ArtisanCave_1F_object_events[] = {
 };
 
 static WarpEvent ArtisanCave_1F_warps[] = {
-    {10, 17, 0, "MAP_BATTLE_FRONTIER_OUTSIDE_EAST", "13"},
-    {6, 5, 0, "MAP_ARTISAN_CAVE_B1F", "1"},
+    {10, 17, 0, &BattleFrontier_OutsideEast, "13"},
+    {6, 5, 0, &ArtisanCave_B1F, "1"},
 };
 
 const Map ArtisanCave_1F = {
@@ -5074,8 +5077,8 @@ const Map ArtisanCave_1F = {
 };
 
 static WarpEvent NavelRock_Entrance_warps[] = {
-    {10, 5, 3, "MAP_NAVEL_ROCK_B1F", "0"},
-    {10, 26, 3, "MAP_NAVEL_ROCK_EXTERIOR", "1"},
+    {10, 5, 3, &NavelRock_B1F, "0"},
+    {10, 26, 3, &NavelRock_Exterior, "1"},
 };
 
 const Map NavelRock_Entrance = {
@@ -5111,9 +5114,9 @@ static ObjectEvent MagmaHideout_3F_1R_object_events[] = {
 };
 
 static WarpEvent MagmaHideout_3F_1R_warps[] = {
-    {7, 21, 0, "MAP_MAGMA_HIDEOUT_4F", "0"},
-    {21, 9, 0, "MAP_MAGMA_HIDEOUT_3F_2R", "0"},
-    {23, 3, 0, "MAP_MAGMA_HIDEOUT_2F_1R", "2"},
+    {7, 21, 0, &MagmaHideout_4F, "0"},
+    {21, 9, 0, &MagmaHideout_3F_2R, "0"},
+    {23, 3, 0, &MagmaHideout_2F_1R, "2"},
 };
 
 const Map MagmaHideout_3F_1R = {
@@ -5178,9 +5181,9 @@ static ObjectEvent RustboroCity_Flat2_1F_object_events[] = {
 };
 
 static WarpEvent RustboroCity_Flat2_1F_warps[] = {
-    {2, 8, 0, "MAP_RUSTBORO_CITY", "10"},
-    {3, 8, 0, "MAP_RUSTBORO_CITY", "10"},
-    {3, 1, 0, "MAP_RUSTBORO_CITY_FLAT2_2F", "0"},
+    {2, 8, 0, &RustboroCity, "10"},
+    {3, 8, 0, &RustboroCity, "10"},
+    {3, 1, 0, &RustboroCity_Flat2_2F, "0"},
 };
 
 const Map RustboroCity_Flat2_1F = {
@@ -5215,8 +5218,8 @@ static ObjectEvent FortreeCity_House3_object_events[] = {
 };
 
 static WarpEvent FortreeCity_House3_warps[] = {
-    {3, 5, 0, "MAP_FORTREE_CITY", "5"},
-    {4, 5, 0, "MAP_FORTREE_CITY", "5"},
+    {3, 5, 0, &FortreeCity, "5"},
+    {4, 5, 0, &FortreeCity, "5"},
 };
 
 const Map FortreeCity_House3 = {
@@ -5257,9 +5260,9 @@ static ObjectEvent MtPyre_Summit_object_events[] = {
 };
 
 static WarpEvent MtPyre_Summit_warps[] = {
-    {22, 31, 3, "MAP_MT_PYRE_EXTERIOR", "1"},
-    {23, 31, 3, "MAP_MT_PYRE_EXTERIOR", "1"},
-    {24, 31, 3, "MAP_MT_PYRE_EXTERIOR", "1"},
+    {22, 31, 3, &MtPyre_Exterior, "1"},
+    {23, 31, 3, &MtPyre_Exterior, "1"},
+    {24, 31, 3, &MtPyre_Exterior, "1"},
 };
 
 static CoordEvent MtPyre_Summit_coords[] = {
@@ -5317,44 +5320,44 @@ static ObjectEvent PetalburgCity_Gym_object_events[] = {
 };
 
 static WarpEvent PetalburgCity_Gym_warps[] = {
-    {4, 111, 3, "MAP_PETALBURG_CITY", "2"},
-    {5, 111, 3, "MAP_PETALBURG_CITY", "2"},
-    {1, 105, 3, "MAP_PETALBURG_CITY_GYM", "3"},
-    {7, 85, 3, "MAP_PETALBURG_CITY_GYM", "2"},
-    {6, 85, 3, "MAP_PETALBURG_CITY_GYM", "2"},
-    {7, 105, 3, "MAP_PETALBURG_CITY_GYM", "6"},
-    {1, 98, 3, "MAP_PETALBURG_CITY_GYM", "5"},
-    {2, 98, 3, "MAP_PETALBURG_CITY_GYM", "5"},
-    {1, 79, 3, "MAP_PETALBURG_CITY_GYM", "10"},
-    {7, 79, 3, "MAP_PETALBURG_CITY_GYM", "12"},
-    {7, 46, 3, "MAP_PETALBURG_CITY_GYM", "8"},
-    {6, 46, 3, "MAP_PETALBURG_CITY_GYM", "8"},
-    {1, 59, 3, "MAP_PETALBURG_CITY_GYM", "9"},
-    {2, 59, 3, "MAP_PETALBURG_CITY_GYM", "9"},
-    {1, 92, 3, "MAP_PETALBURG_CITY_GYM", "16"},
-    {7, 92, 3, "MAP_PETALBURG_CITY_GYM", "18"},
-    {7, 59, 3, "MAP_PETALBURG_CITY_GYM", "14"},
-    {6, 59, 3, "MAP_PETALBURG_CITY_GYM", "14"},
-    {1, 72, 3, "MAP_PETALBURG_CITY_GYM", "15"},
-    {2, 72, 3, "MAP_PETALBURG_CITY_GYM", "15"},
-    {7, 40, 3, "MAP_PETALBURG_CITY_GYM", "24"},
-    {1, 53, 3, "MAP_PETALBURG_CITY_GYM", "26"},
-    {7, 53, 3, "MAP_PETALBURG_CITY_GYM", "28"},
-    {1, 66, 3, "MAP_PETALBURG_CITY_GYM", "30"},
-    {1, 20, 3, "MAP_PETALBURG_CITY_GYM", "20"},
-    {2, 20, 3, "MAP_PETALBURG_CITY_GYM", "20"},
-    {7, 20, 3, "MAP_PETALBURG_CITY_GYM", "21"},
-    {6, 20, 3, "MAP_PETALBURG_CITY_GYM", "21"},
-    {1, 33, 3, "MAP_PETALBURG_CITY_GYM", "22"},
-    {2, 33, 3, "MAP_PETALBURG_CITY_GYM", "22"},
-    {7, 33, 3, "MAP_PETALBURG_CITY_GYM", "23"},
-    {6, 33, 3, "MAP_PETALBURG_CITY_GYM", "23"},
-    {7, 14, 3, "MAP_PETALBURG_CITY_GYM", "34"},
-    {1, 27, 3, "MAP_PETALBURG_CITY_GYM", "36"},
-    {1, 7, 3, "MAP_PETALBURG_CITY_GYM", "32"},
-    {2, 7, 3, "MAP_PETALBURG_CITY_GYM", "32"},
-    {7, 7, 3, "MAP_PETALBURG_CITY_GYM", "33"},
-    {6, 7, 3, "MAP_PETALBURG_CITY_GYM", "33"},
+    {4, 111, 3, &PetalburgCity, "2"},
+    {5, 111, 3, &PetalburgCity, "2"},
+    {1, 105, 3, &PetalburgCity_Gym, "3"},
+    {7, 85, 3, &PetalburgCity_Gym, "2"},
+    {6, 85, 3, &PetalburgCity_Gym, "2"},
+    {7, 105, 3, &PetalburgCity_Gym, "6"},
+    {1, 98, 3, &PetalburgCity_Gym, "5"},
+    {2, 98, 3, &PetalburgCity_Gym, "5"},
+    {1, 79, 3, &PetalburgCity_Gym, "10"},
+    {7, 79, 3, &PetalburgCity_Gym, "12"},
+    {7, 46, 3, &PetalburgCity_Gym, "8"},
+    {6, 46, 3, &PetalburgCity_Gym, "8"},
+    {1, 59, 3, &PetalburgCity_Gym, "9"},
+    {2, 59, 3, &PetalburgCity_Gym, "9"},
+    {1, 92, 3, &PetalburgCity_Gym, "16"},
+    {7, 92, 3, &PetalburgCity_Gym, "18"},
+    {7, 59, 3, &PetalburgCity_Gym, "14"},
+    {6, 59, 3, &PetalburgCity_Gym, "14"},
+    {1, 72, 3, &PetalburgCity_Gym, "15"},
+    {2, 72, 3, &PetalburgCity_Gym, "15"},
+    {7, 40, 3, &PetalburgCity_Gym, "24"},
+    {1, 53, 3, &PetalburgCity_Gym, "26"},
+    {7, 53, 3, &PetalburgCity_Gym, "28"},
+    {1, 66, 3, &PetalburgCity_Gym, "30"},
+    {1, 20, 3, &PetalburgCity_Gym, "20"},
+    {2, 20, 3, &PetalburgCity_Gym, "20"},
+    {7, 20, 3, &PetalburgCity_Gym, "21"},
+    {6, 20, 3, &PetalburgCity_Gym, "21"},
+    {1, 33, 3, &PetalburgCity_Gym, "22"},
+    {2, 33, 3, &PetalburgCity_Gym, "22"},
+    {7, 33, 3, &PetalburgCity_Gym, "23"},
+    {6, 33, 3, &PetalburgCity_Gym, "23"},
+    {7, 14, 3, &PetalburgCity_Gym, "34"},
+    {1, 27, 3, &PetalburgCity_Gym, "36"},
+    {1, 7, 3, &PetalburgCity_Gym, "32"},
+    {2, 7, 3, &PetalburgCity_Gym, "32"},
+    {7, 7, 3, &PetalburgCity_Gym, "33"},
+    {6, 7, 3, &PetalburgCity_Gym, "33"},
 };
 
 static BgEvent PetalburgCity_Gym_bg_events[] = {
@@ -5401,10 +5404,10 @@ const Map PetalburgCity_Gym = {
 };
 
 static WarpEvent BattleColosseum_4P_warps[] = {
-    {5, 8, 3, "MAP_DYNAMIC", "WARP_ID_DYNAMIC"},
-    {6, 8, 3, "MAP_DYNAMIC", "WARP_ID_DYNAMIC"},
-    {7, 8, 3, "MAP_DYNAMIC", "WARP_ID_DYNAMIC"},
-    {8, 8, 3, "MAP_DYNAMIC", "WARP_ID_DYNAMIC"},
+    {5, 8, 3, &Dynamic, "WARP_ID_DYNAMIC"},
+    {6, 8, 3, &Dynamic, "WARP_ID_DYNAMIC"},
+    {7, 8, 3, &Dynamic, "WARP_ID_DYNAMIC"},
+    {8, 8, 3, &Dynamic, "WARP_ID_DYNAMIC"},
 };
 
 static CoordEvent BattleColosseum_4P_coords[] = {
@@ -5456,7 +5459,7 @@ static ObjectEvent SafariZone_South_object_events[] = {
 };
 
 static WarpEvent SafariZone_South_warps[] = {
-    {32, 33, 0, "MAP_ROUTE121_SAFARI_ZONE_ENTRANCE", "0"},
+    {32, 33, 0, &Route121_SafariZoneEntrance, "0"},
 };
 
 const Map SafariZone_South = {
@@ -5492,8 +5495,8 @@ static ObjectEvent FortreeCity_House4_object_events[] = {
 };
 
 static WarpEvent FortreeCity_House4_warps[] = {
-    {3, 5, 0, "MAP_FORTREE_CITY", "6"},
-    {4, 5, 0, "MAP_FORTREE_CITY", "6"},
+    {3, 5, 0, &FortreeCity, "6"},
+    {4, 5, 0, &FortreeCity, "6"},
 };
 
 const Map FortreeCity_House4 = {
@@ -5527,8 +5530,8 @@ static ObjectEvent Route117_PokemonDayCare_object_events[] = {
 };
 
 static WarpEvent Route117_PokemonDayCare_warps[] = {
-    {2, 8, 0, "MAP_ROUTE117", "0"},
-    {3, 8, 0, "MAP_ROUTE117", "0"},
+    {2, 8, 0, &Route117, "0"},
+    {3, 8, 0, &Route117, "0"},
 };
 
 const Map Route117_PokemonDayCare = {
@@ -5574,12 +5577,12 @@ static ObjectEvent LavaridgeTown_object_events[] = {
 };
 
 static WarpEvent LavaridgeTown_warps[] = {
-    {12, 15, 0, "MAP_LAVARIDGE_TOWN_HERB_SHOP", "0"},
-    {5, 15, 0, "MAP_LAVARIDGE_TOWN_GYM_1F", "0"},
-    {15, 5, 0, "MAP_LAVARIDGE_TOWN_MART", "0"},
-    {9, 6, 0, "MAP_LAVARIDGE_TOWN_POKEMON_CENTER_1F", "0"},
-    {16, 15, 0, "MAP_LAVARIDGE_TOWN_HOUSE", "0"},
-    {9, 2, 3, "MAP_LAVARIDGE_TOWN_POKEMON_CENTER_1F", "3"},
+    {12, 15, 0, &LavaridgeTown_HerbShop, "0"},
+    {5, 15, 0, &LavaridgeTown_Gym_1F, "0"},
+    {15, 5, 0, &LavaridgeTown_Mart, "0"},
+    {9, 6, 0, &LavaridgeTown_PokemonCenter_1F, "0"},
+    {16, 15, 0, &LavaridgeTown_House, "0"},
+    {9, 2, 3, &LavaridgeTown_PokemonCenter_1F, "3"},
 };
 
 static CoordEvent LavaridgeTown_coords[] = {
@@ -5628,8 +5631,8 @@ static ObjectEvent TradeCenter_object_events[] = {
 };
 
 static WarpEvent TradeCenter_warps[] = {
-    {5, 8, 3, "MAP_DYNAMIC", "WARP_ID_DYNAMIC"},
-    {6, 8, 3, "MAP_DYNAMIC", "WARP_ID_DYNAMIC"},
+    {5, 8, 3, &Dynamic, "WARP_ID_DYNAMIC"},
+    {6, 8, 3, &Dynamic, "WARP_ID_DYNAMIC"},
 };
 
 static CoordEvent TradeCenter_coords[] = {
@@ -5669,18 +5672,18 @@ static ObjectEvent AbandonedShip_Corridors_1F_object_events[] = {
 };
 
 static WarpEvent AbandonedShip_Corridors_1F_warps[] = {
-    {9, 11, 3, "MAP_ABANDONED_SHIP_DECK", "2"},
-    {8, 11, 3, "MAP_ABANDONED_SHIP_DECK", "2"},
-    {0, 11, 3, "MAP_ABANDONED_SHIP_DECK", "3"},
-    {1, 11, 3, "MAP_ABANDONED_SHIP_DECK", "3"},
-    {11, 9, 3, "MAP_ABANDONED_SHIP_ROOMS_1F", "0"},
-    {14, 9, 3, "MAP_ABANDONED_SHIP_ROOMS_1F", "3"},
-    {11, 3, 3, "MAP_ABANDONED_SHIP_ROOMS_1F", "2"},
-    {14, 3, 3, "MAP_ABANDONED_SHIP_ROOMS_1F", "4"},
-    {3, 9, 3, "MAP_ABANDONED_SHIP_ROOMS2_1F", "0"},
-    {16, 2, 3, "MAP_ABANDONED_SHIP_CORRIDORS_B1F", "7"},
-    {5, 2, 3, "MAP_ABANDONED_SHIP_CORRIDORS_B1F", "6"},
-    {3, 3, 3, "MAP_ABANDONED_SHIP_ROOMS2_1F", "2"},
+    {9, 11, 3, &AbandonedShip_Deck, "2"},
+    {8, 11, 3, &AbandonedShip_Deck, "2"},
+    {0, 11, 3, &AbandonedShip_Deck, "3"},
+    {1, 11, 3, &AbandonedShip_Deck, "3"},
+    {11, 9, 3, &AbandonedShip_Rooms_1F, "0"},
+    {14, 9, 3, &AbandonedShip_Rooms_1F, "3"},
+    {11, 3, 3, &AbandonedShip_Rooms_1F, "2"},
+    {14, 3, 3, &AbandonedShip_Rooms_1F, "4"},
+    {3, 9, 3, &AbandonedShip_Rooms2_1F, "0"},
+    {16, 2, 3, &AbandonedShip_Corridors_B1F, "7"},
+    {5, 2, 3, &AbandonedShip_Corridors_B1F, "6"},
+    {3, 3, 3, &AbandonedShip_Rooms2_1F, "2"},
 };
 
 const Map AbandonedShip_Corridors_1F = {
@@ -5814,7 +5817,7 @@ const Map BattlePyramidSquare03 = {
 };
 
 static WarpEvent AbandonedShip_Underwater2_warps[] = {
-    {3, 1, 3, "MAP_ABANDONED_SHIP_UNDERWATER1", "0"},
+    {3, 1, 3, &AbandonedShip_Underwater1, "0"},
 };
 
 const Map AbandonedShip_Underwater2 = {
@@ -5876,8 +5879,8 @@ static ObjectEvent MauvilleCity_Mart_object_events[] = {
 };
 
 static WarpEvent MauvilleCity_Mart_warps[] = {
-    {3, 7, 0, "MAP_MAUVILLE_CITY", "3"},
-    {4, 7, 0, "MAP_MAUVILLE_CITY", "3"},
+    {3, 7, 0, &MauvilleCity, "3"},
+    {4, 7, 0, &MauvilleCity, "3"},
 };
 
 const Map MauvilleCity_Mart = {
@@ -5922,15 +5925,15 @@ static ObjectEvent FortreeCity_object_events[] = {
 };
 
 static WarpEvent FortreeCity_warps[] = {
-    {5, 6, 0, "MAP_FORTREE_CITY_POKEMON_CENTER_1F", "0"},
-    {10, 3, 0, "MAP_FORTREE_CITY_HOUSE1", "0"},
-    {22, 11, 0, "MAP_FORTREE_CITY_GYM", "0"},
-    {4, 14, 0, "MAP_FORTREE_CITY_MART", "0"},
-    {17, 3, 0, "MAP_FORTREE_CITY_HOUSE2", "0"},
-    {25, 3, 0, "MAP_FORTREE_CITY_HOUSE3", "0"},
-    {32, 2, 0, "MAP_FORTREE_CITY_HOUSE4", "0"},
-    {12, 13, 0, "MAP_FORTREE_CITY_HOUSE5", "0"},
-    {37, 13, 0, "MAP_FORTREE_CITY_DECORATION_SHOP", "0"},
+    {5, 6, 0, &FortreeCity_PokemonCenter_1F, "0"},
+    {10, 3, 0, &FortreeCity_House1, "0"},
+    {22, 11, 0, &FortreeCity_Gym, "0"},
+    {4, 14, 0, &FortreeCity_Mart, "0"},
+    {17, 3, 0, &FortreeCity_House2, "0"},
+    {25, 3, 0, &FortreeCity_House3, "0"},
+    {32, 2, 0, &FortreeCity_House4, "0"},
+    {12, 13, 0, &FortreeCity_House5, "0"},
+    {37, 13, 0, &FortreeCity_DecorationShop, "0"},
 };
 
 static BgEvent FortreeCity_bg_events[] = {
@@ -5974,12 +5977,12 @@ static ObjectEvent MtPyre_4F_object_events[] = {
 };
 
 static WarpEvent MtPyre_4F_warps[] = {
-    {10, 1, 3, "MAP_MT_PYRE_5F", "1"},
-    {2, 5, 3, "MAP_MT_PYRE_3F", "1"},
-    {12, 10, 3, "MAP_MT_PYRE_5F", "3"},
-    {12, 12, 3, "MAP_MT_PYRE_5F", "4"},
-    {9, 10, 3, "MAP_MT_PYRE_3F", "2"},
-    {2, 12, 3, "MAP_MT_PYRE_3F", "3"},
+    {10, 1, 3, &MtPyre_5F, "1"},
+    {2, 5, 3, &MtPyre_3F, "1"},
+    {12, 10, 3, &MtPyre_5F, "3"},
+    {12, 12, 3, &MtPyre_5F, "4"},
+    {9, 10, 3, &MtPyre_3F, "2"},
+    {2, 12, 3, &MtPyre_3F, "3"},
 };
 
 const Map MtPyre_4F = {
@@ -6013,8 +6016,8 @@ static ObjectEvent BattleFrontier_ScottsHouse_object_events[] = {
 };
 
 static WarpEvent BattleFrontier_ScottsHouse_warps[] = {
-    {2, 7, 3, "MAP_BATTLE_FRONTIER_OUTSIDE_WEST", "5"},
-    {3, 7, 3, "MAP_BATTLE_FRONTIER_OUTSIDE_WEST", "5"},
+    {2, 7, 3, &BattleFrontier_OutsideWest, "5"},
+    {3, 7, 3, &BattleFrontier_OutsideWest, "5"},
 };
 
 const Map BattleFrontier_ScottsHouse = {
@@ -6049,8 +6052,8 @@ static ObjectEvent FallarborTown_CozmosHouse_object_events[] = {
 };
 
 static WarpEvent FallarborTown_CozmosHouse_warps[] = {
-    {3, 8, 0, "MAP_FALLARBOR_TOWN", "3"},
-    {4, 8, 0, "MAP_FALLARBOR_TOWN", "3"},
+    {3, 8, 0, &FallarborTown, "3"},
+    {4, 8, 0, &FallarborTown, "3"},
 };
 
 const Map FallarborTown_CozmosHouse = {
@@ -6091,8 +6094,8 @@ static ObjectEvent MagmaHideout_4F_object_events[] = {
 };
 
 static WarpEvent MagmaHideout_4F_warps[] = {
-    {46, 7, 0, "MAP_MAGMA_HIDEOUT_3F_1R", "0"},
-    {20, 21, 0, "MAP_MAGMA_HIDEOUT_3F_3R", "1"},
+    {46, 7, 0, &MagmaHideout_3F_1R, "0"},
+    {20, 21, 0, &MagmaHideout_3F_3R, "1"},
 };
 
 const Map MagmaHideout_4F = {
@@ -6129,9 +6132,9 @@ static ObjectEvent RustboroCity_PokemonCenter_1F_object_events[] = {
 };
 
 static WarpEvent RustboroCity_PokemonCenter_1F_warps[] = {
-    {7, 8, 3, "MAP_RUSTBORO_CITY", "3"},
-    {6, 8, 3, "MAP_RUSTBORO_CITY", "3"},
-    {1, 6, 4, "MAP_RUSTBORO_CITY_POKEMON_CENTER_2F", "0"},
+    {7, 8, 3, &RustboroCity, "3"},
+    {6, 8, 3, &RustboroCity, "3"},
+    {1, 6, 4, &RustboroCity_PokemonCenter_2F, "0"},
 };
 
 const Map RustboroCity_PokemonCenter_1F = {
@@ -6199,7 +6202,7 @@ static ObjectEvent Route121_object_events[] = {
 };
 
 static WarpEvent Route121_warps[] = {
-    {37, 5, 0, "MAP_ROUTE121_SAFARI_ZONE_ENTRANCE", "2"},
+    {37, 5, 0, &Route121_SafariZoneEntrance, "2"},
 };
 
 static CoordEvent Route121_coords[] = {
@@ -6249,8 +6252,8 @@ const Map Route121 = {
 };
 
 static WarpEvent NavelRock_Down10_warps[] = {
-    {5, 5, 3, "MAP_NAVEL_ROCK_DOWN09", "1"},
-    {3, 3, 3, "MAP_NAVEL_ROCK_DOWN11", "1"},
+    {5, 5, 3, &NavelRock_Down09, "1"},
+    {3, 3, 3, &NavelRock_Down11, "1"},
 };
 
 const Map NavelRock_Down10 = {
@@ -6330,7 +6333,7 @@ static ObjectEvent SlateportCity_SternsShipyard_2F_object_events[] = {
 };
 
 static WarpEvent SlateportCity_SternsShipyard_2F_warps[] = {
-    {3, 1, 0, "MAP_SLATEPORT_CITY_STERNS_SHIPYARD_1F", "2"},
+    {3, 1, 0, &SlateportCity_SternsShipyard_1F, "2"},
 };
 
 const Map SlateportCity_SternsShipyard_2F = {
@@ -6360,8 +6363,8 @@ const Map SlateportCity_SternsShipyard_2F = {
 };
 
 static WarpEvent MirageTower_1F_warps[] = {
-    {10, 14, 3, "MAP_ROUTE111", "3"},
-    {15, 2, 3, "MAP_MIRAGE_TOWER_2F", "1"},
+    {10, 14, 3, &Route111, "3"},
+    {15, 2, 3, &MirageTower_2F, "1"},
 };
 
 const Map MirageTower_1F = {
@@ -6442,8 +6445,8 @@ static ObjectEvent Route119_object_events[] = {
 };
 
 static WarpEvent Route119_warps[] = {
-    {6, 32, 0, "MAP_ROUTE119_WEATHER_INSTITUTE_1F", "0"},
-    {33, 109, 0, "MAP_ROUTE119_HOUSE", "0"},
+    {6, 32, 0, &Route119_WeatherInstitute_1F, "0"},
+    {33, 109, 0, &Route119_House, "0"},
 };
 
 static CoordEvent Route119_coords[] = {
@@ -6522,8 +6525,8 @@ const Map Route119 = {
 };
 
 static WarpEvent LilycoveCity_UnusedMart_warps[] = {
-    {3, 7, 0, "MAP_LILYCOVE_CITY", "0"},
-    {4, 7, 0, "MAP_LILYCOVE_CITY", "0"},
+    {3, 7, 0, &LilycoveCity, "0"},
+    {4, 7, 0, &LilycoveCity, "0"},
 };
 
 const Map LilycoveCity_UnusedMart = {
@@ -6559,8 +6562,8 @@ static ObjectEvent MossdeepCity_StevensHouse_object_events[] = {
 };
 
 static WarpEvent MossdeepCity_StevensHouse_warps[] = {
-    {3, 7, 0, "MAP_MOSSDEEP_CITY", "6"},
-    {4, 7, 0, "MAP_MOSSDEEP_CITY", "6"},
+    {3, 7, 0, &MossdeepCity, "6"},
+    {4, 7, 0, &MossdeepCity, "6"},
 };
 
 static BgEvent MossdeepCity_StevensHouse_bg_events[] = {
@@ -6603,8 +6606,8 @@ static ObjectEvent SootopolisCity_House4_object_events[] = {
 };
 
 static WarpEvent SootopolisCity_House4_warps[] = {
-    {3, 6, 0, "MAP_SOOTOPOLIS_CITY", "7"},
-    {4, 6, 0, "MAP_SOOTOPOLIS_CITY", "7"},
+    {3, 6, 0, &SootopolisCity, "7"},
+    {4, 6, 0, &SootopolisCity, "7"},
 };
 
 const Map SootopolisCity_House4 = {
@@ -6639,9 +6642,9 @@ static ObjectEvent SootopolisCity_Gym_1F_object_events[] = {
 };
 
 static WarpEvent SootopolisCity_Gym_1F_warps[] = {
-    {8, 25, 0, "MAP_SOOTOPOLIS_CITY", "2"},
-    {9, 25, 0, "MAP_SOOTOPOLIS_CITY", "2"},
-    {11, 22, 3, "MAP_SOOTOPOLIS_CITY_GYM_B1F", "0"},
+    {8, 25, 0, &SootopolisCity, "2"},
+    {9, 25, 0, &SootopolisCity, "2"},
+    {11, 22, 3, &SootopolisCity_Gym_B1F, "0"},
 };
 
 static BgEvent SootopolisCity_Gym_1F_bg_events[] = {
@@ -6721,12 +6724,12 @@ static ObjectEvent Route110_object_events[] = {
 };
 
 static WarpEvent Route110_warps[] = {
-    {35, 24, 3, "MAP_NEW_MAUVILLE_ENTRANCE", "0"},
-    {11, 66, 0, "MAP_ROUTE110_TRICK_HOUSE_ENTRANCE", "0"},
-    {15, 16, 0, "MAP_ROUTE110_SEASIDE_CYCLING_ROAD_NORTH_ENTRANCE", "0"},
-    {18, 16, 0, "MAP_ROUTE110_SEASIDE_CYCLING_ROAD_NORTH_ENTRANCE", "2"},
-    {16, 88, 0, "MAP_ROUTE110_SEASIDE_CYCLING_ROAD_SOUTH_ENTRANCE", "0"},
-    {19, 88, 0, "MAP_ROUTE110_SEASIDE_CYCLING_ROAD_SOUTH_ENTRANCE", "2"},
+    {35, 24, 3, &NewMauville_Entrance, "0"},
+    {11, 66, 0, &Route110_TrickHouseEntrance, "0"},
+    {15, 16, 0, &Route110_SeasideCyclingRoadNorthEntrance, "0"},
+    {18, 16, 0, &Route110_SeasideCyclingRoadNorthEntrance, "2"},
+    {16, 88, 0, &Route110_SeasideCyclingRoadSouthEntrance, "0"},
+    {19, 88, 0, &Route110_SeasideCyclingRoadSouthEntrance, "2"},
 };
 
 static CoordEvent Route110_coords[] = {
@@ -6821,20 +6824,20 @@ static ObjectEvent BattleFrontier_OutsideEast_object_events[] = {
 };
 
 static WarpEvent BattleFrontier_OutsideEast_warps[] = {
-    {16, 14, 0, "MAP_BATTLE_FRONTIER_BATTLE_TOWER_LOBBY", "0"},
-    {39, 29, 0, "MAP_BATTLE_FRONTIER_BATTLE_ARENA_LOBBY", "0"},
-    {45, 56, 0, "MAP_BATTLE_FRONTIER_BATTLE_PALACE_LOBBY", "0"},
-    {58, 14, 0, "MAP_BATTLE_FRONTIER_BATTLE_PYRAMID_LOBBY", "0"},
-    {35, 12, 3, "MAP_BATTLE_FRONTIER_RANKING_HALL", "0"},
-    {4, 44, 0, "MAP_BATTLE_FRONTIER_LOUNGE1", "0"},
-    {10, 28, 0, "MAP_BATTLE_FRONTIER_EXCHANGE_SERVICE_CORNER", "0"},
-    {22, 51, 0, "MAP_BATTLE_FRONTIER_LOUNGE5", "0"},
-    {5, 8, 0, "MAP_BATTLE_FRONTIER_LOUNGE6", "0"},
-    {65, 31, 0, "MAP_BATTLE_FRONTIER_LOUNGE3", "0"},
-    {14, 51, 0, "MAP_BATTLE_FRONTIER_LOUNGE8", "0"},
-    {21, 45, 0, "MAP_BATTLE_FRONTIER_LOUNGE9", "0"},
-    {3, 51, 0, "MAP_BATTLE_FRONTIER_POKEMON_CENTER_1F", "0"},
-    {28, 7, 0, "MAP_ARTISAN_CAVE_1F", "0"},
+    {16, 14, 0, &BattleFrontier_BattleTowerLobby, "0"},
+    {39, 29, 0, &BattleFrontier_BattleArenaLobby, "0"},
+    {45, 56, 0, &BattleFrontier_BattlePalaceLobby, "0"},
+    {58, 14, 0, &BattleFrontier_BattlePyramidLobby, "0"},
+    {35, 12, 3, &BattleFrontier_RankingHall, "0"},
+    {4, 44, 0, &BattleFrontier_Lounge1, "0"},
+    {10, 28, 0, &BattleFrontier_ExchangeServiceCorner, "0"},
+    {22, 51, 0, &BattleFrontier_Lounge5, "0"},
+    {5, 8, 0, &BattleFrontier_Lounge6, "0"},
+    {65, 31, 0, &BattleFrontier_Lounge3, "0"},
+    {14, 51, 0, &BattleFrontier_Lounge8, "0"},
+    {21, 45, 0, &BattleFrontier_Lounge9, "0"},
+    {3, 51, 0, &BattleFrontier_PokemonCenter_1F, "0"},
+    {28, 7, 0, &ArtisanCave_1F, "0"},
 };
 
 static BgEvent BattleFrontier_OutsideEast_bg_events[] = {
@@ -6907,7 +6910,7 @@ static ObjectEvent Route117_object_events[] = {
 };
 
 static WarpEvent Route117_warps[] = {
-    {51, 5, 0, "MAP_ROUTE117_POKEMON_DAY_CARE", "0"},
+    {51, 5, 0, &Route117_PokemonDayCare, "0"},
 };
 
 static BgEvent Route117_bg_events[] = {
@@ -6949,8 +6952,8 @@ static ObjectEvent SootopolisCity_House3_object_events[] = {
 };
 
 static WarpEvent SootopolisCity_House3_warps[] = {
-    {3, 6, 0, "MAP_SOOTOPOLIS_CITY", "6"},
-    {4, 6, 0, "MAP_SOOTOPOLIS_CITY", "6"},
+    {3, 6, 0, &SootopolisCity, "6"},
+    {4, 6, 0, &SootopolisCity, "6"},
 };
 
 const Map SootopolisCity_House3 = {
@@ -7082,8 +7085,8 @@ static ObjectEvent SafariZone_RestHouse_object_events[] = {
 };
 
 static WarpEvent SafariZone_RestHouse_warps[] = {
-    {3, 8, 0, "MAP_SAFARI_ZONE_SOUTHWEST", "0"},
-    {4, 8, 0, "MAP_SAFARI_ZONE_SOUTHWEST", "0"},
+    {3, 8, 0, &SafariZone_Southwest, "0"},
+    {4, 8, 0, &SafariZone_Southwest, "0"},
 };
 
 const Map SafariZone_RestHouse = {
@@ -7128,9 +7131,9 @@ static ObjectEvent LittlerootTown_object_events[] = {
 };
 
 static WarpEvent LittlerootTown_warps[] = {
-    {14, 8, 0, "MAP_LITTLEROOT_TOWN_MAYS_HOUSE_1F", "1"},
-    {5, 8, 0, "MAP_LITTLEROOT_TOWN_BRENDANS_HOUSE_1F", "1"},
-    {7, 16, 0, "MAP_LITTLEROOT_TOWN_PROFESSOR_BIRCHS_LAB", "0"},
+    {14, 8, 0, &LittlerootTown_MaysHouse_1F, "1"},
+    {5, 8, 0, &LittlerootTown_BrendansHouse_1F, "1"},
+    {7, 16, 0, &LittlerootTown_ProfessorBirchsLab, "0"},
 };
 
 static CoordEvent LittlerootTown_coords[] = {
@@ -7231,12 +7234,12 @@ static ObjectEvent PetalburgCity_object_events[] = {
 };
 
 static WarpEvent PetalburgCity_warps[] = {
-    {10, 19, 0, "MAP_PETALBURG_CITY_HOUSE1", "0"},
-    {7, 5, 0, "MAP_PETALBURG_CITY_WALLYS_HOUSE", "0"},
-    {15, 8, 0, "MAP_PETALBURG_CITY_GYM", "0"},
-    {20, 16, 0, "MAP_PETALBURG_CITY_POKEMON_CENTER_1F", "0"},
-    {20, 24, 0, "MAP_PETALBURG_CITY_HOUSE2", "0"},
-    {25, 12, 0, "MAP_PETALBURG_CITY_MART", "0"},
+    {10, 19, 0, &PetalburgCity_House1, "0"},
+    {7, 5, 0, &PetalburgCity_WallysHouse, "0"},
+    {15, 8, 0, &PetalburgCity_Gym, "0"},
+    {20, 16, 0, &PetalburgCity_PokemonCenter_1F, "0"},
+    {20, 24, 0, &PetalburgCity_House2, "0"},
+    {25, 12, 0, &PetalburgCity_Mart, "0"},
 };
 
 static CoordEvent PetalburgCity_coords[] = {
@@ -7295,8 +7298,8 @@ static ObjectEvent FortreeCity_DecorationShop_object_events[] = {
 };
 
 static WarpEvent FortreeCity_DecorationShop_warps[] = {
-    {3, 5, 0, "MAP_FORTREE_CITY", "8"},
-    {4, 5, 0, "MAP_FORTREE_CITY", "8"},
+    {3, 5, 0, &FortreeCity, "8"},
+    {4, 5, 0, &FortreeCity, "8"},
 };
 
 const Map FortreeCity_DecorationShop = {
@@ -7365,7 +7368,7 @@ static ObjectEvent SootopolisCity_Gym_B1F_object_events[] = {
 };
 
 static WarpEvent SootopolisCity_Gym_B1F_warps[] = {
-    {11, 22, 3, "MAP_SOOTOPOLIS_CITY_GYM_1F", "2"},
+    {11, 22, 3, &SootopolisCity_Gym_1F, "2"},
 };
 
 const Map SootopolisCity_Gym_B1F = {
@@ -7401,8 +7404,8 @@ static ObjectEvent Route104_PrettyPetalFlowerShop_object_events[] = {
 };
 
 static WarpEvent Route104_PrettyPetalFlowerShop_warps[] = {
-    {2, 8, 0, "MAP_ROUTE104", "1"},
-    {3, 8, 0, "MAP_ROUTE104", "1"},
+    {2, 8, 0, &Route104, "1"},
+    {3, 8, 0, &Route104, "1"},
 };
 
 const Map Route104_PrettyPetalFlowerShop = {
@@ -7439,9 +7442,9 @@ static ObjectEvent RustboroCity_PokemonCenter_2F_object_events[] = {
 };
 
 static WarpEvent RustboroCity_PokemonCenter_2F_warps[] = {
-    {1, 6, 4, "MAP_RUSTBORO_CITY_POKEMON_CENTER_1F", "2"},
-    {5, 1, 3, "MAP_UNION_ROOM", "0"},
-    {9, 1, 3, "MAP_TRADE_CENTER", "0"},
+    {1, 6, 4, &RustboroCity_PokemonCenter_1F, "2"},
+    {5, 1, 3, &UnionRoom, "0"},
+    {9, 1, 3, &TradeCenter, "0"},
 };
 
 const Map RustboroCity_PokemonCenter_2F = {
@@ -7471,9 +7474,9 @@ const Map RustboroCity_PokemonCenter_2F = {
 };
 
 static WarpEvent SkyPillar_3F_warps[] = {
-    {3, 1, 3, "MAP_SKY_PILLAR_2F", "1"},
-    {11, 1, 3, "MAP_SKY_PILLAR_4F", "0"},
-    {7, 1, 3, "MAP_SKY_PILLAR_4F", "1"},
+    {3, 1, 3, &SkyPillar_2F, "1"},
+    {11, 1, 3, &SkyPillar_4F, "0"},
+    {7, 1, 3, &SkyPillar_4F, "1"},
 };
 
 const Map SkyPillar_3F = {
@@ -7508,8 +7511,8 @@ static ObjectEvent LilycoveCity_House1_object_events[] = {
 };
 
 static WarpEvent LilycoveCity_House1_warps[] = {
-    {3, 8, 0, "MAP_LILYCOVE_CITY", "8"},
-    {4, 8, 0, "MAP_LILYCOVE_CITY", "8"},
+    {3, 8, 0, &LilycoveCity, "8"},
+    {4, 8, 0, &LilycoveCity, "8"},
 };
 
 const Map LilycoveCity_House1 = {
@@ -7580,7 +7583,7 @@ static ObjectEvent SkyPillar_Top_object_events[] = {
 };
 
 static WarpEvent SkyPillar_Top_warps[] = {
-    {16, 14, 3, "MAP_SKY_PILLAR_5F", "1"},
+    {16, 14, 3, &SkyPillar_5F, "1"},
 };
 
 static CoordEvent SkyPillar_Top_coords[] = {
@@ -7619,8 +7622,8 @@ static ObjectEvent OldaleTown_House2_object_events[] = {
 };
 
 static WarpEvent OldaleTown_House2_warps[] = {
-    {3, 7, 0, "MAP_OLDALE_TOWN", "1"},
-    {4, 7, 0, "MAP_OLDALE_TOWN", "1"},
+    {3, 7, 0, &OldaleTown, "1"},
+    {4, 7, 0, &OldaleTown, "1"},
 };
 
 const Map OldaleTown_House2 = {
@@ -7694,7 +7697,7 @@ static ObjectEvent BattleFrontier_BattleArenaLobby_object_events[] = {
 };
 
 static WarpEvent BattleFrontier_BattleArenaLobby_warps[] = {
-    {7, 12, 3, "MAP_BATTLE_FRONTIER_OUTSIDE_EAST", "1"},
+    {7, 12, 3, &BattleFrontier_OutsideEast, "1"},
 };
 
 static BgEvent BattleFrontier_BattleArenaLobby_bg_events[] = {
@@ -7733,10 +7736,10 @@ static MapConnection EverGrandeCity_connections[] = {
 };
 
 static WarpEvent EverGrandeCity_warps[] = {
-    {18, 5, 0, "MAP_EVER_GRANDE_CITY_POKEMON_LEAGUE_1F", "0"},
-    {27, 48, 0, "MAP_EVER_GRANDE_CITY_POKEMON_CENTER_1F", "0"},
-    {18, 41, 0, "MAP_VICTORY_ROAD_1F", "0"},
-    {18, 27, 0, "MAP_VICTORY_ROAD_1F", "1"},
+    {18, 5, 0, &EverGrandeCity_PokemonLeague_1F, "0"},
+    {27, 48, 0, &EverGrandeCity_PokemonCenter_1F, "0"},
+    {18, 41, 0, &VictoryRoad_1F, "0"},
+    {18, 27, 0, &VictoryRoad_1F, "1"},
 };
 
 static CoordEvent EverGrandeCity_coords[] = {
@@ -7792,8 +7795,8 @@ static ObjectEvent SootopolisCity_House2_object_events[] = {
 };
 
 static WarpEvent SootopolisCity_House2_warps[] = {
-    {3, 6, 0, "MAP_SOOTOPOLIS_CITY", "5"},
-    {4, 6, 0, "MAP_SOOTOPOLIS_CITY", "5"},
+    {3, 6, 0, &SootopolisCity, "5"},
+    {4, 6, 0, &SootopolisCity, "5"},
 };
 
 const Map SootopolisCity_House2 = {
@@ -7859,11 +7862,11 @@ static ObjectEvent Route116_object_events[] = {
 };
 
 static WarpEvent Route116_warps[] = {
-    {47, 8, 0, "MAP_RUSTURF_TUNNEL", "0"},
-    {38, 8, 0, "MAP_ROUTE116_TUNNELERS_REST_HOUSE", "0"},
-    {65, 10, 0, "MAP_RUSTURF_TUNNEL", "2"},
-    {59, 13, 0, "MAP_TERRA_CAVE_ENTRANCE", "0"},
-    {79, 6, 0, "MAP_TERRA_CAVE_ENTRANCE", "0"},
+    {47, 8, 0, &RusturfTunnel, "0"},
+    {38, 8, 0, &Route116_TunnelersRestHouse, "0"},
+    {65, 10, 0, &RusturfTunnel, "2"},
+    {59, 13, 0, &TerraCave_Entrance, "0"},
+    {79, 6, 0, &TerraCave_Entrance, "0"},
 };
 
 static CoordEvent Route116_coords[] = {
@@ -7918,9 +7921,9 @@ static ObjectEvent SlateportCity_SternsShipyard_1F_object_events[] = {
 };
 
 static WarpEvent SlateportCity_SternsShipyard_1F_warps[] = {
-    {2, 14, 0, "MAP_SLATEPORT_CITY", "2"},
-    {3, 14, 0, "MAP_SLATEPORT_CITY", "2"},
-    {3, 1, 0, "MAP_SLATEPORT_CITY_STERNS_SHIPYARD_2F", "0"},
+    {2, 14, 0, &SlateportCity, "2"},
+    {3, 14, 0, &SlateportCity, "2"},
+    {3, 1, 0, &SlateportCity_SternsShipyard_2F, "0"},
 };
 
 const Map SlateportCity_SternsShipyard_1F = {
@@ -7950,8 +7953,8 @@ const Map SlateportCity_SternsShipyard_1F = {
 };
 
 static WarpEvent MirageTower_2F_warps[] = {
-    {18, 12, 3, "MAP_MIRAGE_TOWER_3F", "0"},
-    {15, 2, 3, "MAP_MIRAGE_TOWER_1F", "1"},
+    {18, 12, 3, &MirageTower_3F, "0"},
+    {15, 2, 3, &MirageTower_1F, "1"},
 };
 
 const Map MirageTower_2F = {
@@ -8025,8 +8028,8 @@ static ObjectEvent SeafloorCavern_Entrance_object_events[] = {
 };
 
 static WarpEvent SeafloorCavern_Entrance_warps[] = {
-    {10, 18, 3, "MAP_UNDERWATER_ROUTE128", "0"},
-    {10, 1, 3, "MAP_SEAFLOOR_CAVERN_ROOM1", "0"},
+    {10, 18, 3, &Underwater_Route128, "0"},
+    {10, 1, 3, &SeafloorCavern_Room1, "0"},
 };
 
 const Map SeafloorCavern_Entrance = {
@@ -8111,11 +8114,11 @@ static ObjectEvent Route111_object_events[] = {
 };
 
 static WarpEvent Route111_warps[] = {
-    {13, 113, 0, "MAP_ROUTE111_WINSTRATE_FAMILYS_HOUSE", "0"},
-    {29, 87, 0, "MAP_DESERT_RUINS", "0"},
-    {26, 18, 0, "MAP_ROUTE111_OLD_LADYS_REST_STOP", "0"},
-    {19, 58, 0, "MAP_MIRAGE_TOWER_1F", "0"},
-    {31, 113, 0, "MAP_TRAINER_HILL_ENTRANCE", "0"},
+    {13, 113, 0, &Route111_WinstrateFamilysHouse, "0"},
+    {29, 87, 0, &DesertRuins, "0"},
+    {26, 18, 0, &Route111_OldLadysRestStop, "0"},
+    {19, 58, 0, &MirageTower_1F, "0"},
+    {31, 113, 0, &TrainerHill_Entrance, "0"},
 };
 
 static CoordEvent Route111_coords[] = {
@@ -8208,8 +8211,8 @@ static ObjectEvent SootopolisCity_House5_object_events[] = {
 };
 
 static WarpEvent SootopolisCity_House5_warps[] = {
-    {3, 6, 0, "MAP_SOOTOPOLIS_CITY", "8"},
-    {4, 6, 0, "MAP_SOOTOPOLIS_CITY", "8"},
+    {3, 6, 0, &SootopolisCity, "8"},
+    {4, 6, 0, &SootopolisCity, "8"},
 };
 
 const Map SootopolisCity_House5 = {
@@ -8257,7 +8260,7 @@ static ObjectEvent SecretBase_BrownCave1_object_events[] = {
 };
 
 static WarpEvent SecretBase_BrownCave1_warps[] = {
-    {5, 7, 0, "MAP_DYNAMIC", "WARP_ID_SECRET_BASE"},
+    {5, 7, 0, &Dynamic, "WARP_ID_SECRET_BASE"},
 };
 
 const Map SecretBase_BrownCave1 = {
@@ -8294,8 +8297,8 @@ static ObjectEvent PetalburgCity_Mart_object_events[] = {
 };
 
 static WarpEvent PetalburgCity_Mart_warps[] = {
-    {3, 7, 0, "MAP_PETALBURG_CITY", "5"},
-    {4, 7, 0, "MAP_PETALBURG_CITY", "5"},
+    {3, 7, 0, &PetalburgCity, "5"},
+    {4, 7, 0, &PetalburgCity, "5"},
 };
 
 const Map PetalburgCity_Mart = {
@@ -8330,14 +8333,14 @@ static ObjectEvent AbandonedShip_Corridors_B1F_object_events[] = {
 };
 
 static WarpEvent AbandonedShip_Corridors_B1F_warps[] = {
-    {6, 4, 3, "MAP_ABANDONED_SHIP_ROOMS2_B1F", "2"},
-    {3, 4, 3, "MAP_ABANDONED_SHIP_ROOMS2_B1F", "0"},
-    {5, 7, 3, "MAP_ABANDONED_SHIP_ROOMS_B1F", "0"},
-    {8, 7, 3, "MAP_ABANDONED_SHIP_ROOMS_B1F", "1"},
-    {11, 7, 3, "MAP_ABANDONED_SHIP_ROOMS_B1F", "2"},
-    {11, 4, 3, "MAP_ABANDONED_SHIP_ROOM_B1F", "0"},
-    {0, 2, 3, "MAP_ABANDONED_SHIP_CORRIDORS_1F", "10"},
-    {8, 2, 3, "MAP_ABANDONED_SHIP_CORRIDORS_1F", "9"},
+    {6, 4, 3, &AbandonedShip_Rooms2_B1F, "2"},
+    {3, 4, 3, &AbandonedShip_Rooms2_B1F, "0"},
+    {5, 7, 3, &AbandonedShip_Rooms_B1F, "0"},
+    {8, 7, 3, &AbandonedShip_Rooms_B1F, "1"},
+    {11, 7, 3, &AbandonedShip_Rooms_B1F, "2"},
+    {11, 4, 3, &AbandonedShip_Room_B1F, "0"},
+    {0, 2, 3, &AbandonedShip_Corridors_1F, "10"},
+    {8, 2, 3, &AbandonedShip_Corridors_1F, "9"},
 };
 
 static BgEvent AbandonedShip_Corridors_B1F_bg_events[] = {
@@ -8426,8 +8429,8 @@ const Map Route127 = {
 };
 
 static WarpEvent NavelRock_Down11_warps[] = {
-    {5, 5, 3, "MAP_NAVEL_ROCK_BOTTOM", "0"},
-    {3, 3, 3, "MAP_NAVEL_ROCK_DOWN10", "1"},
+    {5, 5, 3, &NavelRock_Bottom, "0"},
+    {3, 3, 3, &NavelRock_Down10, "1"},
 };
 
 const Map NavelRock_Down11 = {
@@ -8461,9 +8464,9 @@ static ObjectEvent IslandCave_object_events[] = {
 };
 
 static WarpEvent IslandCave_warps[] = {
-    {8, 29, 3, "MAP_ROUTE105", "0"},
-    {8, 20, 0, "MAP_ISLAND_CAVE", "2"},
-    {8, 11, 3, "MAP_ISLAND_CAVE", "1"},
+    {8, 29, 3, &Route105, "0"},
+    {8, 20, 0, &IslandCave, "2"},
+    {8, 11, 3, &IslandCave, "1"},
 };
 
 static BgEvent IslandCave_bg_events[] = {
@@ -8529,8 +8532,8 @@ static ObjectEvent Route118_object_events[] = {
 };
 
 static WarpEvent Route118_warps[] = {
-    {42, 6, 0, "MAP_TERRA_CAVE_ENTRANCE", "0"},
-    {9, 6, 0, "MAP_TERRA_CAVE_ENTRANCE", "0"},
+    {42, 6, 0, &TerraCave_Entrance, "0"},
+    {9, 6, 0, &TerraCave_Entrance, "0"},
 };
 
 static CoordEvent Route118_coords[] = {
@@ -8585,7 +8588,7 @@ static ObjectEvent Underwater_SeafloorCavern_object_events[] = {
 };
 
 static WarpEvent Underwater_SeafloorCavern_warps[] = {
-    {6, 7, 0, "MAP_UNDERWATER_ROUTE128", "0"},
+    {6, 7, 0, &Underwater_Route128, "0"},
 };
 
 const Map Underwater_SeafloorCavern = {
@@ -8619,8 +8622,8 @@ static ObjectEvent Route124_DivingTreasureHuntersHouse_object_events[] = {
 };
 
 static WarpEvent Route124_DivingTreasureHuntersHouse_warps[] = {
-    {3, 8, 0, "MAP_ROUTE124", "0"},
-    {4, 8, 0, "MAP_ROUTE124", "0"},
+    {3, 8, 0, &Route124, "0"},
+    {4, 8, 0, &Route124, "0"},
 };
 
 static BgEvent Route124_DivingTreasureHuntersHouse_bg_events[] = {
@@ -8706,8 +8709,8 @@ static ObjectEvent Route120_object_events[] = {
 };
 
 static WarpEvent Route120_warps[] = {
-    {7, 55, 0, "MAP_ANCIENT_TOMB", "0"},
-    {19, 23, 1, "MAP_SCORCHED_SLAB", "0"},
+    {7, 55, 0, &AncientTomb, "0"},
+    {19, 23, 1, &ScorchedSlab, "0"},
 };
 
 static CoordEvent Route120_coords[] = {
@@ -8787,7 +8790,7 @@ static ObjectEvent NewMauville_Inside_object_events[] = {
 };
 
 static WarpEvent NewMauville_Inside_warps[] = {
-    {32, 33, 3, "MAP_NEW_MAUVILLE_ENTRANCE", "1"},
+    {32, 33, 3, &NewMauville_Entrance, "1"},
 };
 
 static CoordEvent NewMauville_Inside_coords[] = {
@@ -8890,8 +8893,8 @@ static ObjectEvent PetalburgCity_WallysHouse_object_events[] = {
 };
 
 static WarpEvent PetalburgCity_WallysHouse_warps[] = {
-    {3, 7, 0, "MAP_PETALBURG_CITY", "1"},
-    {4, 7, 0, "MAP_PETALBURG_CITY", "1"},
+    {3, 7, 0, &PetalburgCity, "1"},
+    {4, 7, 0, &PetalburgCity, "1"},
 };
 
 const Map PetalburgCity_WallysHouse = {
@@ -8928,9 +8931,9 @@ static ObjectEvent LavaridgeTown_PokemonCenter_2F_object_events[] = {
 };
 
 static WarpEvent LavaridgeTown_PokemonCenter_2F_warps[] = {
-    {1, 6, 4, "MAP_LAVARIDGE_TOWN_POKEMON_CENTER_1F", "2"},
-    {5, 1, 3, "MAP_UNION_ROOM", "0"},
-    {9, 1, 3, "MAP_TRADE_CENTER", "0"},
+    {1, 6, 4, &LavaridgeTown_PokemonCenter_1F, "2"},
+    {5, 1, 3, &UnionRoom, "0"},
+    {9, 1, 3, &TradeCenter, "0"},
 };
 
 const Map LavaridgeTown_PokemonCenter_2F = {
@@ -8966,8 +8969,8 @@ static ObjectEvent EverGrandeCity_ChampionsRoom_object_events[] = {
 };
 
 static WarpEvent EverGrandeCity_ChampionsRoom_warps[] = {
-    {6, 12, 3, "MAP_EVER_GRANDE_CITY_HALL4", "1"},
-    {6, 2, 0, "MAP_EVER_GRANDE_CITY_HALL_OF_FAME", "0"},
+    {6, 12, 3, &EverGrandeCity_Hall4, "1"},
+    {6, 2, 0, &EverGrandeCity_HallOfFame, "0"},
 };
 
 const Map EverGrandeCity_ChampionsRoom = {
@@ -8997,8 +9000,8 @@ const Map EverGrandeCity_ChampionsRoom = {
 };
 
 static WarpEvent EverGrandeCity_Hall4_warps[] = {
-    {5, 33, 3, "MAP_EVER_GRANDE_CITY_DRAKES_ROOM", "1"},
-    {5, 2, 0, "MAP_EVER_GRANDE_CITY_CHAMPIONS_ROOM", "0"},
+    {5, 33, 3, &EverGrandeCity_DrakesRoom, "1"},
+    {5, 2, 0, &EverGrandeCity_ChampionsRoom, "0"},
 };
 
 const Map EverGrandeCity_Hall4 = {
@@ -9034,8 +9037,8 @@ static ObjectEvent PacifidlogTown_House2_object_events[] = {
 };
 
 static WarpEvent PacifidlogTown_House2_warps[] = {
-    {4, 8, 0, "MAP_PACIFIDLOG_TOWN", "2"},
-    {5, 8, 0, "MAP_PACIFIDLOG_TOWN", "2"},
+    {4, 8, 0, &PacifidlogTown, "2"},
+    {5, 8, 0, &PacifidlogTown, "2"},
 };
 
 const Map PacifidlogTown_House2 = {
@@ -9073,9 +9076,9 @@ static ObjectEvent Route110_TrickHousePuzzle5_object_events[] = {
 };
 
 static WarpEvent Route110_TrickHousePuzzle5_warps[] = {
-    {0, 21, 3, "MAP_ROUTE110_TRICK_HOUSE_ENTRANCE", "2"},
-    {1, 21, 3, "MAP_ROUTE110_TRICK_HOUSE_ENTRANCE", "2"},
-    {13, 1, 3, "MAP_ROUTE110_TRICK_HOUSE_END", "0"},
+    {0, 21, 3, &Route110_TrickHouseEntrance, "2"},
+    {1, 21, 3, &Route110_TrickHouseEntrance, "2"},
+    {13, 1, 3, &Route110_TrickHouseEnd, "0"},
 };
 
 static CoordEvent Route110_TrickHousePuzzle5_coords[] = {
@@ -9142,9 +9145,9 @@ static ObjectEvent PacifidlogTown_PokemonCenter_1F_object_events[] = {
 };
 
 static WarpEvent PacifidlogTown_PokemonCenter_1F_warps[] = {
-    {7, 8, 3, "MAP_PACIFIDLOG_TOWN", "0"},
-    {6, 8, 3, "MAP_PACIFIDLOG_TOWN", "0"},
-    {1, 6, 4, "MAP_PACIFIDLOG_TOWN_POKEMON_CENTER_2F", "0"},
+    {7, 8, 3, &PacifidlogTown, "0"},
+    {6, 8, 3, &PacifidlogTown, "0"},
+    {1, 6, 4, &PacifidlogTown_PokemonCenter_2F, "0"},
 };
 
 const Map PacifidlogTown_PokemonCenter_1F = {
@@ -9180,10 +9183,10 @@ static ObjectEvent Route121_SafariZoneEntrance_object_events[] = {
 };
 
 static WarpEvent Route121_SafariZoneEntrance_warps[] = {
-    {2, 5, 0, "MAP_SAFARI_ZONE_SOUTH", "0"},
-    {3, 5, 0, "MAP_SAFARI_ZONE_SOUTH", "0"},
-    {14, 13, 0, "MAP_ROUTE121", "0"},
-    {15, 13, 0, "MAP_ROUTE121", "0"},
+    {2, 5, 0, &SafariZone_South, "0"},
+    {3, 5, 0, &SafariZone_South, "0"},
+    {14, 13, 0, &Route121, "0"},
+    {15, 13, 0, &Route121, "0"},
 };
 
 static CoordEvent Route121_SafariZoneEntrance_coords[] = {
@@ -9265,9 +9268,9 @@ static ObjectEvent Route110_TrickHousePuzzle2_object_events[] = {
 };
 
 static WarpEvent Route110_TrickHousePuzzle2_warps[] = {
-    {0, 21, 3, "MAP_ROUTE110_TRICK_HOUSE_ENTRANCE", "2"},
-    {1, 21, 3, "MAP_ROUTE110_TRICK_HOUSE_ENTRANCE", "2"},
-    {13, 1, 3, "MAP_ROUTE110_TRICK_HOUSE_END", "0"},
+    {0, 21, 3, &Route110_TrickHouseEntrance, "2"},
+    {1, 21, 3, &Route110_TrickHouseEntrance, "2"},
+    {13, 1, 3, &Route110_TrickHouseEnd, "0"},
 };
 
 static CoordEvent Route110_TrickHousePuzzle2_coords[] = {
@@ -9313,8 +9316,8 @@ static ObjectEvent PacifidlogTown_House5_object_events[] = {
 };
 
 static WarpEvent PacifidlogTown_House5_warps[] = {
-    {4, 8, 0, "MAP_PACIFIDLOG_TOWN", "5"},
-    {5, 8, 0, "MAP_PACIFIDLOG_TOWN", "5"},
+    {4, 8, 0, &PacifidlogTown, "5"},
+    {5, 8, 0, &PacifidlogTown, "5"},
 };
 
 const Map PacifidlogTown_House5 = {
@@ -9344,10 +9347,10 @@ const Map PacifidlogTown_House5 = {
 };
 
 static WarpEvent EverGrandeCity_Hall3_warps[] = {
-    {5, 12, 3, "MAP_EVER_GRANDE_CITY_GLACIAS_ROOM", "1"},
-    {5, 2, 0, "MAP_EVER_GRANDE_CITY_DRAKES_ROOM", "0"},
-    {4, 12, 3, "MAP_EVER_GRANDE_CITY_GLACIAS_ROOM", "1"},
-    {6, 12, 3, "MAP_EVER_GRANDE_CITY_GLACIAS_ROOM", "1"},
+    {5, 12, 3, &EverGrandeCity_GlaciasRoom, "1"},
+    {5, 2, 0, &EverGrandeCity_DrakesRoom, "0"},
+    {4, 12, 3, &EverGrandeCity_GlaciasRoom, "1"},
+    {6, 12, 3, &EverGrandeCity_GlaciasRoom, "1"},
 };
 
 const Map EverGrandeCity_Hall3 = {
@@ -9422,7 +9425,7 @@ const Map BattleFrontier_BattlePyramidFloor = {
 };
 
 static WarpEvent Underwater_MarineCave_warps[] = {
-    {9, 8, 0, "MAP_DYNAMIC", "WARP_ID_DYNAMIC"},
+    {9, 8, 0, &Dynamic, "WARP_ID_DYNAMIC"},
 };
 
 const Map Underwater_MarineCave = {
@@ -9460,9 +9463,9 @@ static ObjectEvent LilycoveCity_DepartmentStore_2F_object_events[] = {
 };
 
 static WarpEvent LilycoveCity_DepartmentStore_2F_warps[] = {
-    {16, 1, 0, "MAP_LILYCOVE_CITY_DEPARTMENT_STORE_1F", "2"},
-    {13, 1, 0, "MAP_LILYCOVE_CITY_DEPARTMENT_STORE_3F", "0"},
-    {2, 1, 0, "MAP_LILYCOVE_CITY_DEPARTMENT_STORE_ELEVATOR", "0"},
+    {16, 1, 0, &LilycoveCity_DepartmentStore_1F, "2"},
+    {13, 1, 0, &LilycoveCity_DepartmentStore_3F, "0"},
+    {2, 1, 0, &LilycoveCity_DepartmentStoreElevator, "0"},
 };
 
 const Map LilycoveCity_DepartmentStore_2F = {
@@ -9492,7 +9495,7 @@ const Map LilycoveCity_DepartmentStore_2F = {
 };
 
 static WarpEvent SealedChamber_InnerRoom_warps[] = {
-    {10, 19, 3, "MAP_SEALED_CHAMBER_OUTER_ROOM", "0"},
+    {10, 19, 3, &SealedChamber_OuterRoom, "0"},
 };
 
 static BgEvent SealedChamber_InnerRoom_bg_events[] = {
@@ -9573,20 +9576,20 @@ static ObjectEvent MossdeepCity_Gym_object_events[] = {
 };
 
 static WarpEvent MossdeepCity_Gym_warps[] = {
-    {6, 35, 3, "MAP_MOSSDEEP_CITY", "1"},
-    {7, 35, 3, "MAP_MOSSDEEP_CITY", "1"},
-    {3, 28, 0, "MAP_MOSSDEEP_CITY_GYM", "3"},
-    {1, 23, 3, "MAP_MOSSDEEP_CITY_GYM", "2"},
-    {7, 18, 0, "MAP_MOSSDEEP_CITY_GYM", "5"},
-    {8, 12, 0, "MAP_MOSSDEEP_CITY_GYM", "4"},
-    {9, 18, 0, "MAP_MOSSDEEP_CITY_GYM", "7"},
-    {23, 20, 0, "MAP_MOSSDEEP_CITY_GYM", "6"},
-    {1, 33, 3, "MAP_MOSSDEEP_CITY_GYM", "9"},
-    {20, 24, 0, "MAP_MOSSDEEP_CITY_GYM", "8"},
-    {11, 3, 0, "MAP_MOSSDEEP_CITY_GYM", "11"},
-    {11, 35, 3, "MAP_MOSSDEEP_CITY_GYM", "10"},
-    {13, 32, 0, "MAP_MOSSDEEP_CITY_GYM", "13"},
-    {21, 10, 0, "MAP_MOSSDEEP_CITY_GYM", "12"},
+    {6, 35, 3, &MossdeepCity, "1"},
+    {7, 35, 3, &MossdeepCity, "1"},
+    {3, 28, 0, &MossdeepCity_Gym, "3"},
+    {1, 23, 3, &MossdeepCity_Gym, "2"},
+    {7, 18, 0, &MossdeepCity_Gym, "5"},
+    {8, 12, 0, &MossdeepCity_Gym, "4"},
+    {9, 18, 0, &MossdeepCity_Gym, "7"},
+    {23, 20, 0, &MossdeepCity_Gym, "6"},
+    {1, 33, 3, &MossdeepCity_Gym, "9"},
+    {20, 24, 0, &MossdeepCity_Gym, "8"},
+    {11, 3, 0, &MossdeepCity_Gym, "11"},
+    {11, 35, 3, &MossdeepCity_Gym, "10"},
+    {13, 32, 0, &MossdeepCity_Gym, "13"},
+    {21, 10, 0, &MossdeepCity_Gym, "12"},
 };
 
 static CoordEvent MossdeepCity_Gym_coords[] = {
@@ -9651,7 +9654,7 @@ static ObjectEvent SecretBase_BlueCave2_object_events[] = {
 };
 
 static WarpEvent SecretBase_BlueCave2_warps[] = {
-    {7, 5, 0, "MAP_DYNAMIC", "WARP_ID_SECRET_BASE"},
+    {7, 5, 0, &Dynamic, "WARP_ID_SECRET_BASE"},
 };
 
 const Map SecretBase_BlueCave2 = {
@@ -9686,8 +9689,8 @@ static ObjectEvent AbandonedShip_CaptainsOffice_object_events[] = {
 };
 
 static WarpEvent AbandonedShip_CaptainsOffice_warps[] = {
-    {7, 6, 3, "MAP_ABANDONED_SHIP_DECK", "4"},
-    {8, 6, 3, "MAP_ABANDONED_SHIP_DECK", "4"},
+    {7, 6, 3, &AbandonedShip_Deck, "4"},
+    {8, 6, 3, &AbandonedShip_Deck, "4"},
 };
 
 const Map AbandonedShip_CaptainsOffice = {
@@ -9717,8 +9720,8 @@ const Map AbandonedShip_CaptainsOffice = {
 };
 
 static WarpEvent TrainerHill_4F_warps[] = {
-    {2, 1, 3, "MAP_TRAINER_HILL_3F", "1"},
-    {12, 1, 3, "MAP_TRAINER_HILL_ROOF", "0"},
+    {2, 1, 3, &TrainerHill_3F, "1"},
+    {12, 1, 3, &TrainerHill_Roof, "0"},
 };
 
 const Map TrainerHill_4F = {
@@ -9752,7 +9755,7 @@ static ObjectEvent DesertUnderpass_object_events[] = {
 };
 
 static WarpEvent DesertUnderpass_warps[] = {
-    {10, 12, 0, "MAP_ROUTE114_FOSSIL_MANIACS_TUNNEL", "2"},
+    {10, 12, 0, &Route114_FossilManiacsTunnel, "2"},
 };
 
 const Map DesertUnderpass = {
@@ -9788,8 +9791,8 @@ static ObjectEvent LavaridgeTown_HerbShop_object_events[] = {
 };
 
 static WarpEvent LavaridgeTown_HerbShop_warps[] = {
-    {3, 7, 0, "MAP_LAVARIDGE_TOWN", "0"},
-    {4, 7, 0, "MAP_LAVARIDGE_TOWN", "0"},
+    {3, 7, 0, &LavaridgeTown, "0"},
+    {4, 7, 0, &LavaridgeTown, "0"},
 };
 
 const Map LavaridgeTown_HerbShop = {
@@ -9837,7 +9840,7 @@ static ObjectEvent SecretBase_Shrub1_object_events[] = {
 };
 
 static WarpEvent SecretBase_Shrub1_warps[] = {
-    {5, 7, 0, "MAP_DYNAMIC", "WARP_ID_SECRET_BASE"},
+    {5, 7, 0, &Dynamic, "WARP_ID_SECRET_BASE"},
 };
 
 const Map SecretBase_Shrub1 = {
@@ -9867,8 +9870,8 @@ const Map SecretBase_Shrub1 = {
 };
 
 static WarpEvent Underwater_SootopolisCity_warps[] = {
-    {9, 8, 0, "MAP_UNDERWATER_ROUTE126", "0"},
-    {10, 8, 0, "MAP_UNDERWATER_ROUTE126", "0"},
+    {9, 8, 0, &Underwater_Route126, "0"},
+    {10, 8, 0, &Underwater_Route126, "0"},
 };
 
 const Map Underwater_SootopolisCity = {
@@ -9902,7 +9905,7 @@ static ObjectEvent MarineCave_End_object_events[] = {
 };
 
 static WarpEvent MarineCave_End_warps[] = {
-    {20, 4, 0, "MAP_MARINE_CAVE_ENTRANCE", "0"},
+    {20, 4, 0, &MarineCave_Entrance, "0"},
 };
 
 static CoordEvent MarineCave_End_coords[] = {
@@ -9943,9 +9946,9 @@ static ObjectEvent FallarborTown_PokemonCenter_2F_object_events[] = {
 };
 
 static WarpEvent FallarborTown_PokemonCenter_2F_warps[] = {
-    {1, 6, 4, "MAP_FALLARBOR_TOWN_POKEMON_CENTER_1F", "2"},
-    {5, 1, 3, "MAP_UNION_ROOM", "0"},
-    {9, 1, 3, "MAP_TRADE_CENTER", "0"},
+    {1, 6, 4, &FallarborTown_PokemonCenter_1F, "2"},
+    {5, 1, 3, &UnionRoom, "0"},
+    {9, 1, 3, &TradeCenter, "0"},
 };
 
 const Map FallarborTown_PokemonCenter_2F = {
@@ -10019,8 +10022,8 @@ static ObjectEvent MossdeepCity_House2_object_events[] = {
 };
 
 static WarpEvent MossdeepCity_House2_warps[] = {
-    {3, 8, 0, "MAP_MOSSDEEP_CITY", "3"},
-    {4, 8, 0, "MAP_MOSSDEEP_CITY", "3"},
+    {3, 8, 0, &MossdeepCity, "3"},
+    {4, 8, 0, &MossdeepCity, "3"},
 };
 
 const Map MossdeepCity_House2 = {
@@ -10060,9 +10063,9 @@ static ObjectEvent Route110_TrickHousePuzzle3_object_events[] = {
 };
 
 static WarpEvent Route110_TrickHousePuzzle3_warps[] = {
-    {0, 21, 3, "MAP_ROUTE110_TRICK_HOUSE_ENTRANCE", "2"},
-    {1, 21, 3, "MAP_ROUTE110_TRICK_HOUSE_ENTRANCE", "2"},
-    {13, 1, 3, "MAP_ROUTE110_TRICK_HOUSE_END", "0"},
+    {0, 21, 3, &Route110_TrickHouseEntrance, "2"},
+    {1, 21, 3, &Route110_TrickHouseEntrance, "2"},
+    {13, 1, 3, &Route110_TrickHouseEnd, "0"},
 };
 
 static CoordEvent Route110_TrickHousePuzzle3_coords[] = {
@@ -10103,7 +10106,7 @@ const Map Route110_TrickHousePuzzle3 = {
 };
 
 static WarpEvent Underwater_SealedChamber_warps[] = {
-    {7, 1, 0, "MAP_UNDERWATER_ROUTE134", "0"},
+    {7, 1, 0, &Underwater_Route134, "0"},
 };
 
 static BgEvent Underwater_SealedChamber_bg_events[] = {
@@ -10145,8 +10148,8 @@ static ObjectEvent FallarborTown_Mart_object_events[] = {
 };
 
 static WarpEvent FallarborTown_Mart_warps[] = {
-    {3, 7, 0, "MAP_FALLARBOR_TOWN", "0"},
-    {4, 7, 0, "MAP_FALLARBOR_TOWN", "0"},
+    {3, 7, 0, &FallarborTown, "0"},
+    {4, 7, 0, &FallarborTown, "0"},
 };
 
 const Map FallarborTown_Mart = {
@@ -10176,10 +10179,10 @@ const Map FallarborTown_Mart = {
 };
 
 static WarpEvent EverGrandeCity_Hall2_warps[] = {
-    {5, 12, 3, "MAP_EVER_GRANDE_CITY_PHOEBES_ROOM", "1"},
-    {5, 2, 0, "MAP_EVER_GRANDE_CITY_GLACIAS_ROOM", "0"},
-    {4, 12, 3, "MAP_EVER_GRANDE_CITY_PHOEBES_ROOM", "1"},
-    {6, 12, 3, "MAP_EVER_GRANDE_CITY_PHOEBES_ROOM", "1"},
+    {5, 12, 3, &EverGrandeCity_PhoebesRoom, "1"},
+    {5, 2, 0, &EverGrandeCity_GlaciasRoom, "0"},
+    {4, 12, 3, &EverGrandeCity_PhoebesRoom, "1"},
+    {6, 12, 3, &EverGrandeCity_PhoebesRoom, "1"},
 };
 
 const Map EverGrandeCity_Hall2 = {
@@ -10215,8 +10218,8 @@ static ObjectEvent PacifidlogTown_House4_object_events[] = {
 };
 
 static WarpEvent PacifidlogTown_House4_warps[] = {
-    {4, 8, 0, "MAP_PACIFIDLOG_TOWN", "4"},
-    {5, 8, 0, "MAP_PACIFIDLOG_TOWN", "4"},
+    {4, 8, 0, &PacifidlogTown, "4"},
+    {5, 8, 0, &PacifidlogTown, "4"},
 };
 
 const Map PacifidlogTown_House4 = {
@@ -10251,9 +10254,9 @@ static ObjectEvent MossdeepCity_GameCorner_1F_object_events[] = {
 };
 
 static WarpEvent MossdeepCity_GameCorner_1F_warps[] = {
-    {5, 9, 0, "MAP_MOSSDEEP_CITY", "9"},
-    {6, 9, 0, "MAP_MOSSDEEP_CITY", "9"},
-    {2, 0, 0, "MAP_MOSSDEEP_CITY_GAME_CORNER_B1F", "0"},
+    {5, 9, 0, &MossdeepCity, "9"},
+    {6, 9, 0, &MossdeepCity, "9"},
+    {2, 0, 0, &MossdeepCity_GameCorner_B1F, "0"},
 };
 
 static BgEvent MossdeepCity_GameCorner_1F_bg_events[] = {
@@ -10295,8 +10298,8 @@ static ObjectEvent DewfordTown_House1_object_events[] = {
 };
 
 static WarpEvent DewfordTown_House1_warps[] = {
-    {3, 7, 0, "MAP_DEWFORD_TOWN", "3"},
-    {4, 7, 0, "MAP_DEWFORD_TOWN", "3"},
+    {3, 7, 0, &DewfordTown, "3"},
+    {4, 7, 0, &DewfordTown, "3"},
 };
 
 const Map DewfordTown_House1 = {
@@ -10333,10 +10336,10 @@ static ObjectEvent LavaridgeTown_PokemonCenter_1F_object_events[] = {
 };
 
 static WarpEvent LavaridgeTown_PokemonCenter_1F_warps[] = {
-    {7, 8, 3, "MAP_LAVARIDGE_TOWN", "3"},
-    {6, 8, 3, "MAP_LAVARIDGE_TOWN", "3"},
-    {1, 6, 4, "MAP_LAVARIDGE_TOWN_POKEMON_CENTER_2F", "0"},
-    {2, 1, 0, "MAP_LAVARIDGE_TOWN", "5"},
+    {7, 8, 3, &LavaridgeTown, "3"},
+    {6, 8, 3, &LavaridgeTown, "3"},
+    {1, 6, 4, &LavaridgeTown_PokemonCenter_2F, "0"},
+    {2, 1, 0, &LavaridgeTown, "5"},
 };
 
 const Map LavaridgeTown_PokemonCenter_1F = {
@@ -10378,8 +10381,8 @@ static ObjectEvent DewfordTown_Hall_object_events[] = {
 };
 
 static WarpEvent DewfordTown_Hall_warps[] = {
-    {5, 8, 0, "MAP_DEWFORD_TOWN", "0"},
-    {6, 8, 0, "MAP_DEWFORD_TOWN", "0"},
+    {5, 8, 0, &DewfordTown, "0"},
+    {6, 8, 0, &DewfordTown, "0"},
 };
 
 static BgEvent DewfordTown_Hall_bg_events[] = {
@@ -10419,8 +10422,8 @@ static ObjectEvent PacifidlogTown_House3_object_events[] = {
 };
 
 static WarpEvent PacifidlogTown_House3_warps[] = {
-    {4, 8, 0, "MAP_PACIFIDLOG_TOWN", "3"},
-    {5, 8, 0, "MAP_PACIFIDLOG_TOWN", "3"},
+    {4, 8, 0, &PacifidlogTown, "3"},
+    {5, 8, 0, &PacifidlogTown, "3"},
 };
 
 const Map PacifidlogTown_House3 = {
@@ -10450,10 +10453,10 @@ const Map PacifidlogTown_House3 = {
 };
 
 static WarpEvent EverGrandeCity_Hall5_warps[] = {
-    {5, 12, 3, "MAP_EVER_GRANDE_CITY_POKEMON_LEAGUE_1F", "2"},
-    {5, 2, 0, "MAP_EVER_GRANDE_CITY_SIDNEYS_ROOM", "0"},
-    {4, 12, 3, "MAP_EVER_GRANDE_CITY_POKEMON_LEAGUE_1F", "2"},
-    {6, 12, 3, "MAP_EVER_GRANDE_CITY_POKEMON_LEAGUE_1F", "2"},
+    {5, 12, 3, &EverGrandeCity_PokemonLeague_1F, "2"},
+    {5, 2, 0, &EverGrandeCity_SidneysRoom, "0"},
+    {4, 12, 3, &EverGrandeCity_PokemonLeague_1F, "2"},
+    {6, 12, 3, &EverGrandeCity_PokemonLeague_1F, "2"},
 };
 
 const Map EverGrandeCity_Hall5 = {
@@ -10500,9 +10503,9 @@ static ObjectEvent Route110_TrickHousePuzzle4_object_events[] = {
 };
 
 static WarpEvent Route110_TrickHousePuzzle4_warps[] = {
-    {0, 21, 3, "MAP_ROUTE110_TRICK_HOUSE_ENTRANCE", "2"},
-    {1, 21, 3, "MAP_ROUTE110_TRICK_HOUSE_ENTRANCE", "2"},
-    {13, 1, 3, "MAP_ROUTE110_TRICK_HOUSE_END", "0"},
+    {0, 21, 3, &Route110_TrickHouseEntrance, "2"},
+    {1, 21, 3, &Route110_TrickHouseEntrance, "2"},
+    {13, 1, 3, &Route110_TrickHouseEnd, "0"},
 };
 
 static BgEvent Route110_TrickHousePuzzle4_bg_events[] = {
@@ -10543,9 +10546,9 @@ static ObjectEvent PacifidlogTown_PokemonCenter_2F_object_events[] = {
 };
 
 static WarpEvent PacifidlogTown_PokemonCenter_2F_warps[] = {
-    {1, 6, 4, "MAP_PACIFIDLOG_TOWN_POKEMON_CENTER_1F", "2"},
-    {5, 1, 3, "MAP_UNION_ROOM", "0"},
-    {9, 1, 3, "MAP_TRADE_CENTER", "0"},
+    {1, 6, 4, &PacifidlogTown_PokemonCenter_1F, "2"},
+    {5, 1, 3, &UnionRoom, "0"},
+    {9, 1, 3, &TradeCenter, "0"},
 };
 
 const Map PacifidlogTown_PokemonCenter_2F = {
@@ -10575,10 +10578,10 @@ const Map PacifidlogTown_PokemonCenter_2F = {
 };
 
 static WarpEvent Route110_TrickHouseCorridor_warps[] = {
-    {13, 3, 3, "MAP_ROUTE110_TRICK_HOUSE_END", "1"},
-    {14, 3, 3, "MAP_ROUTE110_TRICK_HOUSE_END", "1"},
-    {4, 23, 3, "MAP_ROUTE110_TRICK_HOUSE_ENTRANCE", "2"},
-    {5, 23, 3, "MAP_ROUTE110_TRICK_HOUSE_ENTRANCE", "2"},
+    {13, 3, 3, &Route110_TrickHouseEnd, "1"},
+    {14, 3, 3, &Route110_TrickHouseEnd, "1"},
+    {4, 23, 3, &Route110_TrickHouseEntrance, "2"},
+    {5, 23, 3, &Route110_TrickHouseEntrance, "2"},
 };
 
 const Map Route110_TrickHouseCorridor = {
@@ -10642,8 +10645,8 @@ static ObjectEvent Route111_OldLadysRestStop_object_events[] = {
 };
 
 static WarpEvent Route111_OldLadysRestStop_warps[] = {
-    {3, 7, 0, "MAP_ROUTE111", "2"},
-    {4, 7, 0, "MAP_ROUTE111", "2"},
+    {3, 7, 0, &Route111, "2"},
+    {4, 7, 0, &Route111, "2"},
 };
 
 const Map Route111_OldLadysRestStop = {
@@ -10677,8 +10680,8 @@ static ObjectEvent MossdeepCity_House3_object_events[] = {
 };
 
 static WarpEvent MossdeepCity_House3_warps[] = {
-    {3, 7, 0, "MAP_MOSSDEEP_CITY", "5"},
-    {4, 7, 0, "MAP_MOSSDEEP_CITY", "5"},
+    {3, 7, 0, &MossdeepCity, "5"},
+    {4, 7, 0, &MossdeepCity, "5"},
 };
 
 const Map MossdeepCity_House3 = {
@@ -10724,12 +10727,12 @@ static ObjectEvent PetalburgWoods_object_events[] = {
 };
 
 static WarpEvent PetalburgWoods_warps[] = {
-    {14, 5, 0, "MAP_ROUTE104", "2"},
-    {15, 5, 0, "MAP_ROUTE104", "3"},
-    {16, 38, 0, "MAP_ROUTE104", "4"},
-    {17, 38, 0, "MAP_ROUTE104", "5"},
-    {36, 38, 0, "MAP_ROUTE104", "6"},
-    {37, 38, 0, "MAP_ROUTE104", "7"},
+    {14, 5, 0, &Route104, "2"},
+    {15, 5, 0, &Route104, "3"},
+    {16, 38, 0, &Route104, "4"},
+    {17, 38, 0, &Route104, "5"},
+    {36, 38, 0, &Route104, "6"},
+    {37, 38, 0, &Route104, "7"},
 };
 
 static CoordEvent PetalburgWoods_coords[] = {
@@ -10807,8 +10810,8 @@ static ObjectEvent SkyPillar_Outside_object_events[] = {
 };
 
 static WarpEvent SkyPillar_Outside_warps[] = {
-    {17, 13, 3, "MAP_SKY_PILLAR_ENTRANCE", "1"},
-    {14, 5, 0, "MAP_SKY_PILLAR_1F", "0"},
+    {17, 13, 3, &SkyPillar_Entrance, "1"},
+    {14, 5, 0, &SkyPillar_1F, "0"},
 };
 
 const Map SkyPillar_Outside = {
@@ -10843,8 +10846,8 @@ static ObjectEvent PetalburgCity_House2_object_events[] = {
 };
 
 static WarpEvent PetalburgCity_House2_warps[] = {
-    {3, 7, 0, "MAP_PETALBURG_CITY", "4"},
-    {4, 7, 0, "MAP_PETALBURG_CITY", "4"},
+    {3, 7, 0, &PetalburgCity, "4"},
+    {4, 7, 0, &PetalburgCity, "4"},
 };
 
 const Map PetalburgCity_House2 = {
@@ -10883,10 +10886,10 @@ static ObjectEvent LilycoveCity_DepartmentStore_1F_object_events[] = {
 };
 
 static WarpEvent LilycoveCity_DepartmentStore_1F_warps[] = {
-    {8, 7, 0, "MAP_LILYCOVE_CITY", "0"},
-    {9, 7, 0, "MAP_LILYCOVE_CITY", "0"},
-    {16, 1, 0, "MAP_LILYCOVE_CITY_DEPARTMENT_STORE_2F", "0"},
-    {2, 1, 0, "MAP_LILYCOVE_CITY_DEPARTMENT_STORE_ELEVATOR", "0"},
+    {8, 7, 0, &LilycoveCity, "0"},
+    {9, 7, 0, &LilycoveCity, "0"},
+    {16, 1, 0, &LilycoveCity_DepartmentStore_2F, "0"},
+    {2, 1, 0, &LilycoveCity_DepartmentStoreElevator, "0"},
 };
 
 static BgEvent LilycoveCity_DepartmentStore_1F_bg_events[] = {
@@ -10924,8 +10927,8 @@ static ObjectEvent Route114_LanettesHouse_object_events[] = {
 };
 
 static WarpEvent Route114_LanettesHouse_warps[] = {
-    {5, 7, 0, "MAP_ROUTE114", "2"},
-    {6, 7, 0, "MAP_ROUTE114", "2"},
+    {5, 7, 0, &Route114, "2"},
+    {6, 7, 0, &Route114, "2"},
 };
 
 static BgEvent Route114_LanettesHouse_bg_events[] = {
@@ -10967,8 +10970,8 @@ static ObjectEvent MossdeepCity_House4_object_events[] = {
 };
 
 static WarpEvent MossdeepCity_House4_warps[] = {
-    {4, 7, 0, "MAP_MOSSDEEP_CITY", "7"},
-    {3, 7, 0, "MAP_MOSSDEEP_CITY", "7"},
+    {4, 7, 0, &MossdeepCity, "7"},
+    {3, 7, 0, &MossdeepCity, "7"},
 };
 
 const Map MossdeepCity_House4 = {
@@ -11032,8 +11035,8 @@ static ObjectEvent BattleFrontier_BattleDomePreBattleRoom_object_events[] = {
 };
 
 static WarpEvent BattleFrontier_BattleDomePreBattleRoom_warps[] = {
-    {6, 8, 3, "MAP_BATTLE_FRONTIER_OUTSIDE_WEST", "1"},
-    {7, 8, 3, "MAP_BATTLE_FRONTIER_OUTSIDE_WEST", "1"},
+    {6, 8, 3, &BattleFrontier_OutsideWest, "1"},
+    {7, 8, 3, &BattleFrontier_OutsideWest, "1"},
 };
 
 const Map BattleFrontier_BattleDomePreBattleRoom = {
@@ -11081,7 +11084,7 @@ static ObjectEvent SecretBase_BlueCave3_object_events[] = {
 };
 
 static WarpEvent SecretBase_BlueCave3_warps[] = {
-    {4, 15, 0, "MAP_DYNAMIC", "WARP_ID_SECRET_BASE"},
+    {4, 15, 0, &Dynamic, "WARP_ID_SECRET_BASE"},
 };
 
 const Map SecretBase_BlueCave3 = {
@@ -11118,9 +11121,9 @@ static ObjectEvent FallarborTown_PokemonCenter_1F_object_events[] = {
 };
 
 static WarpEvent FallarborTown_PokemonCenter_1F_warps[] = {
-    {7, 8, 3, "MAP_FALLARBOR_TOWN", "2"},
-    {6, 8, 3, "MAP_FALLARBOR_TOWN", "2"},
-    {1, 6, 4, "MAP_FALLARBOR_TOWN_POKEMON_CENTER_2F", "0"},
+    {7, 8, 3, &FallarborTown, "2"},
+    {6, 8, 3, &FallarborTown, "2"},
+    {1, 6, 4, &FallarborTown_PokemonCenter_2F, "0"},
 };
 
 const Map FallarborTown_PokemonCenter_1F = {
@@ -11168,7 +11171,7 @@ static ObjectEvent SecretBase_BlueCave4_object_events[] = {
 };
 
 static WarpEvent SecretBase_BlueCave4_warps[] = {
-    {4, 15, 0, "MAP_DYNAMIC", "WARP_ID_SECRET_BASE"},
+    {4, 15, 0, &Dynamic, "WARP_ID_SECRET_BASE"},
 };
 
 const Map SecretBase_BlueCave4 = {
@@ -11205,8 +11208,8 @@ static ObjectEvent RustboroCity_Mart_object_events[] = {
 };
 
 static WarpEvent RustboroCity_Mart_warps[] = {
-    {3, 7, 0, "MAP_RUSTBORO_CITY", "2"},
-    {4, 7, 0, "MAP_RUSTBORO_CITY", "2"},
+    {3, 7, 0, &RustboroCity, "2"},
+    {4, 7, 0, &RustboroCity, "2"},
 };
 
 const Map RustboroCity_Mart = {
@@ -11240,7 +11243,7 @@ static ObjectEvent NavelRock_Bottom_object_events[] = {
 };
 
 static WarpEvent NavelRock_Bottom_warps[] = {
-    {14, 19, 0, "MAP_NAVEL_ROCK_DOWN11", "0"},
+    {14, 19, 0, &NavelRock_Down11, "0"},
 };
 
 const Map NavelRock_Bottom = {
@@ -11275,10 +11278,10 @@ static ObjectEvent AbandonedShip_Rooms2_B1F_object_events[] = {
 };
 
 static WarpEvent AbandonedShip_Rooms2_B1F_warps[] = {
-    {4, 7, 3, "MAP_ABANDONED_SHIP_CORRIDORS_B1F", "1"},
-    {5, 7, 3, "MAP_ABANDONED_SHIP_CORRIDORS_B1F", "1"},
-    {13, 7, 3, "MAP_ABANDONED_SHIP_CORRIDORS_B1F", "0"},
-    {14, 7, 3, "MAP_ABANDONED_SHIP_CORRIDORS_B1F", "0"},
+    {4, 7, 3, &AbandonedShip_Corridors_B1F, "1"},
+    {5, 7, 3, &AbandonedShip_Corridors_B1F, "1"},
+    {13, 7, 3, &AbandonedShip_Corridors_B1F, "0"},
+    {14, 7, 3, &AbandonedShip_Corridors_B1F, "0"},
 };
 
 const Map AbandonedShip_Rooms2_B1F = {
@@ -11314,8 +11317,8 @@ static MapConnection Underwater_Route127_connections[] = {
 };
 
 static WarpEvent Underwater_Route127_warps[] = {
-    {57, 5, 0, "MAP_UNDERWATER_MARINE_CAVE", "0"},
-    {67, 38, 0, "MAP_UNDERWATER_MARINE_CAVE", "0"},
+    {57, 5, 0, &Underwater_MarineCave, "0"},
+    {67, 38, 0, &Underwater_MarineCave, "0"},
 };
 
 static BgEvent Underwater_Route127_bg_events[] = {
@@ -11387,10 +11390,10 @@ static ObjectEvent LilycoveCity_ContestHall_object_events[] = {
 };
 
 static WarpEvent LilycoveCity_ContestHall_warps[] = {
-    {19, 32, 0, "MAP_LILYCOVE_CITY_CONTEST_LOBBY", "2"},
-    {30, 32, 0, "MAP_LILYCOVE_CITY_CONTEST_LOBBY", "3"},
-    {20, 32, 0, "MAP_LILYCOVE_CITY_CONTEST_LOBBY", "2"},
-    {31, 32, 0, "MAP_LILYCOVE_CITY_CONTEST_LOBBY", "3"},
+    {19, 32, 0, &LilycoveCity_ContestLobby, "2"},
+    {30, 32, 0, &LilycoveCity_ContestLobby, "3"},
+    {20, 32, 0, &LilycoveCity_ContestLobby, "2"},
+    {31, 32, 0, &LilycoveCity_ContestLobby, "3"},
 };
 
 static BgEvent LilycoveCity_ContestHall_bg_events[] = {
@@ -11433,9 +11436,9 @@ static ObjectEvent DesertRuins_object_events[] = {
 };
 
 static WarpEvent DesertRuins_warps[] = {
-    {8, 29, 3, "MAP_ROUTE111", "1"},
-    {8, 20, 0, "MAP_DESERT_RUINS", "2"},
-    {8, 11, 3, "MAP_DESERT_RUINS", "1"},
+    {8, 29, 3, &Route111, "1"},
+    {8, 20, 0, &DesertRuins, "2"},
+    {8, 11, 3, &DesertRuins, "1"},
 };
 
 static BgEvent DesertRuins_bg_events[] = {
@@ -11471,7 +11474,7 @@ const Map DesertRuins = {
 };
 
 static WarpEvent AlteringCave_warps[] = {
-    {18, 22, 0, "MAP_ROUTE103", "0"},
+    {18, 22, 0, &Route103, "0"},
 };
 
 const Map AlteringCave = {
@@ -11505,7 +11508,7 @@ static ObjectEvent NavelRock_Top_object_events[] = {
 };
 
 static WarpEvent NavelRock_Top_warps[] = {
-    {13, 20, 3, "MAP_NAVEL_ROCK_UP4", "1"},
+    {13, 20, 3, &NavelRock_Up4, "1"},
 };
 
 static CoordEvent NavelRock_Top_coords[] = {
@@ -11549,9 +11552,9 @@ static ObjectEvent InsideOfTruck_object_events[] = {
 };
 
 static WarpEvent InsideOfTruck_warps[] = {
-    {4, 1, 0, "MAP_DYNAMIC", "WARP_ID_DYNAMIC"},
-    {4, 2, 0, "MAP_DYNAMIC", "WARP_ID_DYNAMIC"},
-    {4, 3, 0, "MAP_DYNAMIC", "WARP_ID_DYNAMIC"},
+    {4, 1, 0, &Dynamic, "WARP_ID_DYNAMIC"},
+    {4, 2, 0, &Dynamic, "WARP_ID_DYNAMIC"},
+    {4, 3, 0, &Dynamic, "WARP_ID_DYNAMIC"},
 };
 
 static CoordEvent InsideOfTruck_coords[] = {
@@ -11642,7 +11645,7 @@ static ObjectEvent MeteorFalls_B1F_2R_object_events[] = {
 };
 
 static WarpEvent MeteorFalls_B1F_2R_warps[] = {
-    {5, 15, 3, "MAP_METEOR_FALLS_B1F_1R", "3"},
+    {5, 15, 3, &MeteorFalls_B1F_1R, "3"},
 };
 
 const Map MeteorFalls_B1F_2R = {
@@ -11672,8 +11675,8 @@ const Map MeteorFalls_B1F_2R = {
 };
 
 static WarpEvent CaveOfOrigin_1F_warps[] = {
-    {11, 17, 3, "MAP_CAVE_OF_ORIGIN_ENTRANCE", "1"},
-    {14, 5, 3, "MAP_CAVE_OF_ORIGIN_B1F", "0"},
+    {11, 17, 3, &CaveOfOrigin_Entrance, "1"},
+    {14, 5, 3, &CaveOfOrigin_B1F, "0"},
 };
 
 const Map CaveOfOrigin_1F = {
@@ -11713,8 +11716,8 @@ static ObjectEvent RustboroCity_PokemonSchool_object_events[] = {
 };
 
 static WarpEvent RustboroCity_PokemonSchool_warps[] = {
-    {5, 10, 0, "MAP_RUSTBORO_CITY", "4"},
-    {6, 10, 0, "MAP_RUSTBORO_CITY", "4"},
+    {5, 10, 0, &RustboroCity, "4"},
+    {6, 10, 0, &RustboroCity, "4"},
 };
 
 static BgEvent RustboroCity_PokemonSchool_bg_events[] = {
@@ -11782,8 +11785,8 @@ static ObjectEvent TrainerHill_Roof_object_events[] = {
 };
 
 static WarpEvent TrainerHill_Roof_warps[] = {
-    {9, 5, 3, "MAP_TRAINER_HILL_4F", "1"},
-    {15, 5, 0, "MAP_TRAINER_HILL_ELEVATOR", "1"},
+    {9, 5, 3, &TrainerHill_4F, "1"},
+    {15, 5, 0, &TrainerHill_Elevator, "1"},
 };
 
 const Map TrainerHill_Roof = {
@@ -11821,8 +11824,8 @@ static ObjectEvent BattleFrontier_Lounge2_object_events[] = {
 };
 
 static WarpEvent BattleFrontier_Lounge2_warps[] = {
-    {1, 7, 0, "MAP_BATTLE_FRONTIER_OUTSIDE_WEST", "3"},
-    {2, 7, 0, "MAP_BATTLE_FRONTIER_OUTSIDE_WEST", "3"},
+    {1, 7, 0, &BattleFrontier_OutsideWest, "3"},
+    {2, 7, 0, &BattleFrontier_OutsideWest, "3"},
 };
 
 const Map BattleFrontier_Lounge2 = {
@@ -11856,8 +11859,8 @@ static ObjectEvent Route110_TrickHouseEnd_object_events[] = {
 };
 
 static WarpEvent Route110_TrickHouseEnd_warps[] = {
-    {10, 1, 3, "MAP_ROUTE110_TRICK_HOUSE_PUZZLE1", "2"},
-    {2, 1, 3, "MAP_ROUTE110_TRICK_HOUSE_CORRIDOR", "0"},
+    {10, 1, 3, &Route110_TrickHousePuzzle1, "2"},
+    {2, 1, 3, &Route110_TrickHouseCorridor, "0"},
 };
 
 static CoordEvent Route110_TrickHouseEnd_coords[] = {
@@ -11900,10 +11903,10 @@ static ObjectEvent SeafloorCavern_Room4_object_events[] = {
 };
 
 static WarpEvent SeafloorCavern_Room4_warps[] = {
-    {13, 1, 3, "MAP_SEAFLOOR_CAVERN_ROOM2", "1"},
-    {4, 1, 3, "MAP_SEAFLOOR_CAVERN_ROOM5", "1"},
-    {9, 10, 3, "MAP_SEAFLOOR_CAVERN_ROOM5", "2"},
-    {10, 15, 3, "MAP_SEAFLOOR_CAVERN_ENTRANCE", "1"},
+    {13, 1, 3, &SeafloorCavern_Room2, "1"},
+    {4, 1, 3, &SeafloorCavern_Room5, "1"},
+    {9, 10, 3, &SeafloorCavern_Room5, "2"},
+    {10, 15, 3, &SeafloorCavern_Entrance, "1"},
 };
 
 const Map SeafloorCavern_Room4 = {
@@ -11937,8 +11940,8 @@ static MapConnection Underwater_Route129_connections[] = {
 };
 
 static WarpEvent Underwater_Route129_warps[] = {
-    {26, 3, 0, "MAP_UNDERWATER_MARINE_CAVE", "0"},
-    {32, 21, 0, "MAP_UNDERWATER_MARINE_CAVE", "0"},
+    {26, 3, 0, &Underwater_MarineCave, "0"},
+    {32, 21, 0, &Underwater_MarineCave, "0"},
 };
 
 const Map Underwater_Route129 = {
@@ -11973,9 +11976,9 @@ static ObjectEvent AbandonedShip_Rooms_B1F_object_events[] = {
 };
 
 static WarpEvent AbandonedShip_Rooms_B1F_warps[] = {
-    {4, 1, 3, "MAP_ABANDONED_SHIP_CORRIDORS_B1F", "2"},
-    {13, 1, 3, "MAP_ABANDONED_SHIP_CORRIDORS_B1F", "3"},
-    {22, 1, 3, "MAP_ABANDONED_SHIP_CORRIDORS_B1F", "4"},
+    {4, 1, 3, &AbandonedShip_Corridors_B1F, "2"},
+    {13, 1, 3, &AbandonedShip_Corridors_B1F, "3"},
+    {22, 1, 3, &AbandonedShip_Corridors_B1F, "4"},
 };
 
 const Map AbandonedShip_Rooms_B1F = {
@@ -12017,9 +12020,9 @@ static ObjectEvent SeafloorCavern_Room3_object_events[] = {
 };
 
 static WarpEvent SeafloorCavern_Room3_warps[] = {
-    {8, 1, 3, "MAP_SEAFLOOR_CAVERN_ROOM8", "1"},
-    {9, 13, 3, "MAP_SEAFLOOR_CAVERN_ROOM7", "1"},
-    {4, 15, 3, "MAP_SEAFLOOR_CAVERN_ROOM6", "1"},
+    {8, 1, 3, &SeafloorCavern_Room8, "1"},
+    {9, 13, 3, &SeafloorCavern_Room7, "1"},
+    {4, 15, 3, &SeafloorCavern_Room6, "1"},
 };
 
 const Map SeafloorCavern_Room3 = {
@@ -12063,9 +12066,9 @@ static ObjectEvent MossdeepCity_SpaceCenter_1F_object_events[] = {
 };
 
 static WarpEvent MossdeepCity_SpaceCenter_1F_warps[] = {
-    {7, 9, 0, "MAP_MOSSDEEP_CITY", "8"},
-    {8, 9, 0, "MAP_MOSSDEEP_CITY", "8"},
-    {13, 1, 0, "MAP_MOSSDEEP_CITY_SPACE_CENTER_2F", "0"},
+    {7, 9, 0, &MossdeepCity, "8"},
+    {8, 9, 0, &MossdeepCity, "8"},
+    {13, 1, 0, &MossdeepCity_SpaceCenter_2F, "0"},
 };
 
 const Map MossdeepCity_SpaceCenter_1F = {
@@ -12102,8 +12105,8 @@ static ObjectEvent BattleFrontier_Lounge5_object_events[] = {
 };
 
 static WarpEvent BattleFrontier_Lounge5_warps[] = {
-    {1, 7, 0, "MAP_BATTLE_FRONTIER_OUTSIDE_EAST", "7"},
-    {2, 7, 0, "MAP_BATTLE_FRONTIER_OUTSIDE_EAST", "7"},
+    {1, 7, 0, &BattleFrontier_OutsideEast, "7"},
+    {2, 7, 0, &BattleFrontier_OutsideEast, "7"},
 };
 
 const Map BattleFrontier_Lounge5 = {
@@ -12139,8 +12142,8 @@ static ObjectEvent RustboroCity_House3_object_events[] = {
 };
 
 static WarpEvent RustboroCity_House3_warps[] = {
-    {5, 8, 0, "MAP_RUSTBORO_CITY", "11"},
-    {6, 8, 0, "MAP_RUSTBORO_CITY", "11"},
+    {5, 8, 0, &RustboroCity, "11"},
+    {6, 8, 0, &RustboroCity, "11"},
 };
 
 const Map RustboroCity_House3 = {
@@ -12178,9 +12181,9 @@ static ObjectEvent MauvilleCity_PokemonCenter_1F_object_events[] = {
 };
 
 static WarpEvent MauvilleCity_PokemonCenter_1F_warps[] = {
-    {7, 8, 3, "MAP_MAUVILLE_CITY", "1"},
-    {6, 8, 3, "MAP_MAUVILLE_CITY", "1"},
-    {1, 6, 4, "MAP_MAUVILLE_CITY_POKEMON_CENTER_2F", "0"},
+    {7, 8, 3, &MauvilleCity, "1"},
+    {6, 8, 3, &MauvilleCity, "1"},
+    {1, 6, 4, &MauvilleCity_PokemonCenter_2F, "0"},
 };
 
 const Map MauvilleCity_PokemonCenter_1F = {
@@ -12219,9 +12222,9 @@ static ObjectEvent BattleFrontier_BattlePalaceLobby_object_events[] = {
 };
 
 static WarpEvent BattleFrontier_BattlePalaceLobby_warps[] = {
-    {12, 11, 0, "MAP_BATTLE_FRONTIER_OUTSIDE_EAST", "2"},
-    {13, 11, 0, "MAP_BATTLE_FRONTIER_OUTSIDE_EAST", "2"},
-    {5, 4, 3, "MAP_BATTLE_FRONTIER_BATTLE_PALACE_CORRIDOR", "0"},
+    {12, 11, 0, &BattleFrontier_OutsideEast, "2"},
+    {13, 11, 0, &BattleFrontier_OutsideEast, "2"},
+    {5, 4, 3, &BattleFrontier_BattlePalaceCorridor, "0"},
 };
 
 static BgEvent BattleFrontier_BattlePalaceLobby_bg_events[] = {
@@ -12266,8 +12269,8 @@ static ObjectEvent BattleFrontier_BattleFactoryLobby_object_events[] = {
 };
 
 static WarpEvent BattleFrontier_BattleFactoryLobby_warps[] = {
-    {9, 11, 0, "MAP_BATTLE_FRONTIER_OUTSIDE_WEST", "2"},
-    {10, 11, 0, "MAP_BATTLE_FRONTIER_OUTSIDE_WEST", "2"},
+    {9, 11, 0, &BattleFrontier_OutsideWest, "2"},
+    {10, 11, 0, &BattleFrontier_OutsideWest, "2"},
 };
 
 static BgEvent BattleFrontier_BattleFactoryLobby_bg_events[] = {
@@ -12307,9 +12310,9 @@ static ObjectEvent AncientTomb_object_events[] = {
 };
 
 static WarpEvent AncientTomb_warps[] = {
-    {8, 29, 3, "MAP_ROUTE120", "0"},
-    {8, 20, 0, "MAP_ANCIENT_TOMB", "2"},
-    {8, 11, 3, "MAP_ANCIENT_TOMB", "1"},
+    {8, 29, 3, &Route120, "0"},
+    {8, 20, 0, &AncientTomb, "2"},
+    {8, 11, 3, &AncientTomb, "1"},
 };
 
 static BgEvent AncientTomb_bg_events[] = {
@@ -12349,7 +12352,7 @@ static ObjectEvent GraniteCave_StevensRoom_object_events[] = {
 };
 
 static WarpEvent GraniteCave_StevensRoom_warps[] = {
-    {7, 3, 3, "MAP_GRANITE_CAVE_1F", "3"},
+    {7, 3, 3, &GraniteCave_1F, "3"},
 };
 
 const Map GraniteCave_StevensRoom = {
@@ -12383,8 +12386,8 @@ static ObjectEvent EverGrandeCity_SidneysRoom_object_events[] = {
 };
 
 static WarpEvent EverGrandeCity_SidneysRoom_warps[] = {
-    {6, 13, 3, "MAP_EVER_GRANDE_CITY_HALL5", "1"},
-    {6, 2, 0, "MAP_EVER_GRANDE_CITY_HALL1", "0"},
+    {6, 13, 3, &EverGrandeCity_Hall5, "1"},
+    {6, 2, 0, &EverGrandeCity_Hall1, "0"},
 };
 
 const Map EverGrandeCity_SidneysRoom = {
@@ -12414,8 +12417,8 @@ const Map EverGrandeCity_SidneysRoom = {
 };
 
 static WarpEvent NavelRock_B1F_warps[] = {
-    {4, 3, 3, "MAP_NAVEL_ROCK_ENTRANCE", "0"},
-    {18, 9, 3, "MAP_NAVEL_ROCK_FORK", "1"},
+    {4, 3, 3, &NavelRock_Entrance, "0"},
+    {18, 9, 3, &NavelRock_Fork, "1"},
 };
 
 const Map NavelRock_B1F = {
@@ -12453,8 +12456,8 @@ static ObjectEvent BattleFrontier_BattlePalaceBattleRoom_object_events[] = {
 };
 
 static WarpEvent BattleFrontier_BattlePalaceBattleRoom_warps[] = {
-    {0, 9, 3, "MAP_BATTLE_FRONTIER_BATTLE_PALACE_CORRIDOR", "2"},
-    {1, 9, 3, "MAP_BATTLE_FRONTIER_BATTLE_PALACE_CORRIDOR", "2"},
+    {0, 9, 3, &BattleFrontier_BattlePalaceCorridor, "2"},
+    {1, 9, 3, &BattleFrontier_BattlePalaceCorridor, "2"},
 };
 
 const Map BattleFrontier_BattlePalaceBattleRoom = {
@@ -12490,8 +12493,8 @@ static ObjectEvent BattleFrontier_BattleTowerBattleRoom_object_events[] = {
 };
 
 static WarpEvent BattleFrontier_BattleTowerBattleRoom_warps[] = {
-    {5, 8, 0, "MAP_BATTLE_FRONTIER_BATTLE_TOWER_LOBBY", "2"},
-    {6, 8, 0, "MAP_BATTLE_FRONTIER_BATTLE_TOWER_LOBBY", "2"},
+    {5, 8, 0, &BattleFrontier_BattleTowerLobby, "2"},
+    {6, 8, 0, &BattleFrontier_BattleTowerLobby, "2"},
 };
 
 const Map BattleFrontier_BattleTowerBattleRoom = {
@@ -12527,7 +12530,7 @@ static ObjectEvent BattleFrontier_Lounge4_object_events[] = {
 };
 
 static WarpEvent BattleFrontier_Lounge4_warps[] = {
-    {4, 9, 0, "MAP_BATTLE_FRONTIER_OUTSIDE_WEST", "6"},
+    {4, 9, 0, &BattleFrontier_OutsideWest, "6"},
 };
 
 const Map BattleFrontier_Lounge4 = {
@@ -12562,8 +12565,8 @@ static ObjectEvent RustboroCity_House2_object_events[] = {
 };
 
 static WarpEvent RustboroCity_House2_warps[] = {
-    {5, 8, 0, "MAP_RUSTBORO_CITY", "9"},
-    {6, 8, 0, "MAP_RUSTBORO_CITY", "9"},
+    {5, 8, 0, &RustboroCity, "9"},
+    {6, 8, 0, &RustboroCity, "9"},
 };
 
 const Map RustboroCity_House2 = {
@@ -12604,10 +12607,10 @@ static ObjectEvent SeafloorCavern_Room2_object_events[] = {
 };
 
 static WarpEvent SeafloorCavern_Room2_warps[] = {
-    {10, 7, 3, "MAP_SEAFLOOR_CAVERN_ROOM1", "2"},
-    {4, 10, 3, "MAP_SEAFLOOR_CAVERN_ROOM4", "0"},
-    {6, 1, 3, "MAP_SEAFLOOR_CAVERN_ROOM6", "0"},
-    {11, 1, 3, "MAP_SEAFLOOR_CAVERN_ROOM7", "0"},
+    {10, 7, 3, &SeafloorCavern_Room1, "2"},
+    {4, 10, 3, &SeafloorCavern_Room4, "0"},
+    {6, 1, 3, &SeafloorCavern_Room6, "0"},
+    {11, 1, 3, &SeafloorCavern_Room7, "0"},
 };
 
 const Map SeafloorCavern_Room2 = {
@@ -12644,12 +12647,12 @@ static ObjectEvent AbandonedShip_Rooms_1F_object_events[] = {
 };
 
 static WarpEvent AbandonedShip_Rooms_1F_warps[] = {
-    {4, 16, 3, "MAP_ABANDONED_SHIP_CORRIDORS_1F", "4"},
-    {5, 16, 3, "MAP_ABANDONED_SHIP_CORRIDORS_1F", "4"},
-    {4, 1, 3, "MAP_ABANDONED_SHIP_CORRIDORS_1F", "6"},
-    {13, 16, 3, "MAP_ABANDONED_SHIP_CORRIDORS_1F", "5"},
-    {13, 1, 3, "MAP_ABANDONED_SHIP_CORRIDORS_1F", "7"},
-    {14, 16, 3, "MAP_ABANDONED_SHIP_CORRIDORS_1F", "5"},
+    {4, 16, 3, &AbandonedShip_Corridors_1F, "4"},
+    {5, 16, 3, &AbandonedShip_Corridors_1F, "4"},
+    {4, 1, 3, &AbandonedShip_Corridors_1F, "6"},
+    {13, 16, 3, &AbandonedShip_Corridors_1F, "5"},
+    {13, 1, 3, &AbandonedShip_Corridors_1F, "7"},
+    {14, 16, 3, &AbandonedShip_Corridors_1F, "5"},
 };
 
 const Map AbandonedShip_Rooms_1F = {
@@ -12715,10 +12718,10 @@ static ObjectEvent RecordCorner_object_events[] = {
 };
 
 static WarpEvent RecordCorner_warps[] = {
-    {8, 9, 3, "MAP_DYNAMIC", "WARP_ID_DYNAMIC"},
-    {9, 9, 3, "MAP_DYNAMIC", "WARP_ID_DYNAMIC"},
-    {11, 9, 3, "MAP_DYNAMIC", "WARP_ID_DYNAMIC"},
-    {10, 9, 3, "MAP_DYNAMIC", "WARP_ID_DYNAMIC"},
+    {8, 9, 3, &Dynamic, "WARP_ID_DYNAMIC"},
+    {9, 9, 3, &Dynamic, "WARP_ID_DYNAMIC"},
+    {11, 9, 3, &Dynamic, "WARP_ID_DYNAMIC"},
+    {10, 9, 3, &Dynamic, "WARP_ID_DYNAMIC"},
 };
 
 static CoordEvent RecordCorner_coords[] = {
@@ -12765,11 +12768,11 @@ static ObjectEvent JaggedPass_object_events[] = {
 };
 
 static WarpEvent JaggedPass_warps[] = {
-    {14, 40, 3, "MAP_ROUTE112", "2"},
-    {15, 40, 3, "MAP_ROUTE112", "3"},
-    {13, 5, 3, "MAP_MT_CHIMNEY", "2"},
-    {14, 5, 3, "MAP_MT_CHIMNEY", "3"},
-    {16, 18, 0, "MAP_MAGMA_HIDEOUT_1F", "0"},
+    {14, 40, 3, &Route112, "2"},
+    {15, 40, 3, &Route112, "3"},
+    {13, 5, 3, &MtChimney, "2"},
+    {14, 5, 3, &MtChimney, "3"},
+    {16, 18, 0, &MagmaHideout_1F, "0"},
 };
 
 static CoordEvent JaggedPass_coords[] = {
@@ -12821,14 +12824,14 @@ static ObjectEvent ShoalCave_LowTideInnerRoom_object_events[] = {
 };
 
 static WarpEvent ShoalCave_LowTideInnerRoom_warps[] = {
-    {34, 29, 3, "MAP_SHOAL_CAVE_LOW_TIDE_ENTRANCE_ROOM", "1"},
-    {38, 15, 3, "MAP_SHOAL_CAVE_LOW_TIDE_STAIRS_ROOM", "0"},
-    {42, 4, 3, "MAP_SHOAL_CAVE_LOW_TIDE_STAIRS_ROOM", "1"},
-    {19, 14, 4, "MAP_SHOAL_CAVE_LOW_TIDE_LOWER_ROOM", "0"},
-    {15, 19, 3, "MAP_SHOAL_CAVE_LOW_TIDE_LOWER_ROOM", "1"},
-    {30, 25, 3, "MAP_SHOAL_CAVE_LOW_TIDE_LOWER_ROOM", "2"},
-    {14, 33, 5, "MAP_SHOAL_CAVE_LOW_TIDE_ENTRANCE_ROOM", "2"},
-    {40, 33, 5, "MAP_SHOAL_CAVE_LOW_TIDE_ENTRANCE_ROOM", "3"},
+    {34, 29, 3, &ShoalCave_LowTideEntranceRoom, "1"},
+    {38, 15, 3, &ShoalCave_LowTideStairsRoom, "0"},
+    {42, 4, 3, &ShoalCave_LowTideStairsRoom, "1"},
+    {19, 14, 4, &ShoalCave_LowTideLowerRoom, "0"},
+    {15, 19, 3, &ShoalCave_LowTideLowerRoom, "1"},
+    {30, 25, 3, &ShoalCave_LowTideLowerRoom, "2"},
+    {14, 33, 5, &ShoalCave_LowTideEntranceRoom, "2"},
+    {40, 33, 5, &ShoalCave_LowTideEntranceRoom, "3"},
 };
 
 static BgEvent ShoalCave_LowTideInnerRoom_bg_events[] = {
@@ -12876,9 +12879,9 @@ static ObjectEvent SeafloorCavern_Room5_object_events[] = {
 };
 
 static WarpEvent SeafloorCavern_Room5_warps[] = {
-    {4, 1, 3, "MAP_SEAFLOOR_CAVERN_ROOM1", "1"},
-    {15, 12, 3, "MAP_SEAFLOOR_CAVERN_ROOM4", "1"},
-    {7, 17, 3, "MAP_SEAFLOOR_CAVERN_ROOM4", "2"},
+    {4, 1, 3, &SeafloorCavern_Room1, "1"},
+    {15, 12, 3, &SeafloorCavern_Room4, "1"},
+    {7, 17, 3, &SeafloorCavern_Room4, "2"},
 };
 
 const Map SeafloorCavern_Room5 = {
@@ -12913,7 +12916,7 @@ static MapConnection Underwater_Route128_connections[] = {
 };
 
 static WarpEvent Underwater_Route128_warps[] = {
-    {38, 26, 3, "MAP_UNDERWATER_SEAFLOOR_CAVERN", "0"},
+    {38, 26, 3, &Underwater_SeafloorCavern, "0"},
 };
 
 static BgEvent Underwater_Route128_bg_events[] = {
@@ -12956,7 +12959,7 @@ static ObjectEvent BattleFrontier_Lounge3_object_events[] = {
 };
 
 static WarpEvent BattleFrontier_Lounge3_warps[] = {
-    {4, 9, 0, "MAP_BATTLE_FRONTIER_OUTSIDE_EAST", "9"},
+    {4, 9, 0, &BattleFrontier_OutsideEast, "9"},
 };
 
 const Map BattleFrontier_Lounge3 = {
@@ -12986,12 +12989,12 @@ const Map BattleFrontier_Lounge3 = {
 };
 
 static WarpEvent MeteorFalls_B1F_1R_warps[] = {
-    {5, 6, 4, "MAP_METEOR_FALLS_1F_2R", "1"},
-    {7, 11, 5, "MAP_METEOR_FALLS_1F_2R", "2"},
-    {18, 15, 4, "MAP_METEOR_FALLS_1F_2R", "3"},
-    {17, 3, 3, "MAP_METEOR_FALLS_B1F_2R", "0"},
-    {3, 23, 5, "MAP_METEOR_FALLS_1F_1R", "3"},
-    {20, 36, 3, "MAP_METEOR_FALLS_1F_1R", "4"},
+    {5, 6, 4, &MeteorFalls_1F_2R, "1"},
+    {7, 11, 5, &MeteorFalls_1F_2R, "2"},
+    {18, 15, 4, &MeteorFalls_1F_2R, "3"},
+    {17, 3, 3, &MeteorFalls_B1F_2R, "0"},
+    {3, 23, 5, &MeteorFalls_1F_1R, "3"},
+    {20, 36, 3, &MeteorFalls_1F_1R, "4"},
 };
 
 const Map MeteorFalls_B1F_1R = {
@@ -13026,10 +13029,10 @@ static ObjectEvent GraniteCave_1F_object_events[] = {
 };
 
 static WarpEvent GraniteCave_1F_warps[] = {
-    {37, 12, 3, "MAP_ROUTE106", "0"},
-    {35, 3, 3, "MAP_GRANITE_CAVE_B1F", "0"},
-    {17, 11, 3, "MAP_GRANITE_CAVE_B1F", "1"},
-    {5, 10, 3, "MAP_GRANITE_CAVE_STEVENS_ROOM", "0"},
+    {37, 12, 3, &Route106, "0"},
+    {35, 3, 3, &GraniteCave_B1F, "0"},
+    {17, 11, 3, &GraniteCave_B1F, "1"},
+    {5, 10, 3, &GraniteCave_StevensRoom, "0"},
 };
 
 const Map GraniteCave_1F = {
@@ -13071,7 +13074,7 @@ static ObjectEvent MossdeepCity_SpaceCenter_2F_object_events[] = {
 };
 
 static WarpEvent MossdeepCity_SpaceCenter_2F_warps[] = {
-    {13, 1, 0, "MAP_MOSSDEEP_CITY_SPACE_CENTER_1F", "2"},
+    {13, 1, 0, &MossdeepCity_SpaceCenter_1F, "2"},
 };
 
 const Map MossdeepCity_SpaceCenter_2F = {
@@ -13106,8 +13109,8 @@ static ObjectEvent MtChimney_CableCarStation_object_events[] = {
 };
 
 static WarpEvent MtChimney_CableCarStation_warps[] = {
-    {6, 11, 0, "MAP_MT_CHIMNEY", "0"},
-    {7, 11, 0, "MAP_MT_CHIMNEY", "1"},
+    {6, 11, 0, &MtChimney, "0"},
+    {7, 11, 0, &MtChimney, "1"},
 };
 
 const Map MtChimney_CableCarStation = {
@@ -13143,7 +13146,7 @@ static MapConnection Underwater_Route126_connections[] = {
 };
 
 static WarpEvent Underwater_Route126_warps[] = {
-    {45, 65, 0, "MAP_UNDERWATER_SOOTOPOLIS_CITY", "0"},
+    {45, 65, 0, &Underwater_SootopolisCity, "0"},
 };
 
 static BgEvent Underwater_Route126_bg_events[] = {
@@ -13184,8 +13187,8 @@ const Map Underwater_Route126 = {
 };
 
 static WarpEvent NavelRock_Up1_warps[] = {
-    {5, 5, 3, "MAP_NAVEL_ROCK_FORK", "0"},
-    {3, 3, 3, "MAP_NAVEL_ROCK_UP2", "0"},
+    {5, 5, 3, &NavelRock_Fork, "0"},
+    {3, 3, 3, &NavelRock_Up2, "0"},
 };
 
 const Map NavelRock_Up1 = {
@@ -13223,9 +13226,9 @@ static ObjectEvent LilycoveCity_DepartmentStore_3F_object_events[] = {
 };
 
 static WarpEvent LilycoveCity_DepartmentStore_3F_warps[] = {
-    {13, 1, 0, "MAP_LILYCOVE_CITY_DEPARTMENT_STORE_2F", "1"},
-    {16, 1, 0, "MAP_LILYCOVE_CITY_DEPARTMENT_STORE_4F", "0"},
-    {2, 1, 0, "MAP_LILYCOVE_CITY_DEPARTMENT_STORE_ELEVATOR", "0"},
+    {13, 1, 0, &LilycoveCity_DepartmentStore_2F, "1"},
+    {16, 1, 0, &LilycoveCity_DepartmentStore_4F, "0"},
+    {2, 1, 0, &LilycoveCity_DepartmentStoreElevator, "0"},
 };
 
 const Map LilycoveCity_DepartmentStore_3F = {
@@ -13264,8 +13267,8 @@ static ObjectEvent LittlerootTown_ProfessorBirchsLab_object_events[] = {
 };
 
 static WarpEvent LittlerootTown_ProfessorBirchsLab_warps[] = {
-    {6, 12, 0, "MAP_LITTLEROOT_TOWN", "2"},
-    {7, 12, 0, "MAP_LITTLEROOT_TOWN", "2"},
+    {6, 12, 0, &LittlerootTown, "2"},
+    {7, 12, 0, &LittlerootTown, "2"},
 };
 
 static BgEvent LittlerootTown_ProfessorBirchsLab_bg_events[] = {
@@ -13321,9 +13324,9 @@ static ObjectEvent MauvilleCity_PokemonCenter_2F_object_events[] = {
 };
 
 static WarpEvent MauvilleCity_PokemonCenter_2F_warps[] = {
-    {1, 6, 4, "MAP_MAUVILLE_CITY_POKEMON_CENTER_1F", "2"},
-    {5, 1, 3, "MAP_UNION_ROOM", "0"},
-    {9, 1, 3, "MAP_TRADE_CENTER", "0"},
+    {1, 6, 4, &MauvilleCity_PokemonCenter_1F, "2"},
+    {5, 1, 3, &UnionRoom, "0"},
+    {9, 1, 3, &TradeCenter, "0"},
 };
 
 const Map MauvilleCity_PokemonCenter_2F = {
@@ -13358,8 +13361,8 @@ static ObjectEvent VerdanturfTown_House_object_events[] = {
 };
 
 static WarpEvent VerdanturfTown_House_warps[] = {
-    {3, 8, 0, "MAP_VERDANTURF_TOWN", "6"},
-    {4, 8, 0, "MAP_VERDANTURF_TOWN", "6"},
+    {3, 8, 0, &VerdanturfTown, "6"},
+    {4, 8, 0, &VerdanturfTown, "6"},
 };
 
 const Map VerdanturfTown_House = {
@@ -13397,8 +13400,8 @@ static ObjectEvent VerdanturfTown_WandasHouse_object_events[] = {
 };
 
 static WarpEvent VerdanturfTown_WandasHouse_warps[] = {
-    {7, 7, 0, "MAP_VERDANTURF_TOWN", "3"},
-    {8, 7, 0, "MAP_VERDANTURF_TOWN", "3"},
+    {7, 7, 0, &VerdanturfTown, "3"},
+    {8, 7, 0, &VerdanturfTown, "3"},
 };
 
 const Map VerdanturfTown_WandasHouse = {
@@ -13440,8 +13443,8 @@ static ObjectEvent LilycoveCity_PokemonTrainerFanClub_object_events[] = {
 };
 
 static WarpEvent LilycoveCity_PokemonTrainerFanClub_warps[] = {
-    {6, 13, 0, "MAP_LILYCOVE_CITY", "5"},
-    {5, 13, 0, "MAP_LILYCOVE_CITY", "5"},
+    {6, 13, 0, &LilycoveCity, "5"},
+    {5, 13, 0, &LilycoveCity, "5"},
 };
 
 const Map LilycoveCity_PokemonTrainerFanClub = {
@@ -13475,7 +13478,7 @@ static ObjectEvent ScorchedSlab_object_events[] = {
 };
 
 static WarpEvent ScorchedSlab_warps[] = {
-    {7, 16, 1, "MAP_ROUTE120", "1"},
+    {7, 16, 1, &Route120, "1"},
 };
 
 const Map ScorchedSlab = {
@@ -13509,8 +13512,8 @@ static ObjectEvent AbandonedShip_Room_B1F_object_events[] = {
 };
 
 static WarpEvent AbandonedShip_Room_B1F_warps[] = {
-    {4, 7, 3, "MAP_ABANDONED_SHIP_CORRIDORS_B1F", "5"},
-    {5, 7, 3, "MAP_ABANDONED_SHIP_CORRIDORS_B1F", "5"},
+    {4, 7, 3, &AbandonedShip_Corridors_B1F, "5"},
+    {5, 7, 3, &AbandonedShip_Corridors_B1F, "5"},
 };
 
 const Map AbandonedShip_Room_B1F = {
@@ -13546,8 +13549,8 @@ static ObjectEvent LavaridgeTown_House_object_events[] = {
 };
 
 static WarpEvent LavaridgeTown_House_warps[] = {
-    {3, 7, 0, "MAP_LAVARIDGE_TOWN", "4"},
-    {4, 7, 0, "MAP_LAVARIDGE_TOWN", "4"},
+    {3, 7, 0, &LavaridgeTown, "4"},
+    {4, 7, 0, &LavaridgeTown, "4"},
 };
 
 const Map LavaridgeTown_House = {
@@ -13581,8 +13584,8 @@ static ObjectEvent MauvilleCity_House1_object_events[] = {
 };
 
 static WarpEvent MauvilleCity_House1_warps[] = {
-    {3, 7, 0, "MAP_MAUVILLE_CITY", "4"},
-    {4, 7, 0, "MAP_MAUVILLE_CITY", "4"},
+    {3, 7, 0, &MauvilleCity, "4"},
+    {4, 7, 0, &MauvilleCity, "4"},
 };
 
 const Map MauvilleCity_House1 = {
@@ -13618,8 +13621,8 @@ static ObjectEvent FortreeCity_House1_object_events[] = {
 };
 
 static WarpEvent FortreeCity_House1_warps[] = {
-    {3, 5, 0, "MAP_FORTREE_CITY", "1"},
-    {4, 5, 0, "MAP_FORTREE_CITY", "1"},
+    {3, 5, 0, &FortreeCity, "1"},
+    {4, 5, 0, &FortreeCity, "1"},
 };
 
 const Map FortreeCity_House1 = {
@@ -13654,8 +13657,8 @@ static ObjectEvent Route104_MrBrineysHouse_object_events[] = {
 };
 
 static WarpEvent Route104_MrBrineysHouse_warps[] = {
-    {5, 8, 0, "MAP_ROUTE104", "0"},
-    {6, 8, 0, "MAP_ROUTE104", "0"},
+    {5, 8, 0, &Route104, "0"},
+    {6, 8, 0, &Route104, "0"},
 };
 
 const Map Route104_MrBrineysHouse = {
@@ -13717,8 +13720,8 @@ const Map VerdanturfTown_BattleTentBattleRoom = {
 };
 
 static WarpEvent CaveOfOrigin_UnusedRubySapphireMap2_warps[] = {
-    {5, 10, 3, "MAP_CAVE_OF_ORIGIN_UNUSED_RUBY_SAPPHIRE_MAP1", "1"},
-    {8, 14, 3, "MAP_CAVE_OF_ORIGIN_UNUSED_RUBY_SAPPHIRE_MAP3", "0"},
+    {5, 10, 3, &CaveOfOrigin_UnusedRubySapphireMap1, "1"},
+    {8, 14, 3, &CaveOfOrigin_UnusedRubySapphireMap3, "0"},
 };
 
 const Map CaveOfOrigin_UnusedRubySapphireMap2 = {
@@ -13759,7 +13762,7 @@ static ObjectEvent Route119_WeatherInstitute_2F_object_events[] = {
 };
 
 static WarpEvent Route119_WeatherInstitute_2F_warps[] = {
-    {17, 1, 0, "MAP_ROUTE119_WEATHER_INSTITUTE_1F", "2"},
+    {17, 1, 0, &Route119_WeatherInstitute_1F, "2"},
 };
 
 const Map Route119_WeatherInstitute_2F = {
@@ -13833,17 +13836,17 @@ static ObjectEvent SlateportCity_object_events[] = {
 };
 
 static WarpEvent SlateportCity_warps[] = {
-    {19, 19, 0, "MAP_SLATEPORT_CITY_POKEMON_CENTER_1F", "0"},
-    {13, 26, 0, "MAP_SLATEPORT_CITY_MART", "0"},
-    {26, 38, 0, "MAP_SLATEPORT_CITY_STERNS_SHIPYARD_1F", "0"},
-    {10, 12, 0, "MAP_SLATEPORT_CITY_BATTLE_TENT_LOBBY", "0"},
-    {4, 26, 0, "MAP_SLATEPORT_CITY_POKEMON_FAN_CLUB", "0"},
-    {30, 26, 0, "MAP_SLATEPORT_CITY_OCEANIC_MUSEUM_1F", "0"},
-    {5, 19, 0, "MAP_SLATEPORT_CITY_NAME_RATERS_HOUSE", "0"},
-    {31, 26, 0, "MAP_SLATEPORT_CITY_OCEANIC_MUSEUM_1F", "1"},
-    {28, 12, 0, "MAP_SLATEPORT_CITY_HARBOR", "0"},
-    {40, 7, 0, "MAP_SLATEPORT_CITY_HARBOR", "2"},
-    {21, 44, 0, "MAP_SLATEPORT_CITY_HOUSE", "0"},
+    {19, 19, 0, &SlateportCity_PokemonCenter_1F, "0"},
+    {13, 26, 0, &SlateportCity_Mart, "0"},
+    {26, 38, 0, &SlateportCity_SternsShipyard_1F, "0"},
+    {10, 12, 0, &SlateportCity_BattleTentLobby, "0"},
+    {4, 26, 0, &SlateportCity_PokemonFanClub, "0"},
+    {30, 26, 0, &SlateportCity_OceanicMuseum_1F, "0"},
+    {5, 19, 0, &SlateportCity_NameRatersHouse, "0"},
+    {31, 26, 0, &SlateportCity_OceanicMuseum_1F, "1"},
+    {28, 12, 0, &SlateportCity_Harbor, "0"},
+    {40, 7, 0, &SlateportCity_Harbor, "2"},
+    {21, 44, 0, &SlateportCity_House, "0"},
 };
 
 static CoordEvent SlateportCity_coords[] = {
@@ -13898,10 +13901,10 @@ static ObjectEvent ShoalCave_LowTideEntranceRoom_object_events[] = {
 };
 
 static WarpEvent ShoalCave_LowTideEntranceRoom_warps[] = {
-    {20, 30, 3, "MAP_ROUTE125", "0"},
-    {19, 5, 3, "MAP_SHOAL_CAVE_LOW_TIDE_INNER_ROOM", "0"},
-    {6, 2, 3, "MAP_SHOAL_CAVE_LOW_TIDE_INNER_ROOM", "6"},
-    {27, 2, 3, "MAP_SHOAL_CAVE_LOW_TIDE_INNER_ROOM", "7"},
+    {20, 30, 3, &Route125, "0"},
+    {19, 5, 3, &ShoalCave_LowTideInnerRoom, "0"},
+    {6, 2, 3, &ShoalCave_LowTideInnerRoom, "6"},
+    {27, 2, 3, &ShoalCave_LowTideInnerRoom, "7"},
 };
 
 const Map ShoalCave_LowTideEntranceRoom = {
@@ -13938,9 +13941,9 @@ static ObjectEvent BattleFrontier_BattlePikeLobby_object_events[] = {
 };
 
 static WarpEvent BattleFrontier_BattlePikeLobby_warps[] = {
-    {5, 12, 0, "MAP_BATTLE_FRONTIER_OUTSIDE_WEST", "0"},
-    {4, 12, 0, "MAP_BATTLE_FRONTIER_OUTSIDE_WEST", "0"},
-    {6, 12, 0, "MAP_BATTLE_FRONTIER_OUTSIDE_WEST", "0"},
+    {5, 12, 0, &BattleFrontier_OutsideWest, "0"},
+    {4, 12, 0, &BattleFrontier_OutsideWest, "0"},
+    {6, 12, 0, &BattleFrontier_OutsideWest, "0"},
 };
 
 static BgEvent BattleFrontier_BattlePikeLobby_bg_events[] = {
@@ -14011,8 +14014,8 @@ const Map BattlePyramidSquare12 = {
 };
 
 static WarpEvent SkyPillar_2F_warps[] = {
-    {10, 1, 3, "MAP_SKY_PILLAR_1F", "2"},
-    {3, 1, 3, "MAP_SKY_PILLAR_3F", "0"},
+    {10, 1, 3, &SkyPillar_1F, "2"},
+    {3, 1, 3, &SkyPillar_3F, "0"},
 };
 
 const Map SkyPillar_2F = {
@@ -14054,8 +14057,8 @@ static ObjectEvent UnionRoom_object_events[] = {
 };
 
 static WarpEvent UnionRoom_warps[] = {
-    {7, 11, 3, "MAP_DYNAMIC", "WARP_ID_DYNAMIC"},
-    {8, 11, 3, "MAP_DYNAMIC", "WARP_ID_DYNAMIC"},
+    {7, 11, 3, &Dynamic, "WARP_ID_DYNAMIC"},
+    {8, 11, 3, &Dynamic, "WARP_ID_DYNAMIC"},
 };
 
 const Map UnionRoom = {
@@ -14092,8 +14095,8 @@ static ObjectEvent BattleFrontier_Mart_object_events[] = {
 };
 
 static WarpEvent BattleFrontier_Mart_warps[] = {
-    {3, 7, 0, "MAP_BATTLE_FRONTIER_OUTSIDE_WEST", "4"},
-    {4, 7, 0, "MAP_BATTLE_FRONTIER_OUTSIDE_WEST", "4"},
+    {3, 7, 0, &BattleFrontier_OutsideWest, "4"},
+    {4, 7, 0, &BattleFrontier_OutsideWest, "4"},
 };
 
 const Map BattleFrontier_Mart = {
@@ -14128,8 +14131,8 @@ static ObjectEvent SouthernIsland_Interior_object_events[] = {
 };
 
 static WarpEvent SouthernIsland_Interior_warps[] = {
-    {13, 18, 3, "MAP_SOUTHERN_ISLAND_EXTERIOR", "0"},
-    {14, 18, 3, "MAP_SOUTHERN_ISLAND_EXTERIOR", "1"},
+    {13, 18, 3, &SouthernIsland_Exterior, "0"},
+    {14, 18, 3, &SouthernIsland_Exterior, "1"},
 };
 
 static BgEvent SouthernIsland_Interior_bg_events[] = {
@@ -14168,7 +14171,7 @@ static ObjectEvent ShoalCave_LowTideIceRoom_object_events[] = {
 };
 
 static WarpEvent ShoalCave_LowTideIceRoom_warps[] = {
-    {17, 10, 3, "MAP_SHOAL_CAVE_LOW_TIDE_LOWER_ROOM", "3"},
+    {17, 10, 3, &ShoalCave_LowTideLowerRoom, "3"},
 };
 
 const Map ShoalCave_LowTideIceRoom = {
@@ -14204,8 +14207,8 @@ static ObjectEvent MtPyre_6F_object_events[] = {
 };
 
 static WarpEvent MtPyre_6F_warps[] = {
-    {2, 1, 3, "MAP_MT_PYRE_5F", "0"},
-    {1, 10, 3, "MAP_MT_PYRE_5F", "2"},
+    {2, 1, 3, &MtPyre_5F, "0"},
+    {1, 10, 3, &MtPyre_5F, "2"},
 };
 
 const Map MtPyre_6F = {
@@ -14276,7 +14279,7 @@ static ObjectEvent NavelRock_Harbor_object_events[] = {
 };
 
 static WarpEvent NavelRock_Harbor_warps[] = {
-    {8, 2, 0, "MAP_NAVEL_ROCK_EXTERIOR", "0"},
+    {8, 2, 0, &NavelRock_Exterior, "0"},
 };
 
 const Map NavelRock_Harbor = {
@@ -14310,8 +14313,8 @@ static ObjectEvent EverGrandeCity_GlaciasRoom_object_events[] = {
 };
 
 static WarpEvent EverGrandeCity_GlaciasRoom_warps[] = {
-    {6, 13, 3, "MAP_EVER_GRANDE_CITY_HALL2", "1"},
-    {6, 2, 0, "MAP_EVER_GRANDE_CITY_HALL3", "0"},
+    {6, 13, 3, &EverGrandeCity_Hall2, "1"},
+    {6, 2, 0, &EverGrandeCity_Hall3, "0"},
 };
 
 const Map EverGrandeCity_GlaciasRoom = {
@@ -14345,10 +14348,10 @@ static ObjectEvent Route110_SeasideCyclingRoadNorthEntrance_object_events[] = {
 };
 
 static WarpEvent Route110_SeasideCyclingRoadNorthEntrance_warps[] = {
-    {1, 5, 0, "MAP_ROUTE110", "2"},
-    {2, 5, 0, "MAP_ROUTE110", "2"},
-    {12, 5, 0, "MAP_ROUTE110", "3"},
-    {13, 5, 0, "MAP_ROUTE110", "3"},
+    {1, 5, 0, &Route110, "2"},
+    {2, 5, 0, &Route110, "2"},
+    {12, 5, 0, &Route110, "3"},
+    {13, 5, 0, &Route110, "3"},
 };
 
 static CoordEvent Route110_SeasideCyclingRoadNorthEntrance_coords[] = {
@@ -14390,9 +14393,9 @@ static ObjectEvent LilycoveCity_PokemonCenter_2F_object_events[] = {
 };
 
 static WarpEvent LilycoveCity_PokemonCenter_2F_warps[] = {
-    {1, 6, 4, "MAP_LILYCOVE_CITY_POKEMON_CENTER_1F", "2"},
-    {5, 1, 3, "MAP_UNION_ROOM", "0"},
-    {9, 1, 3, "MAP_TRADE_CENTER", "0"},
+    {1, 6, 4, &LilycoveCity_PokemonCenter_1F, "2"},
+    {5, 1, 3, &UnionRoom, "0"},
+    {9, 1, 3, &TradeCenter, "0"},
 };
 
 const Map LilycoveCity_PokemonCenter_2F = {
@@ -14427,8 +14430,8 @@ static ObjectEvent MirageTower_3F_object_events[] = {
 };
 
 static WarpEvent MirageTower_3F_warps[] = {
-    {18, 12, 3, "MAP_MIRAGE_TOWER_2F", "0"},
-    {2, 4, 0, "MAP_MIRAGE_TOWER_4F", "0"},
+    {18, 12, 3, &MirageTower_2F, "0"},
+    {2, 4, 0, &MirageTower_4F, "0"},
 };
 
 const Map MirageTower_3F = {
@@ -14476,7 +14479,7 @@ static ObjectEvent SecretBase_Tree2_object_events[] = {
 };
 
 static WarpEvent SecretBase_Tree2_warps[] = {
-    {3, 14, 0, "MAP_DYNAMIC", "WARP_ID_SECRET_BASE"},
+    {3, 14, 0, &Dynamic, "WARP_ID_SECRET_BASE"},
 };
 
 const Map SecretBase_Tree2 = {
@@ -14510,8 +14513,8 @@ static ObjectEvent BattleColosseum_2P_object_events[] = {
 };
 
 static WarpEvent BattleColosseum_2P_warps[] = {
-    {6, 8, 3, "MAP_DYNAMIC", "WARP_ID_DYNAMIC"},
-    {7, 8, 3, "MAP_DYNAMIC", "WARP_ID_DYNAMIC"},
+    {6, 8, 3, &Dynamic, "WARP_ID_DYNAMIC"},
+    {7, 8, 3, &Dynamic, "WARP_ID_DYNAMIC"},
 };
 
 static CoordEvent BattleColosseum_2P_coords[] = {
@@ -14553,9 +14556,9 @@ static ObjectEvent VerdanturfTown_PokemonCenter_1F_object_events[] = {
 };
 
 static WarpEvent VerdanturfTown_PokemonCenter_1F_warps[] = {
-    {7, 8, 3, "MAP_VERDANTURF_TOWN", "2"},
-    {6, 8, 3, "MAP_VERDANTURF_TOWN", "2"},
-    {1, 6, 4, "MAP_VERDANTURF_TOWN_POKEMON_CENTER_2F", "0"},
+    {7, 8, 3, &VerdanturfTown, "2"},
+    {6, 8, 3, &VerdanturfTown, "2"},
+    {1, 6, 4, &VerdanturfTown_PokemonCenter_2F, "0"},
 };
 
 const Map VerdanturfTown_PokemonCenter_1F = {
@@ -14598,7 +14601,7 @@ static ObjectEvent Route106_object_events[] = {
 };
 
 static WarpEvent Route106_warps[] = {
-    {48, 16, 0, "MAP_GRANITE_CAVE_1F", "0"},
+    {48, 16, 0, &GraniteCave_1F, "0"},
 };
 
 static BgEvent Route106_bg_events[] = {
@@ -14645,8 +14648,8 @@ static ObjectEvent Route119_House_object_events[] = {
 };
 
 static WarpEvent Route119_House_warps[] = {
-    {3, 8, 0, "MAP_ROUTE119", "1"},
-    {4, 8, 0, "MAP_ROUTE119", "1"},
+    {3, 8, 0, &Route119, "1"},
+    {4, 8, 0, &Route119, "1"},
 };
 
 const Map Route119_House = {
@@ -14702,11 +14705,11 @@ const Map UnusedContestHall2 = {
 };
 
 static WarpEvent AbandonedShip_Deck_warps[] = {
-    {13, 15, 3, "MAP_ROUTE108", "0"},
-    {14, 15, 3, "MAP_ROUTE108", "0"},
-    {13, 9, 3, "MAP_ABANDONED_SHIP_CORRIDORS_1F", "1"},
-    {8, 9, 3, "MAP_ABANDONED_SHIP_CORRIDORS_1F", "2"},
-    {12, 5, 3, "MAP_ABANDONED_SHIP_CAPTAINS_OFFICE", "0"},
+    {13, 15, 3, &Route108, "0"},
+    {14, 15, 3, &Route108, "0"},
+    {13, 9, 3, &AbandonedShip_Corridors_1F, "1"},
+    {8, 9, 3, &AbandonedShip_Corridors_1F, "2"},
+    {12, 5, 3, &AbandonedShip_CaptainsOffice, "0"},
 };
 
 const Map AbandonedShip_Deck = {
@@ -14736,8 +14739,8 @@ const Map AbandonedShip_Deck = {
 };
 
 static WarpEvent NavelRock_Down08_warps[] = {
-    {5, 5, 3, "MAP_NAVEL_ROCK_DOWN07", "1"},
-    {3, 3, 3, "MAP_NAVEL_ROCK_DOWN09", "0"},
+    {5, 5, 3, &NavelRock_Down07, "1"},
+    {3, 3, 3, &NavelRock_Down09, "0"},
 };
 
 const Map NavelRock_Down08 = {
@@ -14864,7 +14867,7 @@ static ObjectEvent Route108_object_events[] = {
 };
 
 static WarpEvent Route108_warps[] = {
-    {29, 6, 3, "MAP_ABANDONED_SHIP_DECK", "0"},
+    {29, 6, 3, &AbandonedShip_Deck, "0"},
 };
 
 static BgEvent Route108_bg_events[] = {
@@ -14898,8 +14901,8 @@ const Map Route108 = {
 };
 
 static WarpEvent NavelRock_Down01_warps[] = {
-    {3, 3, 3, "MAP_NAVEL_ROCK_FORK", "2"},
-    {5, 5, 3, "MAP_NAVEL_ROCK_DOWN02", "0"},
+    {3, 3, 3, &NavelRock_Fork, "2"},
+    {5, 5, 3, &NavelRock_Down02, "0"},
 };
 
 const Map NavelRock_Down01 = {
@@ -14967,8 +14970,8 @@ const Map Route130 = {
 };
 
 static WarpEvent NavelRock_Down06_warps[] = {
-    {5, 5, 3, "MAP_NAVEL_ROCK_DOWN05", "1"},
-    {3, 3, 3, "MAP_NAVEL_ROCK_DOWN07", "0"},
+    {5, 5, 3, &NavelRock_Down05, "1"},
+    {3, 3, 3, &NavelRock_Down07, "0"},
 };
 
 const Map NavelRock_Down06 = {
@@ -15016,7 +15019,7 @@ static ObjectEvent SecretBase_YellowCave2_object_events[] = {
 };
 
 static WarpEvent SecretBase_YellowCave2_warps[] = {
-    {12, 7, 0, "MAP_DYNAMIC", "WARP_ID_SECRET_BASE"},
+    {12, 7, 0, &Dynamic, "WARP_ID_SECRET_BASE"},
 };
 
 const Map SecretBase_YellowCave2 = {
@@ -15054,8 +15057,8 @@ static ObjectEvent FallarborTown_BattleTentLobby_object_events[] = {
 };
 
 static WarpEvent FallarborTown_BattleTentLobby_warps[] = {
-    {6, 9, 0, "MAP_FALLARBOR_TOWN", "1"},
-    {7, 9, 0, "MAP_FALLARBOR_TOWN", "1"},
+    {6, 9, 0, &FallarborTown, "1"},
+    {7, 9, 0, &FallarborTown, "1"},
 };
 
 static BgEvent FallarborTown_BattleTentLobby_bg_events[] = {
@@ -15129,8 +15132,8 @@ static ObjectEvent LilycoveCity_DepartmentStoreElevator_object_events[] = {
 };
 
 static WarpEvent LilycoveCity_DepartmentStoreElevator_warps[] = {
-    {1, 5, 3, "MAP_DYNAMIC", "WARP_ID_DYNAMIC"},
-    {2, 5, 3, "MAP_DYNAMIC", "WARP_ID_DYNAMIC"},
+    {1, 5, 3, &Dynamic, "WARP_ID_DYNAMIC"},
+    {2, 5, 3, &Dynamic, "WARP_ID_DYNAMIC"},
 };
 
 const Map LilycoveCity_DepartmentStoreElevator = {
@@ -15164,8 +15167,8 @@ static ObjectEvent EverGrandeCity_DrakesRoom_object_events[] = {
 };
 
 static WarpEvent EverGrandeCity_DrakesRoom_warps[] = {
-    {6, 13, 3, "MAP_EVER_GRANDE_CITY_HALL3", "1"},
-    {6, 2, 0, "MAP_EVER_GRANDE_CITY_HALL4", "0"},
+    {6, 13, 3, &EverGrandeCity_Hall3, "1"},
+    {6, 2, 0, &EverGrandeCity_Hall4, "0"},
 };
 
 const Map EverGrandeCity_DrakesRoom = {
@@ -15225,9 +15228,9 @@ static ObjectEvent Route110_TrickHouseEntrance_object_events[] = {
 };
 
 static WarpEvent Route110_TrickHouseEntrance_warps[] = {
-    {5, 7, 3, "MAP_ROUTE110", "1"},
-    {6, 7, 3, "MAP_ROUTE110", "1"},
-    {5, 2, 3, "MAP_ROUTE110_TRICK_HOUSE_PUZZLE1", "0"},
+    {5, 7, 3, &Route110, "1"},
+    {6, 7, 3, &Route110, "1"},
+    {5, 2, 3, &Route110_TrickHousePuzzle1, "0"},
 };
 
 static CoordEvent Route110_TrickHouseEntrance_coords[] = {
@@ -15279,18 +15282,18 @@ static ObjectEvent SSTidalRooms_object_events[] = {
 };
 
 static WarpEvent SSTidalRooms_warps[] = {
-    {4, 16, 0, "MAP_SS_TIDAL_CORRIDOR", "0"},
-    {5, 16, 0, "MAP_SS_TIDAL_CORRIDOR", "0"},
-    {13, 16, 0, "MAP_SS_TIDAL_CORRIDOR", "1"},
-    {14, 16, 0, "MAP_SS_TIDAL_CORRIDOR", "1"},
-    {22, 16, 0, "MAP_SS_TIDAL_CORRIDOR", "2"},
-    {23, 16, 0, "MAP_SS_TIDAL_CORRIDOR", "2"},
-    {31, 16, 0, "MAP_SS_TIDAL_CORRIDOR", "3"},
-    {32, 16, 0, "MAP_SS_TIDAL_CORRIDOR", "3"},
-    {4, 1, 0, "MAP_SS_TIDAL_CORRIDOR", "4"},
-    {13, 1, 0, "MAP_SS_TIDAL_CORRIDOR", "5"},
-    {22, 1, 0, "MAP_SS_TIDAL_CORRIDOR", "6"},
-    {31, 1, 0, "MAP_SS_TIDAL_CORRIDOR", "7"},
+    {4, 16, 0, &SSTidalCorridor, "0"},
+    {5, 16, 0, &SSTidalCorridor, "0"},
+    {13, 16, 0, &SSTidalCorridor, "1"},
+    {14, 16, 0, &SSTidalCorridor, "1"},
+    {22, 16, 0, &SSTidalCorridor, "2"},
+    {23, 16, 0, &SSTidalCorridor, "2"},
+    {31, 16, 0, &SSTidalCorridor, "3"},
+    {32, 16, 0, &SSTidalCorridor, "3"},
+    {4, 1, 0, &SSTidalCorridor, "4"},
+    {13, 1, 0, &SSTidalCorridor, "5"},
+    {22, 1, 0, &SSTidalCorridor, "6"},
+    {31, 1, 0, &SSTidalCorridor, "7"},
 };
 
 static BgEvent SSTidalRooms_bg_events[] = {
@@ -15343,7 +15346,7 @@ static ObjectEvent SecretBase_RedCave1_object_events[] = {
 };
 
 static WarpEvent SecretBase_RedCave1_warps[] = {
-    {5, 7, 0, "MAP_DYNAMIC", "WARP_ID_SECRET_BASE"},
+    {5, 7, 0, &Dynamic, "WARP_ID_SECRET_BASE"},
 };
 
 const Map SecretBase_RedCave1 = {
@@ -15380,7 +15383,7 @@ static ObjectEvent LilycoveCity_DepartmentStoreRooftop_object_events[] = {
 };
 
 static WarpEvent LilycoveCity_DepartmentStoreRooftop_warps[] = {
-    {13, 3, 0, "MAP_LILYCOVE_CITY_DEPARTMENT_STORE_5F", "2"},
+    {13, 3, 0, &LilycoveCity_DepartmentStore_5F, "2"},
 };
 
 static BgEvent LilycoveCity_DepartmentStoreRooftop_bg_events[] = {
@@ -15459,9 +15462,9 @@ static ObjectEvent Route119_WeatherInstitute_1F_object_events[] = {
 };
 
 static WarpEvent Route119_WeatherInstitute_1F_warps[] = {
-    {9, 12, 0, "MAP_ROUTE119", "0"},
-    {10, 12, 0, "MAP_ROUTE119", "0"},
-    {17, 1, 0, "MAP_ROUTE119_WEATHER_INSTITUTE_2F", "0"},
+    {9, 12, 0, &Route119, "0"},
+    {10, 12, 0, &Route119, "0"},
+    {17, 1, 0, &Route119_WeatherInstitute_2F, "0"},
 };
 
 static BgEvent Route119_WeatherInstitute_1F_bg_events[] = {
@@ -15498,8 +15501,8 @@ const Map Route119_WeatherInstitute_1F = {
 };
 
 static WarpEvent NavelRock_Exterior_warps[] = {
-    {10, 18, 0, "MAP_NAVEL_ROCK_HARBOR", "0"},
-    {10, 10, 0, "MAP_NAVEL_ROCK_ENTRANCE", "1"},
+    {10, 18, 0, &NavelRock_Harbor, "0"},
+    {10, 10, 0, &NavelRock_Entrance, "1"},
 };
 
 const Map NavelRock_Exterior = {
@@ -15534,11 +15537,11 @@ static ObjectEvent MtPyre_5F_object_events[] = {
 };
 
 static WarpEvent MtPyre_5F_warps[] = {
-    {2, 1, 3, "MAP_MT_PYRE_6F", "0"},
-    {10, 5, 3, "MAP_MT_PYRE_4F", "0"},
-    {1, 10, 3, "MAP_MT_PYRE_6F", "1"},
-    {12, 10, 3, "MAP_MT_PYRE_4F", "2"},
-    {12, 12, 3, "MAP_MT_PYRE_4F", "3"},
+    {2, 1, 3, &MtPyre_6F, "0"},
+    {10, 5, 3, &MtPyre_4F, "0"},
+    {1, 10, 3, &MtPyre_6F, "1"},
+    {12, 10, 3, &MtPyre_4F, "2"},
+    {12, 12, 3, &MtPyre_4F, "3"},
 };
 
 const Map MtPyre_5F = {
@@ -15568,8 +15571,8 @@ const Map MtPyre_5F = {
 };
 
 static WarpEvent CaveOfOrigin_UnusedRubySapphireMap3_warps[] = {
-    {7, 14, 3, "MAP_CAVE_OF_ORIGIN_UNUSED_RUBY_SAPPHIRE_MAP2", "1"},
-    {12, 6, 3, "MAP_CAVE_OF_ORIGIN_B1F", "0"},
+    {7, 14, 3, &CaveOfOrigin_UnusedRubySapphireMap2, "1"},
+    {12, 6, 3, &CaveOfOrigin_B1F, "0"},
 };
 
 const Map CaveOfOrigin_UnusedRubySapphireMap3 = {
@@ -15603,8 +15606,8 @@ static ObjectEvent SlateportCity_NameRatersHouse_object_events[] = {
 };
 
 static WarpEvent SlateportCity_NameRatersHouse_warps[] = {
-    {3, 7, 0, "MAP_SLATEPORT_CITY", "6"},
-    {4, 7, 0, "MAP_SLATEPORT_CITY", "6"},
+    {3, 7, 0, &SlateportCity, "6"},
+    {4, 7, 0, &SlateportCity, "6"},
 };
 
 const Map SlateportCity_NameRatersHouse = {
@@ -15634,9 +15637,9 @@ const Map SlateportCity_NameRatersHouse = {
 };
 
 static WarpEvent SkyPillar_1F_warps[] = {
-    {6, 13, 3, "MAP_SKY_PILLAR_OUTSIDE", "1"},
-    {7, 13, 3, "MAP_SKY_PILLAR_OUTSIDE", "1"},
-    {10, 1, 3, "MAP_SKY_PILLAR_2F", "0"},
+    {6, 13, 3, &SkyPillar_Outside, "1"},
+    {7, 13, 3, &SkyPillar_Outside, "1"},
+    {10, 1, 3, &SkyPillar_2F, "0"},
 };
 
 const Map SkyPillar_1F = {
@@ -15670,8 +15673,8 @@ static ObjectEvent FallarborTown_MoveRelearnersHouse_object_events[] = {
 };
 
 static WarpEvent FallarborTown_MoveRelearnersHouse_warps[] = {
-    {3, 7, 0, "MAP_FALLARBOR_TOWN", "4"},
-    {4, 7, 0, "MAP_FALLARBOR_TOWN", "4"},
+    {3, 7, 0, &FallarborTown, "4"},
+    {4, 7, 0, &FallarborTown, "4"},
 };
 
 const Map FallarborTown_MoveRelearnersHouse = {
@@ -15705,7 +15708,7 @@ static ObjectEvent TerraCave_End_object_events[] = {
 };
 
 static WarpEvent TerraCave_End_warps[] = {
-    {5, 4, 3, "MAP_TERRA_CAVE_ENTRANCE", "1"},
+    {5, 4, 3, &TerraCave_Entrance, "1"},
 };
 
 static CoordEvent TerraCave_End_coords[] = {
@@ -15757,7 +15760,7 @@ static ObjectEvent SecretBase_YellowCave3_object_events[] = {
 };
 
 static WarpEvent SecretBase_YellowCave3_warps[] = {
-    {5, 9, 0, "MAP_DYNAMIC", "WARP_ID_SECRET_BASE"},
+    {5, 9, 0, &Dynamic, "WARP_ID_SECRET_BASE"},
 };
 
 const Map SecretBase_YellowCave3 = {
@@ -15831,8 +15834,8 @@ const Map SafariZone_North = {
 };
 
 static WarpEvent NavelRock_Down07_warps[] = {
-    {3, 3, 3, "MAP_NAVEL_ROCK_DOWN06", "1"},
-    {5, 5, 3, "MAP_NAVEL_ROCK_DOWN08", "0"},
+    {3, 3, 3, &NavelRock_Down06, "1"},
+    {5, 5, 3, &NavelRock_Down08, "0"},
 };
 
 const Map NavelRock_Down07 = {
@@ -15878,7 +15881,7 @@ static ObjectEvent Route131_object_events[] = {
 };
 
 static WarpEvent Route131_warps[] = {
-    {36, 6, 3, "MAP_SKY_PILLAR_ENTRANCE", "0"},
+    {36, 6, 3, &SkyPillar_Entrance, "0"},
 };
 
 const Map Route131 = {
@@ -15940,7 +15943,7 @@ static ObjectEvent Route109_object_events[] = {
 };
 
 static WarpEvent Route109_warps[] = {
-    {12, 5, 0, "MAP_ROUTE109_SEASHORE_HOUSE", "0"},
+    {12, 5, 0, &Route109_SeashoreHouse, "0"},
 };
 
 static BgEvent Route109_bg_events[] = {
@@ -15989,9 +15992,9 @@ static ObjectEvent LilycoveCity_PokemonCenter_1F_object_events[] = {
 };
 
 static WarpEvent LilycoveCity_PokemonCenter_1F_warps[] = {
-    {7, 8, 3, "MAP_LILYCOVE_CITY", "2"},
-    {6, 8, 3, "MAP_LILYCOVE_CITY", "2"},
-    {1, 6, 4, "MAP_LILYCOVE_CITY_POKEMON_CENTER_2F", "0"},
+    {7, 8, 3, &LilycoveCity, "2"},
+    {6, 8, 3, &LilycoveCity, "2"},
+    {1, 6, 4, &LilycoveCity_PokemonCenter_2F, "0"},
 };
 
 const Map LilycoveCity_PokemonCenter_1F = {
@@ -16028,9 +16031,9 @@ static ObjectEvent VerdanturfTown_PokemonCenter_2F_object_events[] = {
 };
 
 static WarpEvent VerdanturfTown_PokemonCenter_2F_warps[] = {
-    {1, 6, 4, "MAP_VERDANTURF_TOWN_POKEMON_CENTER_1F", "2"},
-    {5, 1, 3, "MAP_UNION_ROOM", "0"},
-    {9, 1, 3, "MAP_TRADE_CENTER", "0"},
+    {1, 6, 4, &VerdanturfTown_PokemonCenter_1F, "2"},
+    {5, 1, 3, &UnionRoom, "0"},
+    {9, 1, 3, &TradeCenter, "0"},
 };
 
 const Map VerdanturfTown_PokemonCenter_2F = {
@@ -16078,7 +16081,7 @@ static ObjectEvent SecretBase_YellowCave4_object_events[] = {
 };
 
 static WarpEvent SecretBase_YellowCave4_warps[] = {
-    {6, 12, 0, "MAP_DYNAMIC", "WARP_ID_SECRET_BASE"},
+    {6, 12, 0, &Dynamic, "WARP_ID_SECRET_BASE"},
 };
 
 const Map SecretBase_YellowCave4 = {
@@ -16112,7 +16115,7 @@ static ObjectEvent EverGrandeCity_HallOfFame_object_events[] = {
 };
 
 static WarpEvent EverGrandeCity_HallOfFame_warps[] = {
-    {7, 11, 3, "MAP_EVER_GRANDE_CITY_CHAMPIONS_ROOM", "1"},
+    {7, 11, 3, &EverGrandeCity_ChampionsRoom, "1"},
 };
 
 const Map EverGrandeCity_HallOfFame = {
@@ -16142,8 +16145,8 @@ const Map EverGrandeCity_HallOfFame = {
 };
 
 static WarpEvent NavelRock_Down09_warps[] = {
-    {3, 3, 3, "MAP_NAVEL_ROCK_DOWN08", "1"},
-    {5, 5, 3, "MAP_NAVEL_ROCK_DOWN10", "0"},
+    {3, 3, 3, &NavelRock_Down08, "1"},
+    {5, 5, 3, &NavelRock_Down10, "0"},
 };
 
 const Map NavelRock_Down09 = {
@@ -16178,7 +16181,7 @@ static ObjectEvent BirthIsland_Exterior_object_events[] = {
 };
 
 static WarpEvent BirthIsland_Exterior_warps[] = {
-    {15, 24, 0, "MAP_BIRTH_ISLAND_HARBOR", "0"},
+    {15, 24, 0, &BirthIsland_Harbor, "0"},
 };
 
 const Map BirthIsland_Exterior = {
@@ -16226,7 +16229,7 @@ static ObjectEvent SecretBase_Tree4_object_events[] = {
 };
 
 static WarpEvent SecretBase_Tree4_warps[] = {
-    {7, 12, 0, "MAP_DYNAMIC", "WARP_ID_SECRET_BASE"},
+    {7, 12, 0, &Dynamic, "WARP_ID_SECRET_BASE"},
 };
 
 const Map SecretBase_Tree4 = {
@@ -16300,7 +16303,7 @@ static ObjectEvent SecretBase_Tree3_object_events[] = {
 };
 
 static WarpEvent SecretBase_Tree3_warps[] = {
-    {8, 6, 0, "MAP_DYNAMIC", "WARP_ID_SECRET_BASE"},
+    {8, 6, 0, &Dynamic, "WARP_ID_SECRET_BASE"},
 };
 
 const Map SecretBase_Tree3 = {
@@ -16360,20 +16363,20 @@ static ObjectEvent LilycoveCity_object_events[] = {
 };
 
 static WarpEvent LilycoveCity_warps[] = {
-    {27, 6, 0, "MAP_LILYCOVE_CITY_DEPARTMENT_STORE_1F", "0"},
-    {37, 24, 0, "MAP_LILYCOVE_CITY_COVE_LILY_MOTEL_1F", "0"},
-    {24, 14, 0, "MAP_LILYCOVE_CITY_POKEMON_CENTER_1F", "0"},
-    {11, 5, 0, "MAP_LILYCOVE_CITY_LILYCOVE_MUSEUM_1F", "0"},
-    {23, 24, 0, "MAP_LILYCOVE_CITY_CONTEST_LOBBY", "0"},
-    {39, 14, 0, "MAP_LILYCOVE_CITY_POKEMON_TRAINER_FAN_CLUB", "1"},
-    {70, 5, 1, "MAP_AQUA_HIDEOUT_1F", "0"},
-    {36, 6, 0, "MAP_LILYCOVE_CITY_MOVE_DELETERS_HOUSE", "0"},
-    {42, 6, 0, "MAP_LILYCOVE_CITY_HOUSE1", "0"},
-    {55, 15, 0, "MAP_LILYCOVE_CITY_HOUSE2", "0"},
-    {11, 22, 0, "MAP_LILYCOVE_CITY_HOUSE3", "0"},
-    {12, 14, 0, "MAP_LILYCOVE_CITY_HOUSE4", "0"},
-    {12, 32, 0, "MAP_LILYCOVE_CITY_HARBOR", "0"},
-    {12, 5, 0, "MAP_LILYCOVE_CITY_LILYCOVE_MUSEUM_1F", "1"},
+    {27, 6, 0, &LilycoveCity_DepartmentStore_1F, "0"},
+    {37, 24, 0, &LilycoveCity_CoveLilyMotel_1F, "0"},
+    {24, 14, 0, &LilycoveCity_PokemonCenter_1F, "0"},
+    {11, 5, 0, &LilycoveCity_LilycoveMuseum_1F, "0"},
+    {23, 24, 0, &LilycoveCity_ContestLobby, "0"},
+    {39, 14, 0, &LilycoveCity_PokemonTrainerFanClub, "1"},
+    {70, 5, 1, &AquaHideout_1F, "0"},
+    {36, 6, 0, &LilycoveCity_MoveDeletersHouse, "0"},
+    {42, 6, 0, &LilycoveCity_House1, "0"},
+    {55, 15, 0, &LilycoveCity_House2, "0"},
+    {11, 22, 0, &LilycoveCity_House3, "0"},
+    {12, 14, 0, &LilycoveCity_House4, "0"},
+    {12, 32, 0, &LilycoveCity_Harbor, "0"},
+    {12, 5, 0, &LilycoveCity_LilycoveMuseum_1F, "1"},
 };
 
 static BgEvent LilycoveCity_bg_events[] = {
@@ -16491,8 +16494,8 @@ static ObjectEvent RustboroCity_CuttersHouse_object_events[] = {
 };
 
 static WarpEvent RustboroCity_CuttersHouse_warps[] = {
-    {5, 8, 0, "MAP_RUSTBORO_CITY", "8"},
-    {6, 8, 0, "MAP_RUSTBORO_CITY", "8"},
+    {5, 8, 0, &RustboroCity, "8"},
+    {6, 8, 0, &RustboroCity, "8"},
 };
 
 const Map RustboroCity_CuttersHouse = {
@@ -16530,9 +16533,9 @@ static ObjectEvent BattleFrontier_PokemonCenter_1F_object_events[] = {
 };
 
 static WarpEvent BattleFrontier_PokemonCenter_1F_warps[] = {
-    {7, 8, 3, "MAP_BATTLE_FRONTIER_OUTSIDE_EAST", "12"},
-    {6, 8, 3, "MAP_BATTLE_FRONTIER_OUTSIDE_EAST", "12"},
-    {1, 6, 4, "MAP_BATTLE_FRONTIER_POKEMON_CENTER_2F", "0"},
+    {7, 8, 3, &BattleFrontier_OutsideEast, "12"},
+    {6, 8, 3, &BattleFrontier_OutsideEast, "12"},
+    {1, 6, 4, &BattleFrontier_PokemonCenter_2F, "0"},
 };
 
 const Map BattleFrontier_PokemonCenter_1F = {
@@ -16581,7 +16584,7 @@ static ObjectEvent Route125_object_events[] = {
 };
 
 static WarpEvent Route125_warps[] = {
-    {22, 19, 0, "MAP_SHOAL_CAVE_LOW_TIDE_ENTRANCE_ROOM", "0"},
+    {22, 19, 0, &ShoalCave_LowTideEntranceRoom, "0"},
 };
 
 static BgEvent Route125_bg_events[] = {
@@ -16618,8 +16621,8 @@ const Map Route125 = {
 };
 
 static WarpEvent SkyPillar_5F_warps[] = {
-    {3, 1, 3, "MAP_SKY_PILLAR_4F", "2"},
-    {10, 1, 3, "MAP_SKY_PILLAR_TOP", "0"},
+    {3, 1, 3, &SkyPillar_4F, "2"},
+    {10, 1, 3, &SkyPillar_Top, "0"},
 };
 
 const Map SkyPillar_5F = {
@@ -16660,8 +16663,8 @@ static ObjectEvent FieryPath_object_events[] = {
 };
 
 static WarpEvent FieryPath_warps[] = {
-    {26, 36, 3, "MAP_ROUTE112", "4"},
-    {26, 4, 3, "MAP_ROUTE112", "5"},
+    {26, 36, 3, &Route112, "4"},
+    {26, 4, 3, &Route112, "5"},
 };
 
 const Map FieryPath = {
@@ -16700,10 +16703,10 @@ static ObjectEvent MagmaHideout_1F_object_events[] = {
 };
 
 static WarpEvent MagmaHideout_1F_warps[] = {
-    {10, 34, 3, "MAP_JAGGED_PASS", "4"},
-    {25, 34, 3, "MAP_MAGMA_HIDEOUT_2F_1R", "1"},
-    {31, 3, 0, "MAP_MAGMA_HIDEOUT_2F_2R", "1"},
-    {20, 22, 0, "MAP_MAGMA_HIDEOUT_2F_3R", "0"},
+    {10, 34, 3, &JaggedPass, "4"},
+    {25, 34, 3, &MagmaHideout_2F_1R, "1"},
+    {31, 3, 0, &MagmaHideout_2F_2R, "1"},
+    {20, 22, 0, &MagmaHideout_2F_3R, "0"},
 };
 
 const Map MagmaHideout_1F = {
@@ -16738,7 +16741,7 @@ static MapConnection Route122_connections[] = {
 };
 
 static WarpEvent Route122_warps[] = {
-    {22, 29, 0, "MAP_MT_PYRE_1F", "0"},
+    {22, 29, 0, &MtPyre_1F, "0"},
 };
 
 const Map Route122 = {
@@ -16774,12 +16777,12 @@ static ObjectEvent MtPyre_1F_object_events[] = {
 };
 
 static WarpEvent MtPyre_1F_warps[] = {
-    {17, 18, 3, "MAP_ROUTE122", "0"},
-    {3, 6, 3, "MAP_MT_PYRE_EXTERIOR", "0"},
-    {18, 18, 3, "MAP_ROUTE122", "0"},
-    {4, 6, 3, "MAP_MT_PYRE_EXTERIOR", "0"},
-    {11, 1, 3, "MAP_MT_PYRE_2F", "0"},
-    {20, 9, 3, "MAP_MT_PYRE_2F", "4"},
+    {17, 18, 3, &Route122, "0"},
+    {3, 6, 3, &MtPyre_Exterior, "0"},
+    {18, 18, 3, &Route122, "0"},
+    {4, 6, 3, &MtPyre_Exterior, "0"},
+    {11, 1, 3, &MtPyre_2F, "0"},
+    {20, 9, 3, &MtPyre_2F, "4"},
 };
 
 const Map MtPyre_1F = {
@@ -16819,10 +16822,10 @@ static ObjectEvent BattleFrontier_BattlePalaceCorridor_object_events[] = {
 };
 
 static WarpEvent BattleFrontier_BattlePalaceCorridor_warps[] = {
-    {8, 13, 3, "MAP_BATTLE_FRONTIER_BATTLE_PALACE_LOBBY", "2"},
-    {9, 13, 3, "MAP_BATTLE_FRONTIER_BATTLE_PALACE_LOBBY", "2"},
-    {6, 3, 3, "MAP_BATTLE_FRONTIER_BATTLE_PALACE_BATTLE_ROOM", "0"},
-    {10, 3, 3, "MAP_BATTLE_FRONTIER_BATTLE_PALACE_BATTLE_ROOM", "0"},
+    {8, 13, 3, &BattleFrontier_BattlePalaceLobby, "2"},
+    {9, 13, 3, &BattleFrontier_BattlePalaceLobby, "2"},
+    {6, 3, 3, &BattleFrontier_BattlePalaceBattleRoom, "0"},
+    {10, 3, 3, &BattleFrontier_BattlePalaceBattleRoom, "0"},
 };
 
 const Map BattleFrontier_BattlePalaceCorridor = {
@@ -16887,11 +16890,11 @@ static ObjectEvent Route114_object_events[] = {
 };
 
 static WarpEvent Route114_warps[] = {
-    {8, 63, 0, "MAP_METEOR_FALLS_1F_1R", "0"},
-    {29, 5, 0, "MAP_ROUTE114_FOSSIL_MANIACS_HOUSE", "0"},
-    {27, 36, 0, "MAP_ROUTE114_LANETTES_HOUSE", "0"},
-    {6, 46, 0, "MAP_TERRA_CAVE_ENTRANCE", "0"},
-    {7, 4, 0, "MAP_TERRA_CAVE_ENTRANCE", "0"},
+    {8, 63, 0, &MeteorFalls_1F_1R, "0"},
+    {29, 5, 0, &Route114_FossilManiacsHouse, "0"},
+    {27, 36, 0, &Route114_LanettesHouse, "0"},
+    {6, 46, 0, &TerraCave_Entrance, "0"},
+    {7, 4, 0, &TerraCave_Entrance, "0"},
 };
 
 static BgEvent Route114_bg_events[] = {
@@ -16940,9 +16943,9 @@ static ObjectEvent SootopolisCity_MysteryEventsHouse_1F_object_events[] = {
 };
 
 static WarpEvent SootopolisCity_MysteryEventsHouse_1F_warps[] = {
-    {3, 7, 0, "MAP_SOOTOPOLIS_CITY", "12"},
-    {4, 7, 0, "MAP_SOOTOPOLIS_CITY", "12"},
-    {3, 1, 3, "MAP_SOOTOPOLIS_CITY_MYSTERY_EVENTS_HOUSE_B1F", "0"},
+    {3, 7, 0, &SootopolisCity, "12"},
+    {4, 7, 0, &SootopolisCity, "12"},
+    {3, 1, 3, &SootopolisCity_MysteryEventsHouse_B1F, "0"},
 };
 
 const Map SootopolisCity_MysteryEventsHouse_1F = {
@@ -16990,7 +16993,7 @@ static ObjectEvent SecretBase_BrownCave4_object_events[] = {
 };
 
 static WarpEvent SecretBase_BrownCave4_warps[] = {
-    {2, 8, 0, "MAP_DYNAMIC", "WARP_ID_SECRET_BASE"},
+    {2, 8, 0, &Dynamic, "WARP_ID_SECRET_BASE"},
 };
 
 const Map SecretBase_BrownCave4 = {
@@ -17045,9 +17048,9 @@ static ObjectEvent Route113_object_events[] = {
 };
 
 static WarpEvent Route113_warps[] = {
-    {33, 5, 0, "MAP_ROUTE113_GLASS_WORKSHOP", "0"},
-    {41, 12, 0, "MAP_TERRA_CAVE_ENTRANCE", "0"},
-    {88, 5, 0, "MAP_TERRA_CAVE_ENTRANCE", "0"},
+    {33, 5, 0, &Route113_GlassWorkshop, "0"},
+    {41, 12, 0, &TerraCave_Entrance, "0"},
+    {88, 5, 0, &TerraCave_Entrance, "0"},
 };
 
 static CoordEvent Route113_coords[] = {
@@ -17150,8 +17153,8 @@ static ObjectEvent SootopolisCity_House7_object_events[] = {
 };
 
 static WarpEvent SootopolisCity_House7_warps[] = {
-    {3, 6, 0, "MAP_SOOTOPOLIS_CITY", "10"},
-    {4, 6, 0, "MAP_SOOTOPOLIS_CITY", "10"},
+    {3, 6, 0, &SootopolisCity, "10"},
+    {4, 6, 0, &SootopolisCity, "10"},
 };
 
 const Map SootopolisCity_House7 = {
@@ -17187,9 +17190,9 @@ static ObjectEvent AquaHideout_1F_object_events[] = {
 };
 
 static WarpEvent AquaHideout_1F_warps[] = {
-    {13, 27, 1, "MAP_LILYCOVE_CITY", "6"},
-    {14, 27, 1, "MAP_LILYCOVE_CITY", "6"},
-    {22, 1, 3, "MAP_AQUA_HIDEOUT_B1F", "0"},
+    {13, 27, 1, &LilycoveCity, "6"},
+    {14, 27, 1, &LilycoveCity, "6"},
+    {22, 1, 3, &AquaHideout_B1F, "0"},
 };
 
 const Map AquaHideout_1F = {
@@ -17225,8 +17228,8 @@ static ObjectEvent Route116_TunnelersRestHouse_object_events[] = {
 };
 
 static WarpEvent Route116_TunnelersRestHouse_warps[] = {
-    {4, 8, 0, "MAP_ROUTE116", "1"},
-    {5, 8, 0, "MAP_ROUTE116", "1"},
+    {4, 8, 0, &Route116, "1"},
+    {5, 8, 0, &Route116, "1"},
 };
 
 const Map Route116_TunnelersRestHouse = {
@@ -17260,9 +17263,9 @@ static ObjectEvent Route114_FossilManiacsTunnel_object_events[] = {
 };
 
 static WarpEvent Route114_FossilManiacsTunnel_warps[] = {
-    {6, 25, 3, "MAP_ROUTE114_FOSSIL_MANIACS_HOUSE", "2"},
-    {7, 25, 3, "MAP_ROUTE114_FOSSIL_MANIACS_HOUSE", "2"},
-    {6, 2, 0, "MAP_DESERT_UNDERPASS", "0"},
+    {6, 25, 3, &Route114_FossilManiacsHouse, "2"},
+    {7, 25, 3, &Route114_FossilManiacsHouse, "2"},
+    {6, 2, 0, &DesertUnderpass, "0"},
 };
 
 static CoordEvent Route114_FossilManiacsTunnel_coords[] = {
@@ -17315,7 +17318,7 @@ static ObjectEvent SecretBase_BrownCave3_object_events[] = {
 };
 
 static WarpEvent SecretBase_BrownCave3_warps[] = {
-    {11, 9, 0, "MAP_DYNAMIC", "WARP_ID_SECRET_BASE"},
+    {11, 9, 0, &Dynamic, "WARP_ID_SECRET_BASE"},
 };
 
 const Map SecretBase_BrownCave3 = {
@@ -17354,8 +17357,8 @@ static ObjectEvent LilycoveCity_House3_object_events[] = {
 };
 
 static WarpEvent LilycoveCity_House3_warps[] = {
-    {3, 7, 0, "MAP_LILYCOVE_CITY", "10"},
-    {4, 7, 0, "MAP_LILYCOVE_CITY", "10"},
+    {3, 7, 0, &LilycoveCity, "10"},
+    {4, 7, 0, &LilycoveCity, "10"},
 };
 
 const Map LilycoveCity_House3 = {
@@ -17385,8 +17388,8 @@ const Map LilycoveCity_House3 = {
 };
 
 static WarpEvent AbandonedShip_Underwater1_warps[] = {
-    {3, 7, 3, "MAP_ABANDONED_SHIP_UNDERWATER2", "0"},
-    {4, 7, 3, "MAP_ABANDONED_SHIP_UNDERWATER2", "0"},
+    {3, 7, 3, &AbandonedShip_Underwater2, "0"},
+    {4, 7, 3, &AbandonedShip_Underwater2, "0"},
 };
 
 const Map AbandonedShip_Underwater1 = {
@@ -17452,7 +17455,7 @@ static ObjectEvent LilycoveCity_CoveLilyMotel_2F_object_events[] = {
 };
 
 static WarpEvent LilycoveCity_CoveLilyMotel_2F_warps[] = {
-    {2, 1, 0, "MAP_LILYCOVE_CITY_COVE_LILY_MOTEL_1F", "2"},
+    {2, 1, 0, &LilycoveCity_CoveLilyMotel_1F, "2"},
 };
 
 const Map LilycoveCity_CoveLilyMotel_2F = {
@@ -17495,10 +17498,10 @@ static ObjectEvent OldaleTown_object_events[] = {
 };
 
 static WarpEvent OldaleTown_warps[] = {
-    {5, 7, 0, "MAP_OLDALE_TOWN_HOUSE1", "0"},
-    {15, 16, 0, "MAP_OLDALE_TOWN_HOUSE2", "0"},
-    {6, 16, 0, "MAP_OLDALE_TOWN_POKEMON_CENTER_1F", "0"},
-    {14, 6, 0, "MAP_OLDALE_TOWN_MART", "0"},
+    {5, 7, 0, &OldaleTown_House1, "0"},
+    {15, 16, 0, &OldaleTown_House2, "0"},
+    {6, 16, 0, &OldaleTown_PokemonCenter_1F, "0"},
+    {14, 6, 0, &OldaleTown_Mart, "0"},
 };
 
 static CoordEvent OldaleTown_coords[] = {
@@ -17586,11 +17589,11 @@ static ObjectEvent EverGrandeCity_PokemonLeague_1F_object_events[] = {
 };
 
 static WarpEvent EverGrandeCity_PokemonLeague_1F_warps[] = {
-    {9, 11, 3, "MAP_EVER_GRANDE_CITY", "0"},
-    {10, 11, 3, "MAP_EVER_GRANDE_CITY", "0"},
-    {9, 1, 3, "MAP_EVER_GRANDE_CITY_HALL5", "0"},
-    {10, 1, 3, "MAP_EVER_GRANDE_CITY_HALL5", "0"},
-    {1, 7, 4, "MAP_EVER_GRANDE_CITY_POKEMON_LEAGUE_2F", "0"},
+    {9, 11, 3, &EverGrandeCity, "0"},
+    {10, 11, 3, &EverGrandeCity, "0"},
+    {9, 1, 3, &EverGrandeCity_Hall5, "0"},
+    {10, 1, 3, &EverGrandeCity_Hall5, "0"},
+    {1, 7, 4, &EverGrandeCity_PokemonLeague_2F, "0"},
 };
 
 const Map EverGrandeCity_PokemonLeague_1F = {
@@ -17625,8 +17628,8 @@ static ObjectEvent LilycoveCity_House4_object_events[] = {
 };
 
 static WarpEvent LilycoveCity_House4_warps[] = {
-    {3, 8, 0, "MAP_LILYCOVE_CITY", "11"},
-    {4, 8, 0, "MAP_LILYCOVE_CITY", "11"},
+    {3, 8, 0, &LilycoveCity, "11"},
+    {4, 8, 0, &LilycoveCity, "11"},
 };
 
 const Map LilycoveCity_House4 = {
@@ -17663,9 +17666,9 @@ static ObjectEvent EverGrandeCity_PokemonCenter_2F_object_events[] = {
 };
 
 static WarpEvent EverGrandeCity_PokemonCenter_2F_warps[] = {
-    {1, 6, 4, "MAP_EVER_GRANDE_CITY_POKEMON_CENTER_1F", "2"},
-    {5, 1, 3, "MAP_UNION_ROOM", "0"},
-    {9, 1, 3, "MAP_TRADE_CENTER", "0"},
+    {1, 6, 4, &EverGrandeCity_PokemonCenter_1F, "2"},
+    {5, 1, 3, &UnionRoom, "0"},
+    {9, 1, 3, &TradeCenter, "0"},
 };
 
 const Map EverGrandeCity_PokemonCenter_2F = {
@@ -17708,9 +17711,9 @@ static ObjectEvent RusturfTunnel_object_events[] = {
 };
 
 static WarpEvent RusturfTunnel_warps[] = {
-    {4, 10, 3, "MAP_ROUTE116", "0"},
-    {29, 16, 3, "MAP_VERDANTURF_TOWN", "4"},
-    {18, 20, 3, "MAP_ROUTE116", "2"},
+    {4, 10, 3, &Route116, "0"},
+    {29, 16, 3, &VerdanturfTown, "4"},
+    {18, 20, 3, &Route116, "2"},
 };
 
 static CoordEvent RusturfTunnel_coords[] = {
@@ -17754,7 +17757,7 @@ static ObjectEvent MirageTower_4F_object_events[] = {
 };
 
 static WarpEvent MirageTower_4F_warps[] = {
-    {1, 4, 3, "MAP_MIRAGE_TOWER_3F", "1"},
+    {1, 4, 3, &MirageTower_3F, "1"},
 };
 
 const Map MirageTower_4F = {
@@ -17796,8 +17799,8 @@ static ObjectEvent SlateportCity_PokemonFanClub_object_events[] = {
 };
 
 static WarpEvent SlateportCity_PokemonFanClub_warps[] = {
-    {6, 10, 0, "MAP_SLATEPORT_CITY", "4"},
-    {7, 10, 0, "MAP_SLATEPORT_CITY", "4"},
+    {6, 10, 0, &SlateportCity, "4"},
+    {7, 10, 0, &SlateportCity, "4"},
 };
 
 const Map SlateportCity_PokemonFanClub = {
@@ -17869,8 +17872,8 @@ static ObjectEvent LavaridgeTown_Mart_object_events[] = {
 };
 
 static WarpEvent LavaridgeTown_Mart_warps[] = {
-    {3, 7, 0, "MAP_LAVARIDGE_TOWN", "2"},
-    {4, 7, 0, "MAP_LAVARIDGE_TOWN", "2"},
+    {3, 7, 0, &LavaridgeTown, "2"},
+    {4, 7, 0, &LavaridgeTown, "2"},
 };
 
 const Map LavaridgeTown_Mart = {
@@ -17911,7 +17914,7 @@ static ObjectEvent RustboroCity_Flat1_2F_object_events[] = {
 };
 
 static WarpEvent RustboroCity_Flat1_2F_warps[] = {
-    {2, 1, 0, "MAP_RUSTBORO_CITY_FLAT1_1F", "2"},
+    {2, 1, 0, &RustboroCity_Flat1_1F, "2"},
 };
 
 const Map RustboroCity_Flat1_2F = {
@@ -17948,9 +17951,9 @@ static ObjectEvent PetalburgCity_PokemonCenter_2F_object_events[] = {
 };
 
 static WarpEvent PetalburgCity_PokemonCenter_2F_warps[] = {
-    {1, 6, 4, "MAP_PETALBURG_CITY_POKEMON_CENTER_1F", "2"},
-    {5, 1, 3, "MAP_UNION_ROOM", "0"},
-    {9, 1, 3, "MAP_TRADE_CENTER", "0"},
+    {1, 6, 4, &PetalburgCity_PokemonCenter_1F, "2"},
+    {5, 1, 3, &UnionRoom, "0"},
+    {9, 1, 3, &TradeCenter, "0"},
 };
 
 const Map PetalburgCity_PokemonCenter_2F = {
@@ -17984,8 +17987,8 @@ static ObjectEvent SootopolisCity_House6_object_events[] = {
 };
 
 static WarpEvent SootopolisCity_House6_warps[] = {
-    {3, 6, 0, "MAP_SOOTOPOLIS_CITY", "9"},
-    {4, 6, 0, "MAP_SOOTOPOLIS_CITY", "9"},
+    {3, 6, 0, &SootopolisCity, "9"},
+    {4, 6, 0, &SootopolisCity, "9"},
 };
 
 const Map SootopolisCity_House6 = {
@@ -18038,12 +18041,12 @@ static ObjectEvent Route112_object_events[] = {
 };
 
 static WarpEvent Route112_warps[] = {
-    {28, 27, 0, "MAP_ROUTE112_CABLE_CAR_STATION", "0"},
-    {29, 27, 0, "MAP_ROUTE112_CABLE_CAR_STATION", "1"},
-    {6, 46, 3, "MAP_JAGGED_PASS", "0"},
-    {7, 46, 3, "MAP_JAGGED_PASS", "1"},
-    {11, 36, 0, "MAP_FIERY_PATH", "0"},
-    {22, 10, 0, "MAP_FIERY_PATH", "1"},
+    {28, 27, 0, &Route112_CableCarStation, "0"},
+    {29, 27, 0, &Route112_CableCarStation, "1"},
+    {6, 46, 3, &JaggedPass, "0"},
+    {7, 46, 3, &JaggedPass, "1"},
+    {11, 36, 0, &FieryPath, "0"},
+    {22, 10, 0, &FieryPath, "1"},
 };
 
 static BgEvent Route112_bg_events[] = {
@@ -18090,11 +18093,11 @@ static ObjectEvent MtPyre_2F_object_events[] = {
 };
 
 static WarpEvent MtPyre_2F_warps[] = {
-    {2, 1, 3, "MAP_MT_PYRE_1F", "4"},
-    {10, 1, 3, "MAP_MT_PYRE_3F", "0"},
-    {10, 12, 3, "MAP_MT_PYRE_3F", "4"},
-    {6, 12, 3, "MAP_MT_PYRE_3F", "5"},
-    {11, 9, 3, "MAP_MT_PYRE_1F", "5"},
+    {2, 1, 3, &MtPyre_1F, "4"},
+    {10, 1, 3, &MtPyre_3F, "0"},
+    {10, 12, 3, &MtPyre_3F, "4"},
+    {6, 12, 3, &MtPyre_3F, "5"},
+    {11, 9, 3, &MtPyre_1F, "5"},
 };
 
 const Map MtPyre_2F = {
@@ -18128,8 +18131,8 @@ static ObjectEvent FarawayIsland_Interior_object_events[] = {
 };
 
 static WarpEvent FarawayIsland_Interior_warps[] = {
-    {12, 19, 0, "MAP_FARAWAY_ISLAND_ENTRANCE", "0"},
-    {13, 19, 0, "MAP_FARAWAY_ISLAND_ENTRANCE", "1"},
+    {12, 19, 0, &FarawayIsland_Entrance, "0"},
+    {13, 19, 0, &FarawayIsland_Entrance, "1"},
 };
 
 const Map FarawayIsland_Interior = {
@@ -18177,7 +18180,7 @@ static ObjectEvent SecretBase_BrownCave2_object_events[] = {
 };
 
 static WarpEvent SecretBase_BrownCave2_warps[] = {
-    {1, 7, 0, "MAP_DYNAMIC", "WARP_ID_SECRET_BASE"},
+    {1, 7, 0, &Dynamic, "WARP_ID_SECRET_BASE"},
 };
 
 const Map SecretBase_BrownCave2 = {
@@ -18215,8 +18218,8 @@ static ObjectEvent RustboroCity_Gym_object_events[] = {
 };
 
 static WarpEvent RustboroCity_Gym_warps[] = {
-    {5, 19, 0, "MAP_RUSTBORO_CITY", "0"},
-    {6, 19, 0, "MAP_RUSTBORO_CITY", "0"},
+    {5, 19, 0, &RustboroCity, "0"},
+    {6, 19, 0, &RustboroCity, "0"},
 };
 
 static BgEvent RustboroCity_Gym_bg_events[] = {
@@ -18282,9 +18285,9 @@ static ObjectEvent Route115_object_events[] = {
 };
 
 static WarpEvent Route115_warps[] = {
-    {27, 37, 0, "MAP_METEOR_FALLS_1F_1R", "1"},
-    {21, 6, 0, "MAP_TERRA_CAVE_ENTRANCE", "0"},
-    {36, 10, 0, "MAP_TERRA_CAVE_ENTRANCE", "0"},
+    {27, 37, 0, &MeteorFalls_1F_1R, "1"},
+    {21, 6, 0, &TerraCave_Entrance, "0"},
+    {36, 10, 0, &TerraCave_Entrance, "0"},
 };
 
 static BgEvent Route115_bg_events[] = {
@@ -18338,9 +18341,9 @@ static ObjectEvent BattleFrontier_PokemonCenter_2F_object_events[] = {
 };
 
 static WarpEvent BattleFrontier_PokemonCenter_2F_warps[] = {
-    {1, 6, 4, "MAP_BATTLE_FRONTIER_POKEMON_CENTER_1F", "2"},
-    {5, 1, 3, "MAP_UNION_ROOM", "0"},
-    {9, 1, 3, "MAP_TRADE_CENTER", "0"},
+    {1, 6, 4, &BattleFrontier_PokemonCenter_1F, "2"},
+    {5, 1, 3, &UnionRoom, "0"},
+    {9, 1, 3, &TradeCenter, "0"},
 };
 
 const Map BattleFrontier_PokemonCenter_2F = {
@@ -18375,8 +18378,8 @@ static ObjectEvent SootopolisCity_House1_object_events[] = {
 };
 
 static WarpEvent SootopolisCity_House1_warps[] = {
-    {3, 6, 0, "MAP_SOOTOPOLIS_CITY", "4"},
-    {4, 6, 0, "MAP_SOOTOPOLIS_CITY", "4"},
+    {3, 6, 0, &SootopolisCity, "4"},
+    {4, 6, 0, &SootopolisCity, "4"},
 };
 
 const Map SootopolisCity_House1 = {
@@ -18457,8 +18460,8 @@ static ObjectEvent MossdeepCity_Mart_object_events[] = {
 };
 
 static WarpEvent MossdeepCity_Mart_warps[] = {
-    {3, 7, 0, "MAP_MOSSDEEP_CITY", "4"},
-    {4, 7, 0, "MAP_MOSSDEEP_CITY", "4"},
+    {3, 7, 0, &MossdeepCity, "4"},
+    {4, 7, 0, &MossdeepCity, "4"},
 };
 
 const Map MossdeepCity_Mart = {
@@ -18539,7 +18542,7 @@ static ObjectEvent Route123_object_events[] = {
 };
 
 static WarpEvent Route123_warps[] = {
-    {22, 6, 0, "MAP_ROUTE123_BERRY_MASTERS_HOUSE", "0"},
+    {22, 6, 0, &Route123_BerryMastersHouse, "0"},
 };
 
 static CoordEvent Route123_coords[] = {
@@ -18616,8 +18619,8 @@ static ObjectEvent BattleFrontier_ReceptionGate_object_events[] = {
 };
 
 static WarpEvent BattleFrontier_ReceptionGate_warps[] = {
-    {4, 13, 0, "MAP_BATTLE_FRONTIER_OUTSIDE_WEST", "8"},
-    {4, 1, 0, "MAP_BATTLE_FRONTIER_OUTSIDE_WEST", "9"},
+    {4, 13, 0, &BattleFrontier_OutsideWest, "8"},
+    {4, 1, 0, &BattleFrontier_OutsideWest, "9"},
 };
 
 const Map BattleFrontier_ReceptionGate = {
@@ -18652,9 +18655,9 @@ static ObjectEvent MtPyre_Exterior_object_events[] = {
 };
 
 static WarpEvent MtPyre_Exterior_warps[] = {
-    {10, 42, 3, "MAP_MT_PYRE_1F", "1"},
-    {19, 10, 3, "MAP_MT_PYRE_SUMMIT", "1"},
-    {20, 10, 3, "MAP_MT_PYRE_SUMMIT", "1"},
+    {10, 42, 3, &MtPyre_1F, "1"},
+    {19, 10, 3, &MtPyre_Summit, "1"},
+    {20, 10, 3, &MtPyre_Summit, "1"},
 };
 
 static CoordEvent MtPyre_Exterior_coords[] = {
@@ -18720,7 +18723,7 @@ static ObjectEvent Route124_object_events[] = {
 };
 
 static WarpEvent Route124_warps[] = {
-    {70, 48, 3, "MAP_ROUTE124_DIVING_TREASURE_HUNTERS_HOUSE", "0"},
+    {70, 48, 3, &Route124_DivingTreasureHuntersHouse, "0"},
 };
 
 static BgEvent Route124_bg_events[] = {
@@ -18754,9 +18757,9 @@ const Map Route124 = {
 };
 
 static WarpEvent NavelRock_Fork_warps[] = {
-    {4, 6, 3, "MAP_NAVEL_ROCK_UP1", "0"},
-    {11, 79, 3, "MAP_NAVEL_ROCK_B1F", "1"},
-    {22, 6, 3, "MAP_NAVEL_ROCK_DOWN01", "0"},
+    {4, 6, 3, &NavelRock_Up1, "0"},
+    {11, 79, 3, &NavelRock_B1F, "1"},
+    {22, 6, 3, &NavelRock_Down01, "0"},
 };
 
 const Map NavelRock_Fork = {
@@ -18786,8 +18789,8 @@ const Map NavelRock_Fork = {
 };
 
 static WarpEvent MagmaHideout_2F_3R_warps[] = {
-    {16, 1, 0, "MAP_MAGMA_HIDEOUT_1F", "3"},
-    {16, 13, 0, "MAP_MAGMA_HIDEOUT_3F_3R", "0"},
+    {16, 1, 0, &MagmaHideout_1F, "3"},
+    {16, 13, 0, &MagmaHideout_3F_3R, "0"},
 };
 
 const Map MagmaHideout_2F_3R = {
@@ -18857,8 +18860,8 @@ static ObjectEvent MagmaHideout_3F_3R_object_events[] = {
 };
 
 static WarpEvent MagmaHideout_3F_3R_warps[] = {
-    {16, 1, 0, "MAP_MAGMA_HIDEOUT_2F_3R", "1"},
-    {16, 21, 0, "MAP_MAGMA_HIDEOUT_4F", "1"},
+    {16, 1, 0, &MagmaHideout_2F_3R, "1"},
+    {16, 21, 0, &MagmaHideout_4F, "1"},
 };
 
 const Map MagmaHideout_3F_3R = {
@@ -18895,9 +18898,9 @@ static ObjectEvent EverGrandeCity_PokemonLeague_2F_object_events[] = {
 };
 
 static WarpEvent EverGrandeCity_PokemonLeague_2F_warps[] = {
-    {1, 6, 4, "MAP_EVER_GRANDE_CITY_POKEMON_LEAGUE_1F", "4"},
-    {5, 1, 3, "MAP_UNION_ROOM", "0"},
-    {9, 1, 3, "MAP_TRADE_CENTER", "0"},
+    {1, 6, 4, &EverGrandeCity_PokemonLeague_1F, "4"},
+    {5, 1, 3, &UnionRoom, "0"},
+    {9, 1, 3, &TradeCenter, "0"},
 };
 
 const Map EverGrandeCity_PokemonLeague_2F = {
@@ -18939,9 +18942,9 @@ static ObjectEvent BattleFrontier_BattleTowerLobby_object_events[] = {
 };
 
 static WarpEvent BattleFrontier_BattleTowerLobby_warps[] = {
-    {12, 9, 3, "MAP_BATTLE_FRONTIER_OUTSIDE_EAST", "0"},
-    {13, 9, 3, "MAP_BATTLE_FRONTIER_OUTSIDE_EAST", "0"},
-    {6, 1, 0, "MAP_BATTLE_FRONTIER_BATTLE_TOWER_BATTLE_ROOM", "0"},
+    {12, 9, 3, &BattleFrontier_OutsideEast, "0"},
+    {13, 9, 3, &BattleFrontier_OutsideEast, "0"},
+    {6, 1, 0, &BattleFrontier_BattleTowerBattleRoom, "0"},
 };
 
 static BgEvent BattleFrontier_BattleTowerLobby_bg_events[] = {
@@ -18983,9 +18986,9 @@ static ObjectEvent LilycoveCity_CoveLilyMotel_1F_object_events[] = {
 };
 
 static WarpEvent LilycoveCity_CoveLilyMotel_1F_warps[] = {
-    {5, 8, 0, "MAP_LILYCOVE_CITY", "1"},
-    {6, 8, 0, "MAP_LILYCOVE_CITY", "1"},
-    {2, 1, 0, "MAP_LILYCOVE_CITY_COVE_LILY_MOTEL_2F", "0"},
+    {5, 8, 0, &LilycoveCity, "1"},
+    {6, 8, 0, &LilycoveCity, "1"},
+    {2, 1, 0, &LilycoveCity_CoveLilyMotel_2F, "0"},
 };
 
 static CoordEvent LilycoveCity_CoveLilyMotel_1F_coords[] = {
@@ -19027,9 +19030,9 @@ static ObjectEvent AbandonedShip_Rooms2_1F_object_events[] = {
 };
 
 static WarpEvent AbandonedShip_Rooms2_1F_warps[] = {
-    {4, 16, 3, "MAP_ABANDONED_SHIP_CORRIDORS_1F", "8"},
-    {5, 16, 3, "MAP_ABANDONED_SHIP_CORRIDORS_1F", "8"},
-    {4, 1, 3, "MAP_ABANDONED_SHIP_CORRIDORS_1F", "11"},
+    {4, 16, 3, &AbandonedShip_Corridors_1F, "8"},
+    {5, 16, 3, &AbandonedShip_Corridors_1F, "8"},
+    {4, 1, 3, &AbandonedShip_Corridors_1F, "11"},
 };
 
 const Map AbandonedShip_Rooms2_1F = {
@@ -19065,8 +19068,8 @@ static ObjectEvent OldaleTown_Mart_object_events[] = {
 };
 
 static WarpEvent OldaleTown_Mart_warps[] = {
-    {3, 7, 0, "MAP_OLDALE_TOWN", "3"},
-    {4, 7, 0, "MAP_OLDALE_TOWN", "3"},
+    {3, 7, 0, &OldaleTown, "3"},
+    {4, 7, 0, &OldaleTown, "3"},
 };
 
 const Map OldaleTown_Mart = {
@@ -19096,8 +19099,8 @@ const Map OldaleTown_Mart = {
 };
 
 static WarpEvent NewMauville_Entrance_warps[] = {
-    {4, 6, 3, "MAP_ROUTE110", "0"},
-    {4, 1, 3, "MAP_NEW_MAUVILLE_INSIDE", "0"},
+    {4, 6, 3, &Route110, "0"},
+    {4, 1, 3, &NewMauville_Inside, "0"},
 };
 
 static CoordEvent NewMauville_Entrance_coords[] = {
@@ -19135,8 +19138,8 @@ static ObjectEvent OldaleTown_House1_object_events[] = {
 };
 
 static WarpEvent OldaleTown_House1_warps[] = {
-    {3, 8, 0, "MAP_OLDALE_TOWN", "0"},
-    {4, 8, 0, "MAP_OLDALE_TOWN", "0"},
+    {3, 8, 0, &OldaleTown, "0"},
+    {4, 8, 0, &OldaleTown, "0"},
 };
 
 const Map OldaleTown_House1 = {
@@ -19171,9 +19174,9 @@ static ObjectEvent RustboroCity_Flat1_1F_object_events[] = {
 };
 
 static WarpEvent RustboroCity_Flat1_1F_warps[] = {
-    {6, 7, 0, "MAP_RUSTBORO_CITY", "1"},
-    {7, 7, 0, "MAP_RUSTBORO_CITY", "1"},
-    {2, 1, 0, "MAP_RUSTBORO_CITY_FLAT1_2F", "0"},
+    {6, 7, 0, &RustboroCity, "1"},
+    {7, 7, 0, &RustboroCity, "1"},
+    {2, 1, 0, &RustboroCity_Flat1_2F, "0"},
 };
 
 const Map RustboroCity_Flat1_1F = {
@@ -19246,8 +19249,8 @@ static ObjectEvent FortreeCity_Mart_object_events[] = {
 };
 
 static WarpEvent FortreeCity_Mart_warps[] = {
-    {3, 7, 0, "MAP_FORTREE_CITY", "3"},
-    {4, 7, 0, "MAP_FORTREE_CITY", "3"},
+    {3, 7, 0, &FortreeCity, "3"},
+    {4, 7, 0, &FortreeCity, "3"},
 };
 
 const Map FortreeCity_Mart = {
@@ -19285,9 +19288,9 @@ static ObjectEvent PetalburgCity_PokemonCenter_1F_object_events[] = {
 };
 
 static WarpEvent PetalburgCity_PokemonCenter_1F_warps[] = {
-    {7, 8, 3, "MAP_PETALBURG_CITY", "3"},
-    {6, 8, 3, "MAP_PETALBURG_CITY", "3"},
-    {1, 6, 4, "MAP_PETALBURG_CITY_POKEMON_CENTER_2F", "0"},
+    {7, 8, 3, &PetalburgCity, "3"},
+    {6, 8, 3, &PetalburgCity, "3"},
+    {1, 6, 4, &PetalburgCity_PokemonCenter_2F, "0"},
 };
 
 const Map PetalburgCity_PokemonCenter_1F = {
@@ -19324,9 +19327,9 @@ static ObjectEvent EverGrandeCity_PokemonCenter_1F_object_events[] = {
 };
 
 static WarpEvent EverGrandeCity_PokemonCenter_1F_warps[] = {
-    {7, 8, 3, "MAP_EVER_GRANDE_CITY", "1"},
-    {6, 8, 3, "MAP_EVER_GRANDE_CITY", "1"},
-    {1, 6, 4, "MAP_EVER_GRANDE_CITY_POKEMON_CENTER_2F", "0"},
+    {7, 8, 3, &EverGrandeCity, "1"},
+    {6, 8, 3, &EverGrandeCity, "1"},
+    {1, 6, 4, &EverGrandeCity_PokemonCenter_2F, "0"},
 };
 
 const Map EverGrandeCity_PokemonCenter_1F = {
@@ -19361,7 +19364,7 @@ static ObjectEvent RustboroCity_Flat2_3F_object_events[] = {
 };
 
 static WarpEvent RustboroCity_Flat2_3F_warps[] = {
-    {1, 1, 0, "MAP_RUSTBORO_CITY_FLAT2_2F", "1"},
+    {1, 1, 0, &RustboroCity_Flat2_2F, "1"},
 };
 
 const Map RustboroCity_Flat2_3F = {
@@ -19457,8 +19460,8 @@ static ObjectEvent LilycoveCity_House2_object_events[] = {
 };
 
 static WarpEvent LilycoveCity_House2_warps[] = {
-    {2, 7, 0, "MAP_LILYCOVE_CITY", "9"},
-    {3, 7, 0, "MAP_LILYCOVE_CITY", "9"},
+    {2, 7, 0, &LilycoveCity, "9"},
+    {3, 7, 0, &LilycoveCity, "9"},
 };
 
 const Map LilycoveCity_House2 = {
@@ -19506,7 +19509,7 @@ static ObjectEvent SecretBase_BlueCave1_object_events[] = {
 };
 
 static WarpEvent SecretBase_BlueCave1_warps[] = {
-    {5, 7, 0, "MAP_DYNAMIC", "WARP_ID_SECRET_BASE"},
+    {5, 7, 0, &Dynamic, "WARP_ID_SECRET_BASE"},
 };
 
 const Map SecretBase_BlueCave1 = {
@@ -19545,16 +19548,16 @@ static ObjectEvent AquaHideout_B2F_object_events[] = {
 };
 
 static WarpEvent AquaHideout_B2F_warps[] = {
-    {18, 1, 3, "MAP_AQUA_HIDEOUT_B1F", "1"},
-    {12, 1, 3, "MAP_AQUA_HIDEOUT_B1F", "2"},
-    {3, 3, 3, "MAP_AQUA_HIDEOUT_B1F", "3"},
-    {31, 8, 3, "MAP_AQUA_HIDEOUT_B2F", "5"},
-    {8, 8, 3, "MAP_AQUA_HIDEOUT_B2F", "8"},
-    {5, 8, 3, "MAP_AQUA_HIDEOUT_B2F", "3"},
-    {18, 13, 3, "MAP_AQUA_HIDEOUT_B2F", "7"},
-    {12, 13, 3, "MAP_AQUA_HIDEOUT_B2F", "6"},
-    {31, 17, 3, "MAP_AQUA_HIDEOUT_B2F", "4"},
-    {32, 20, 3, "MAP_AQUA_HIDEOUT_B1F", "4"},
+    {18, 1, 3, &AquaHideout_B1F, "1"},
+    {12, 1, 3, &AquaHideout_B1F, "2"},
+    {3, 3, 3, &AquaHideout_B1F, "3"},
+    {31, 8, 3, &AquaHideout_B2F, "5"},
+    {8, 8, 3, &AquaHideout_B2F, "8"},
+    {5, 8, 3, &AquaHideout_B2F, "3"},
+    {18, 13, 3, &AquaHideout_B2F, "7"},
+    {12, 13, 3, &AquaHideout_B2F, "6"},
+    {31, 17, 3, &AquaHideout_B2F, "4"},
+    {32, 20, 3, &AquaHideout_B1F, "4"},
 };
 
 static CoordEvent AquaHideout_B2F_coords[] = {
@@ -19604,8 +19607,8 @@ static ObjectEvent MauvilleCity_GameCorner_object_events[] = {
 };
 
 static WarpEvent MauvilleCity_GameCorner_warps[] = {
-    {11, 10, 3, "MAP_MAUVILLE_CITY", "5"},
-    {12, 10, 3, "MAP_MAUVILLE_CITY", "5"},
+    {11, 10, 3, &MauvilleCity, "5"},
+    {12, 10, 3, &MauvilleCity, "5"},
 };
 
 static BgEvent MauvilleCity_GameCorner_bg_events[] = {
@@ -19667,8 +19670,8 @@ static ObjectEvent VerdanturfTown_FriendshipRatersHouse_object_events[] = {
 };
 
 static WarpEvent VerdanturfTown_FriendshipRatersHouse_warps[] = {
-    {3, 7, 0, "MAP_VERDANTURF_TOWN", "5"},
-    {4, 7, 0, "MAP_VERDANTURF_TOWN", "5"},
+    {3, 7, 0, &VerdanturfTown, "5"},
+    {4, 7, 0, &VerdanturfTown, "5"},
 };
 
 const Map VerdanturfTown_FriendshipRatersHouse = {
@@ -19708,9 +19711,9 @@ static ObjectEvent LittlerootTown_BrendansHouse_1F_object_events[] = {
 };
 
 static WarpEvent LittlerootTown_BrendansHouse_1F_warps[] = {
-    {9, 8, 0, "MAP_LITTLEROOT_TOWN", "1"},
-    {8, 8, 0, "MAP_LITTLEROOT_TOWN", "1"},
-    {8, 2, 0, "MAP_LITTLEROOT_TOWN_BRENDANS_HOUSE_2F", "0"},
+    {9, 8, 0, &LittlerootTown, "1"},
+    {8, 8, 0, &LittlerootTown, "1"},
+    {8, 2, 0, &LittlerootTown_BrendansHouse_2F, "0"},
 };
 
 static CoordEvent LittlerootTown_BrendansHouse_1F_coords[] = {
@@ -19752,8 +19755,8 @@ static ObjectEvent MossdeepCity_House1_object_events[] = {
 };
 
 static WarpEvent MossdeepCity_House1_warps[] = {
-    {3, 7, 0, "MAP_MOSSDEEP_CITY", "0"},
-    {4, 7, 0, "MAP_MOSSDEEP_CITY", "0"},
+    {3, 7, 0, &MossdeepCity, "0"},
+    {4, 7, 0, &MossdeepCity, "0"},
 };
 
 const Map MossdeepCity_House1 = {
@@ -19788,8 +19791,8 @@ static ObjectEvent Route113_GlassWorkshop_object_events[] = {
 };
 
 static WarpEvent Route113_GlassWorkshop_warps[] = {
-    {3, 8, 0, "MAP_ROUTE113", "0"},
-    {4, 8, 0, "MAP_ROUTE113", "0"},
+    {3, 8, 0, &Route113, "0"},
+    {4, 8, 0, &Route113, "0"},
 };
 
 const Map Route113_GlassWorkshop = {
@@ -19830,12 +19833,12 @@ static ObjectEvent PacifidlogTown_object_events[] = {
 };
 
 static WarpEvent PacifidlogTown_warps[] = {
-    {8, 15, 0, "MAP_PACIFIDLOG_TOWN_POKEMON_CENTER_1F", "0"},
-    {16, 13, 0, "MAP_PACIFIDLOG_TOWN_HOUSE1", "0"},
-    {3, 22, 0, "MAP_PACIFIDLOG_TOWN_HOUSE2", "0"},
-    {12, 24, 0, "MAP_PACIFIDLOG_TOWN_HOUSE3", "0"},
-    {2, 12, 0, "MAP_PACIFIDLOG_TOWN_HOUSE4", "0"},
-    {17, 21, 0, "MAP_PACIFIDLOG_TOWN_HOUSE5", "0"},
+    {8, 15, 0, &PacifidlogTown_PokemonCenter_1F, "0"},
+    {16, 13, 0, &PacifidlogTown_House1, "0"},
+    {3, 22, 0, &PacifidlogTown_House2, "0"},
+    {12, 24, 0, &PacifidlogTown_House3, "0"},
+    {2, 12, 0, &PacifidlogTown_House4, "0"},
+    {17, 21, 0, &PacifidlogTown_House5, "0"},
 };
 
 static BgEvent PacifidlogTown_bg_events[] = {
@@ -19889,7 +19892,7 @@ static ObjectEvent SecretBase_Shrub2_object_events[] = {
 };
 
 static WarpEvent SecretBase_Shrub2_warps[] = {
-    {7, 5, 0, "MAP_DYNAMIC", "WARP_ID_SECRET_BASE"},
+    {7, 5, 0, &Dynamic, "WARP_ID_SECRET_BASE"},
 };
 
 const Map SecretBase_Shrub2 = {
@@ -19943,13 +19946,13 @@ static ObjectEvent VictoryRoad_B1F_object_events[] = {
 };
 
 static WarpEvent VictoryRoad_B1F_warps[] = {
-    {30, 25, 3, "MAP_VICTORY_ROAD_B2F", "0"},
-    {17, 16, 3, "MAP_VICTORY_ROAD_B2F", "2"},
-    {42, 25, 3, "MAP_VICTORY_ROAD_1F", "3"},
-    {42, 2, 4, "MAP_VICTORY_ROAD_B2F", "1"},
-    {8, 3, 3, "MAP_VICTORY_ROAD_1F", "4"},
-    {20, 21, 3, "MAP_VICTORY_ROAD_1F", "2"},
-    {5, 26, 3, "MAP_VICTORY_ROAD_B2F", "3"},
+    {30, 25, 3, &VictoryRoad_B2F, "0"},
+    {17, 16, 3, &VictoryRoad_B2F, "2"},
+    {42, 25, 3, &VictoryRoad_1F, "3"},
+    {42, 2, 4, &VictoryRoad_B2F, "1"},
+    {8, 3, 3, &VictoryRoad_1F, "4"},
+    {20, 21, 3, &VictoryRoad_1F, "2"},
+    {5, 26, 3, &VictoryRoad_B2F, "3"},
 };
 
 const Map VictoryRoad_B1F = {
@@ -19990,10 +19993,10 @@ static ObjectEvent SlateportCity_Harbor_object_events[] = {
 };
 
 static WarpEvent SlateportCity_Harbor_warps[] = {
-    {11, 14, 0, "MAP_SLATEPORT_CITY", "8"},
-    {12, 14, 0, "MAP_SLATEPORT_CITY", "8"},
-    {19, 15, 0, "MAP_SLATEPORT_CITY", "9"},
-    {20, 15, 0, "MAP_SLATEPORT_CITY", "9"},
+    {11, 14, 0, &SlateportCity, "8"},
+    {12, 14, 0, &SlateportCity, "8"},
+    {19, 15, 0, &SlateportCity, "9"},
+    {20, 15, 0, &SlateportCity, "9"},
 };
 
 static CoordEvent SlateportCity_Harbor_coords[] = {
@@ -20043,11 +20046,11 @@ static ObjectEvent DewfordTown_object_events[] = {
 };
 
 static WarpEvent DewfordTown_warps[] = {
-    {3, 3, 0, "MAP_DEWFORD_TOWN_HALL", "0"},
-    {2, 10, 0, "MAP_DEWFORD_TOWN_POKEMON_CENTER_1F", "0"},
-    {8, 17, 0, "MAP_DEWFORD_TOWN_GYM", "0"},
-    {17, 14, 0, "MAP_DEWFORD_TOWN_HOUSE1", "0"},
-    {8, 8, 0, "MAP_DEWFORD_TOWN_HOUSE2", "0"},
+    {3, 3, 0, &DewfordTown_Hall, "0"},
+    {2, 10, 0, &DewfordTown_PokemonCenter_1F, "0"},
+    {8, 17, 0, &DewfordTown_Gym, "0"},
+    {17, 14, 0, &DewfordTown_House1, "0"},
+    {8, 8, 0, &DewfordTown_House2, "0"},
 };
 
 static BgEvent DewfordTown_bg_events[] = {
@@ -20098,12 +20101,12 @@ static ObjectEvent MeteorFalls_1F_1R_object_events[] = {
 };
 
 static WarpEvent MeteorFalls_1F_1R_warps[] = {
-    {27, 18, 4, "MAP_ROUTE114", "0"},
-    {6, 39, 3, "MAP_ROUTE115", "0"},
-    {10, 3, 3, "MAP_METEOR_FALLS_1F_2R", "0"},
-    {5, 4, 3, "MAP_METEOR_FALLS_B1F_1R", "4"},
-    {26, 28, 3, "MAP_METEOR_FALLS_B1F_1R", "5"},
-    {4, 2, 0, "MAP_METEOR_FALLS_STEVENS_CAVE", "0"},
+    {27, 18, 4, &Route114, "0"},
+    {6, 39, 3, &Route115, "0"},
+    {10, 3, 3, &MeteorFalls_1F_2R, "0"},
+    {5, 4, 3, &MeteorFalls_B1F_1R, "4"},
+    {26, 28, 3, &MeteorFalls_B1F_1R, "5"},
+    {4, 2, 0, &MeteorFalls_StevensCave, "0"},
 };
 
 static CoordEvent MeteorFalls_1F_1R_coords[] = {
@@ -20150,8 +20153,8 @@ static ObjectEvent BattleFrontier_BattleDomeLobby_object_events[] = {
 };
 
 static WarpEvent BattleFrontier_BattleDomeLobby_warps[] = {
-    {11, 16, 0, "MAP_BATTLE_FRONTIER_OUTSIDE_WEST", "1"},
-    {12, 16, 0, "MAP_BATTLE_FRONTIER_OUTSIDE_WEST", "1"},
+    {11, 16, 0, &BattleFrontier_OutsideWest, "1"},
+    {12, 16, 0, &BattleFrontier_OutsideWest, "1"},
 };
 
 static BgEvent BattleFrontier_BattleDomeLobby_bg_events[] = {
@@ -20195,9 +20198,9 @@ static ObjectEvent Route110_TrickHousePuzzle8_object_events[] = {
 };
 
 static WarpEvent Route110_TrickHousePuzzle8_warps[] = {
-    {0, 21, 3, "MAP_ROUTE110_TRICK_HOUSE_ENTRANCE", "2"},
-    {1, 21, 3, "MAP_ROUTE110_TRICK_HOUSE_ENTRANCE", "2"},
-    {13, 1, 0, "MAP_ROUTE110_TRICK_HOUSE_END", "0"},
+    {0, 21, 3, &Route110_TrickHouseEntrance, "2"},
+    {1, 21, 3, &Route110_TrickHouseEntrance, "2"},
+    {13, 1, 0, &Route110_TrickHouseEnd, "0"},
 };
 
 static BgEvent Route110_TrickHousePuzzle8_bg_events[] = {
@@ -20237,8 +20240,8 @@ static ObjectEvent SlateportCity_Mart_object_events[] = {
 };
 
 static WarpEvent SlateportCity_Mart_warps[] = {
-    {3, 7, 0, "MAP_SLATEPORT_CITY", "1"},
-    {4, 7, 0, "MAP_SLATEPORT_CITY", "1"},
+    {3, 7, 0, &SlateportCity, "1"},
+    {4, 7, 0, &SlateportCity, "1"},
 };
 
 const Map SlateportCity_Mart = {
@@ -20274,9 +20277,9 @@ static ObjectEvent MossdeepCity_PokemonCenter_1F_object_events[] = {
 };
 
 static WarpEvent MossdeepCity_PokemonCenter_1F_warps[] = {
-    {7, 8, 3, "MAP_MOSSDEEP_CITY", "2"},
-    {6, 8, 3, "MAP_MOSSDEEP_CITY", "2"},
-    {1, 6, 4, "MAP_MOSSDEEP_CITY_POKEMON_CENTER_2F", "0"},
+    {7, 8, 3, &MossdeepCity, "2"},
+    {6, 8, 3, &MossdeepCity, "2"},
+    {1, 6, 4, &MossdeepCity_PokemonCenter_2F, "0"},
 };
 
 const Map MossdeepCity_PokemonCenter_1F = {
@@ -20324,9 +20327,9 @@ static ObjectEvent Route110_TrickHousePuzzle1_object_events[] = {
 };
 
 static WarpEvent Route110_TrickHousePuzzle1_warps[] = {
-    {0, 21, 3, "MAP_ROUTE110_TRICK_HOUSE_ENTRANCE", "2"},
-    {1, 21, 3, "MAP_ROUTE110_TRICK_HOUSE_ENTRANCE", "2"},
-    {13, 1, 3, "MAP_ROUTE110_TRICK_HOUSE_END", "0"},
+    {0, 21, 3, &Route110_TrickHouseEntrance, "2"},
+    {1, 21, 3, &Route110_TrickHouseEntrance, "2"},
+    {13, 1, 3, &Route110_TrickHouseEnd, "0"},
 };
 
 static BgEvent Route110_TrickHousePuzzle1_bg_events[] = {
@@ -20372,11 +20375,11 @@ static ObjectEvent GraniteCave_B2F_object_events[] = {
 };
 
 static WarpEvent GraniteCave_B2F_warps[] = {
-    {29, 13, 3, "MAP_GRANITE_CAVE_B1F", "2"},
-    {28, 21, 3, "MAP_GRANITE_CAVE_B1F", "3"},
-    {8, 5, 3, "MAP_GRANITE_CAVE_B1F", "4"},
-    {12, 3, 3, "MAP_GRANITE_CAVE_B1F", "5"},
-    {29, 2, 3, "MAP_GRANITE_CAVE_B1F", "6"},
+    {29, 13, 3, &GraniteCave_B1F, "2"},
+    {28, 21, 3, &GraniteCave_B1F, "3"},
+    {8, 5, 3, &GraniteCave_B1F, "4"},
+    {12, 3, 3, &GraniteCave_B1F, "5"},
+    {29, 2, 3, &GraniteCave_B1F, "6"},
 };
 
 static BgEvent GraniteCave_B2F_bg_events[] = {
@@ -20411,8 +20414,8 @@ const Map GraniteCave_B2F = {
 };
 
 static WarpEvent TrainerHill_1F_warps[] = {
-    {2, 1, 3, "MAP_TRAINER_HILL_ENTRANCE", "2"},
-    {12, 1, 3, "MAP_TRAINER_HILL_2F", "0"},
+    {2, 1, 3, &TrainerHill_Entrance, "2"},
+    {12, 1, 3, &TrainerHill_2F, "0"},
 };
 
 const Map TrainerHill_1F = {
@@ -20448,9 +20451,9 @@ static ObjectEvent DewfordTown_PokemonCenter_1F_object_events[] = {
 };
 
 static WarpEvent DewfordTown_PokemonCenter_1F_warps[] = {
-    {7, 8, 3, "MAP_DEWFORD_TOWN", "1"},
-    {6, 8, 3, "MAP_DEWFORD_TOWN", "1"},
-    {1, 6, 4, "MAP_DEWFORD_TOWN_POKEMON_CENTER_2F", "0"},
+    {7, 8, 3, &DewfordTown, "1"},
+    {6, 8, 3, &DewfordTown, "1"},
+    {1, 6, 4, &DewfordTown_PokemonCenter_2F, "0"},
 };
 
 const Map DewfordTown_PokemonCenter_1F = {
@@ -20490,9 +20493,9 @@ static ObjectEvent LittlerootTown_MaysHouse_1F_object_events[] = {
 };
 
 static WarpEvent LittlerootTown_MaysHouse_1F_warps[] = {
-    {1, 8, 0, "MAP_LITTLEROOT_TOWN", "0"},
-    {2, 8, 0, "MAP_LITTLEROOT_TOWN", "0"},
-    {2, 2, 0, "MAP_LITTLEROOT_TOWN_MAYS_HOUSE_2F", "0"},
+    {1, 8, 0, &LittlerootTown, "0"},
+    {2, 8, 0, &LittlerootTown, "0"},
+    {2, 2, 0, &LittlerootTown_MaysHouse_2F, "0"},
 };
 
 static CoordEvent LittlerootTown_MaysHouse_1F_coords[] = {
@@ -20534,8 +20537,8 @@ static ObjectEvent PacifidlogTown_House1_object_events[] = {
 };
 
 static WarpEvent PacifidlogTown_House1_warps[] = {
-    {4, 8, 0, "MAP_PACIFIDLOG_TOWN", "1"},
-    {5, 8, 0, "MAP_PACIFIDLOG_TOWN", "1"},
+    {4, 8, 0, &PacifidlogTown, "1"},
+    {5, 8, 0, &PacifidlogTown, "1"},
 };
 
 const Map PacifidlogTown_House1 = {
@@ -20572,9 +20575,9 @@ static ObjectEvent Route110_TrickHousePuzzle6_object_events[] = {
 };
 
 static WarpEvent Route110_TrickHousePuzzle6_warps[] = {
-    {0, 21, 3, "MAP_ROUTE110_TRICK_HOUSE_ENTRANCE", "2"},
-    {1, 21, 3, "MAP_ROUTE110_TRICK_HOUSE_ENTRANCE", "2"},
-    {13, 1, 3, "MAP_ROUTE110_TRICK_HOUSE_END", "0"},
+    {0, 21, 3, &Route110_TrickHouseEntrance, "2"},
+    {1, 21, 3, &Route110_TrickHouseEntrance, "2"},
+    {13, 1, 3, &Route110_TrickHouseEnd, "0"},
 };
 
 static BgEvent Route110_TrickHousePuzzle6_bg_events[] = {
@@ -20613,10 +20616,10 @@ static ObjectEvent ShoalCave_LowTideLowerRoom_object_events[] = {
 };
 
 static WarpEvent ShoalCave_LowTideLowerRoom_warps[] = {
-    {7, 2, 3, "MAP_SHOAL_CAVE_LOW_TIDE_INNER_ROOM", "3"},
-    {2, 6, 3, "MAP_SHOAL_CAVE_LOW_TIDE_INNER_ROOM", "4"},
-    {19, 11, 3, "MAP_SHOAL_CAVE_LOW_TIDE_INNER_ROOM", "5"},
-    {28, 11, 3, "MAP_SHOAL_CAVE_LOW_TIDE_ICE_ROOM", "0"},
+    {7, 2, 3, &ShoalCave_LowTideInnerRoom, "3"},
+    {2, 6, 3, &ShoalCave_LowTideInnerRoom, "4"},
+    {19, 11, 3, &ShoalCave_LowTideInnerRoom, "5"},
+    {28, 11, 3, &ShoalCave_LowTideIceRoom, "0"},
 };
 
 static BgEvent ShoalCave_LowTideLowerRoom_bg_events[] = {
@@ -20656,9 +20659,9 @@ static ObjectEvent RustboroCity_DevonCorp_1F_object_events[] = {
 };
 
 static WarpEvent RustboroCity_DevonCorp_1F_warps[] = {
-    {5, 8, 0, "MAP_RUSTBORO_CITY", "5"},
-    {6, 8, 0, "MAP_RUSTBORO_CITY", "6"},
-    {14, 1, 0, "MAP_RUSTBORO_CITY_DEVON_CORP_2F", "0"},
+    {5, 8, 0, &RustboroCity, "5"},
+    {6, 8, 0, &RustboroCity, "6"},
+    {14, 1, 0, &RustboroCity_DevonCorp_2F, "0"},
 };
 
 static BgEvent RustboroCity_DevonCorp_1F_bg_events[] = {
@@ -20711,7 +20714,7 @@ static ObjectEvent SecretBase_Shrub3_object_events[] = {
 };
 
 static WarpEvent SecretBase_Shrub3_warps[] = {
-    {6, 9, 0, "MAP_DYNAMIC", "WARP_ID_SECRET_BASE"},
+    {6, 9, 0, &Dynamic, "WARP_ID_SECRET_BASE"},
 };
 
 const Map SecretBase_Shrub3 = {
@@ -20746,8 +20749,8 @@ static ObjectEvent FarawayIsland_Entrance_object_events[] = {
 };
 
 static WarpEvent FarawayIsland_Entrance_warps[] = {
-    {22, 7, 3, "MAP_FARAWAY_ISLAND_INTERIOR", "0"},
-    {23, 7, 3, "MAP_FARAWAY_ISLAND_INTERIOR", "1"},
+    {22, 7, 3, &FarawayIsland_Interior, "0"},
+    {23, 7, 3, &FarawayIsland_Interior, "1"},
 };
 
 static CoordEvent FarawayIsland_Entrance_coords[] = {
@@ -20792,8 +20795,8 @@ static ObjectEvent PetalburgCity_House1_object_events[] = {
 };
 
 static WarpEvent PetalburgCity_House1_warps[] = {
-    {3, 8, 0, "MAP_PETALBURG_CITY", "0"},
-    {4, 8, 0, "MAP_PETALBURG_CITY", "0"},
+    {3, 8, 0, &PetalburgCity, "0"},
+    {4, 8, 0, &PetalburgCity, "0"},
 };
 
 const Map PetalburgCity_House1 = {
@@ -20860,8 +20863,8 @@ const Map BattleFrontier_BattleFactoryBattleRoom = {
 };
 
 static WarpEvent TerraCave_Entrance_warps[] = {
-    {8, 18, 0, "MAP_DYNAMIC", "WARP_ID_DYNAMIC"},
-    {14, 1, 3, "MAP_TERRA_CAVE_END", "0"},
+    {8, 18, 0, &Dynamic, "WARP_ID_DYNAMIC"},
+    {14, 1, 3, &TerraCave_End, "0"},
 };
 
 const Map TerraCave_Entrance = {
@@ -20895,7 +20898,7 @@ static ObjectEvent MeteorFalls_StevensCave_object_events[] = {
 };
 
 static WarpEvent MeteorFalls_StevensCave_warps[] = {
-    {10, 29, 3, "MAP_METEOR_FALLS_1F_1R", "5"},
+    {10, 29, 3, &MeteorFalls_1F_1R, "5"},
 };
 
 const Map MeteorFalls_StevensCave = {
@@ -20963,31 +20966,31 @@ static ObjectEvent AquaHideout_B1F_object_events[] = {
 };
 
 static WarpEvent AquaHideout_B1F_warps[] = {
-    {29, 1, 3, "MAP_AQUA_HIDEOUT_1F", "2"},
-    {18, 1, 3, "MAP_AQUA_HIDEOUT_B2F", "0"},
-    {12, 1, 3, "MAP_AQUA_HIDEOUT_B2F", "1"},
-    {3, 3, 3, "MAP_AQUA_HIDEOUT_B2F", "2"},
-    {31, 4, 3, "MAP_AQUA_HIDEOUT_B1F", "7"},
-    {27, 4, 3, "MAP_AQUA_HIDEOUT_B1F", "8"},
-    {20, 4, 3, "MAP_AQUA_HIDEOUT_B1F", "10"},
-    {27, 12, 3, "MAP_AQUA_HIDEOUT_B1F", "4"},
-    {3, 15, 3, "MAP_AQUA_HIDEOUT_B1F", "5"},
-    {3, 20, 3, "MAP_AQUA_HIDEOUT_B1F", "12"},
-    {32, 19, 3, "MAP_AQUA_HIDEOUT_B1F", "6"},
-    {23, 10, 3, "MAP_AQUA_HIDEOUT_B1F", "22"},
-    {45, 3, 3, "MAP_AQUA_HIDEOUT_B1F", "9"},
-    {42, 5, 3, "MAP_AQUA_HIDEOUT_B1F", "18"},
-    {45, 5, 3, "MAP_AQUA_HIDEOUT_B1F", "12"},
-    {48, 5, 3, "MAP_AQUA_HIDEOUT_B1F", "16"},
-    {42, 9, 3, "MAP_AQUA_HIDEOUT_B1F", "15"},
-    {45, 9, 3, "MAP_AQUA_HIDEOUT_B1F", "20"},
-    {48, 9, 3, "MAP_AQUA_HIDEOUT_B1F", "13"},
-    {42, 13, 3, "MAP_AQUA_HIDEOUT_B1F", "24"},
-    {45, 13, 3, "MAP_AQUA_HIDEOUT_B1F", "17"},
-    {48, 13, 3, "MAP_AQUA_HIDEOUT_B1F", "12"},
-    {42, 17, 3, "MAP_AQUA_HIDEOUT_B1F", "11"},
-    {45, 17, 3, "MAP_AQUA_HIDEOUT_B1F", "17"},
-    {48, 17, 3, "MAP_AQUA_HIDEOUT_B1F", "19"},
+    {29, 1, 3, &AquaHideout_1F, "2"},
+    {18, 1, 3, &AquaHideout_B2F, "0"},
+    {12, 1, 3, &AquaHideout_B2F, "1"},
+    {3, 3, 3, &AquaHideout_B2F, "2"},
+    {31, 4, 3, &AquaHideout_B1F, "7"},
+    {27, 4, 3, &AquaHideout_B1F, "8"},
+    {20, 4, 3, &AquaHideout_B1F, "10"},
+    {27, 12, 3, &AquaHideout_B1F, "4"},
+    {3, 15, 3, &AquaHideout_B1F, "5"},
+    {3, 20, 3, &AquaHideout_B1F, "12"},
+    {32, 19, 3, &AquaHideout_B1F, "6"},
+    {23, 10, 3, &AquaHideout_B1F, "22"},
+    {45, 3, 3, &AquaHideout_B1F, "9"},
+    {42, 5, 3, &AquaHideout_B1F, "18"},
+    {45, 5, 3, &AquaHideout_B1F, "12"},
+    {48, 5, 3, &AquaHideout_B1F, "16"},
+    {42, 9, 3, &AquaHideout_B1F, "15"},
+    {45, 9, 3, &AquaHideout_B1F, "20"},
+    {48, 9, 3, &AquaHideout_B1F, "13"},
+    {42, 13, 3, &AquaHideout_B1F, "24"},
+    {45, 13, 3, &AquaHideout_B1F, "17"},
+    {48, 13, 3, &AquaHideout_B1F, "12"},
+    {42, 17, 3, &AquaHideout_B1F, "11"},
+    {45, 17, 3, &AquaHideout_B1F, "17"},
+    {48, 17, 3, &AquaHideout_B1F, "19"},
 };
 
 const Map AquaHideout_B1F = {
@@ -21035,7 +21038,7 @@ static ObjectEvent SecretBase_Shrub4_object_events[] = {
 };
 
 static WarpEvent SecretBase_Shrub4_warps[] = {
-    {11, 8, 0, "MAP_DYNAMIC", "WARP_ID_SECRET_BASE"},
+    {11, 8, 0, &Dynamic, "WARP_ID_SECRET_BASE"},
 };
 
 const Map SecretBase_Shrub4 = {
@@ -21072,15 +21075,15 @@ static ObjectEvent AbandonedShip_HiddenFloorRooms_object_events[] = {
 };
 
 static WarpEvent AbandonedShip_HiddenFloorRooms_warps[] = {
-    {6, 14, 3, "MAP_ABANDONED_SHIP_HIDDEN_FLOOR_CORRIDORS", "0"},
-    {7, 14, 3, "MAP_ABANDONED_SHIP_HIDDEN_FLOOR_CORRIDORS", "0"},
-    {21, 14, 3, "MAP_ABANDONED_SHIP_HIDDEN_FLOOR_CORRIDORS", "1"},
-    {22, 14, 3, "MAP_ABANDONED_SHIP_HIDDEN_FLOOR_CORRIDORS", "1"},
-    {36, 14, 3, "MAP_ABANDONED_SHIP_HIDDEN_FLOOR_CORRIDORS", "2"},
-    {37, 14, 3, "MAP_ABANDONED_SHIP_HIDDEN_FLOOR_CORRIDORS", "2"},
-    {6, 1, 3, "MAP_ABANDONED_SHIP_HIDDEN_FLOOR_CORRIDORS", "3"},
-    {21, 1, 3, "MAP_ABANDONED_SHIP_HIDDEN_FLOOR_CORRIDORS", "4"},
-    {36, 1, 3, "MAP_ABANDONED_SHIP_HIDDEN_FLOOR_CORRIDORS", "5"},
+    {6, 14, 3, &AbandonedShip_HiddenFloorCorridors, "0"},
+    {7, 14, 3, &AbandonedShip_HiddenFloorCorridors, "0"},
+    {21, 14, 3, &AbandonedShip_HiddenFloorCorridors, "1"},
+    {22, 14, 3, &AbandonedShip_HiddenFloorCorridors, "1"},
+    {36, 14, 3, &AbandonedShip_HiddenFloorCorridors, "2"},
+    {37, 14, 3, &AbandonedShip_HiddenFloorCorridors, "2"},
+    {6, 1, 3, &AbandonedShip_HiddenFloorCorridors, "3"},
+    {21, 1, 3, &AbandonedShip_HiddenFloorCorridors, "4"},
+    {36, 1, 3, &AbandonedShip_HiddenFloorCorridors, "5"},
 };
 
 static BgEvent AbandonedShip_HiddenFloorRooms_bg_events[] = {
@@ -21156,10 +21159,10 @@ static ObjectEvent MtChimney_object_events[] = {
 };
 
 static WarpEvent MtChimney_warps[] = {
-    {17, 36, 0, "MAP_MT_CHIMNEY_CABLE_CAR_STATION", "0"},
-    {18, 36, 0, "MAP_MT_CHIMNEY_CABLE_CAR_STATION", "1"},
-    {20, 41, 3, "MAP_JAGGED_PASS", "2"},
-    {21, 41, 3, "MAP_JAGGED_PASS", "3"},
+    {17, 36, 0, &MtChimney_CableCarStation, "0"},
+    {18, 36, 0, &MtChimney_CableCarStation, "1"},
+    {20, 41, 3, &JaggedPass, "2"},
+    {21, 41, 3, &JaggedPass, "3"},
 };
 
 static BgEvent MtChimney_bg_events[] = {
@@ -21206,11 +21209,11 @@ static ObjectEvent VictoryRoad_1F_object_events[] = {
 };
 
 static WarpEvent VictoryRoad_1F_warps[] = {
-    {15, 40, 3, "MAP_EVER_GRANDE_CITY", "2"},
-    {39, 5, 3, "MAP_EVER_GRANDE_CITY", "3"},
-    {21, 32, 3, "MAP_VICTORY_ROAD_B1F", "5"},
-    {42, 38, 4, "MAP_VICTORY_ROAD_B1F", "2"},
-    {9, 14, 4, "MAP_VICTORY_ROAD_B1F", "4"},
+    {15, 40, 3, &EverGrandeCity, "2"},
+    {39, 5, 3, &EverGrandeCity, "3"},
+    {21, 32, 3, &VictoryRoad_B1F, "5"},
+    {42, 38, 4, &VictoryRoad_B1F, "2"},
+    {9, 14, 4, &VictoryRoad_B1F, "4"},
 };
 
 static CoordEvent VictoryRoad_1F_coords[] = {
@@ -21259,10 +21262,10 @@ static ObjectEvent VictoryRoad_B2F_object_events[] = {
 };
 
 static WarpEvent VictoryRoad_B2F_warps[] = {
-    {30, 25, 3, "MAP_VICTORY_ROAD_B1F", "0"},
-    {43, 2, 3, "MAP_VICTORY_ROAD_B1F", "3"},
-    {19, 12, 3, "MAP_VICTORY_ROAD_B1F", "1"},
-    {5, 26, 3, "MAP_VICTORY_ROAD_B1F", "6"},
+    {30, 25, 3, &VictoryRoad_B1F, "0"},
+    {43, 2, 3, &VictoryRoad_B1F, "3"},
+    {19, 12, 3, &VictoryRoad_B1F, "1"},
+    {5, 26, 3, &VictoryRoad_B1F, "6"},
 };
 
 static BgEvent VictoryRoad_B2F_bg_events[] = {
@@ -21303,10 +21306,10 @@ static ObjectEvent MeteorFalls_1F_2R_object_events[] = {
 };
 
 static WarpEvent MeteorFalls_1F_2R_warps[] = {
-    {10, 29, 3, "MAP_METEOR_FALLS_1F_1R", "2"},
-    {4, 14, 3, "MAP_METEOR_FALLS_B1F_1R", "0"},
-    {7, 20, 3, "MAP_METEOR_FALLS_B1F_1R", "1"},
-    {21, 23, 3, "MAP_METEOR_FALLS_B1F_1R", "2"},
+    {10, 29, 3, &MeteorFalls_1F_1R, "2"},
+    {4, 14, 3, &MeteorFalls_B1F_1R, "0"},
+    {7, 20, 3, &MeteorFalls_B1F_1R, "1"},
+    {21, 23, 3, &MeteorFalls_B1F_1R, "2"},
 };
 
 static BgEvent MeteorFalls_1F_2R_bg_events[] = {
@@ -21361,13 +21364,13 @@ static ObjectEvent MauvilleCity_object_events[] = {
 };
 
 static WarpEvent MauvilleCity_warps[] = {
-    {8, 5, 0, "MAP_MAUVILLE_CITY_GYM", "0"},
-    {22, 5, 0, "MAP_MAUVILLE_CITY_POKEMON_CENTER_1F", "0"},
-    {35, 5, 0, "MAP_MAUVILLE_CITY_BIKE_SHOP", "0"},
-    {23, 14, 0, "MAP_MAUVILLE_CITY_MART", "0"},
-    {32, 14, 0, "MAP_MAUVILLE_CITY_HOUSE1", "0"},
-    {8, 13, 0, "MAP_MAUVILLE_CITY_GAME_CORNER", "0"},
-    {19, 14, 0, "MAP_MAUVILLE_CITY_HOUSE2", "0"},
+    {8, 5, 0, &MauvilleCity_Gym, "0"},
+    {22, 5, 0, &MauvilleCity_PokemonCenter_1F, "0"},
+    {35, 5, 0, &MauvilleCity_BikeShop, "0"},
+    {23, 14, 0, &MauvilleCity_Mart, "0"},
+    {32, 14, 0, &MauvilleCity_House1, "0"},
+    {8, 13, 0, &MauvilleCity_GameCorner, "0"},
+    {19, 14, 0, &MauvilleCity_House2, "0"},
 };
 
 static BgEvent MauvilleCity_bg_events[] = {
@@ -21427,7 +21430,7 @@ static ObjectEvent LittlerootTown_BrendansHouse_2F_object_events[] = {
 };
 
 static WarpEvent LittlerootTown_BrendansHouse_2F_warps[] = {
-    {7, 1, 0, "MAP_LITTLEROOT_TOWN_BRENDANS_HOUSE_1F", "2"},
+    {7, 1, 0, &LittlerootTown_BrendansHouse_1F, "2"},
 };
 
 static BgEvent LittlerootTown_BrendansHouse_2F_bg_events[] = {
@@ -21471,7 +21474,7 @@ static ObjectEvent BattleFrontier_BattlePyramidLobby_object_events[] = {
 };
 
 static WarpEvent BattleFrontier_BattlePyramidLobby_warps[] = {
-    {7, 17, 4, "MAP_BATTLE_FRONTIER_OUTSIDE_EAST", "3"},
+    {7, 17, 4, &BattleFrontier_OutsideEast, "3"},
 };
 
 static BgEvent BattleFrontier_BattlePyramidLobby_bg_events[] = {
@@ -21566,8 +21569,8 @@ static ObjectEvent ShoalCave_LowTideStairsRoom_object_events[] = {
 };
 
 static WarpEvent ShoalCave_LowTideStairsRoom_warps[] = {
-    {3, 12, 3, "MAP_SHOAL_CAVE_LOW_TIDE_INNER_ROOM", "1"},
-    {7, 4, 3, "MAP_SHOAL_CAVE_LOW_TIDE_INNER_ROOM", "2"},
+    {3, 12, 3, &ShoalCave_LowTideInnerRoom, "1"},
+    {7, 4, 3, &ShoalCave_LowTideInnerRoom, "2"},
 };
 
 static BgEvent ShoalCave_LowTideStairsRoom_bg_events[] = {
@@ -21613,19 +21616,19 @@ static ObjectEvent Route110_TrickHousePuzzle7_object_events[] = {
 };
 
 static WarpEvent Route110_TrickHousePuzzle7_warps[] = {
-    {0, 21, 3, "MAP_ROUTE110_TRICK_HOUSE_ENTRANCE", "2"},
-    {1, 21, 3, "MAP_ROUTE110_TRICK_HOUSE_ENTRANCE", "2"},
-    {13, 1, 3, "MAP_ROUTE110_TRICK_HOUSE_END", "0"},
-    {13, 4, 0, "MAP_ROUTE110_TRICK_HOUSE_PUZZLE7", "4"},
-    {7, 3, 0, "MAP_ROUTE110_TRICK_HOUSE_PUZZLE7", "3"},
-    {13, 11, 0, "MAP_ROUTE110_TRICK_HOUSE_PUZZLE7", "6"},
-    {4, 3, 0, "MAP_ROUTE110_TRICK_HOUSE_PUZZLE7", "5"},
-    {1, 17, 0, "MAP_ROUTE110_TRICK_HOUSE_PUZZLE7", "8"},
-    {0, 11, 0, "MAP_ROUTE110_TRICK_HOUSE_PUZZLE7", "7"},
-    {2, 3, 0, "MAP_ROUTE110_TRICK_HOUSE_PUZZLE7", "10"},
-    {4, 13, 0, "MAP_ROUTE110_TRICK_HOUSE_PUZZLE7", "9"},
-    {1, 3, 0, "MAP_ROUTE110_TRICK_HOUSE_PUZZLE7", "12"},
-    {8, 12, 0, "MAP_ROUTE110_TRICK_HOUSE_PUZZLE7", "11"},
+    {0, 21, 3, &Route110_TrickHouseEntrance, "2"},
+    {1, 21, 3, &Route110_TrickHouseEntrance, "2"},
+    {13, 1, 3, &Route110_TrickHouseEnd, "0"},
+    {13, 4, 0, &Route110_TrickHousePuzzle7, "4"},
+    {7, 3, 0, &Route110_TrickHousePuzzle7, "3"},
+    {13, 11, 0, &Route110_TrickHousePuzzle7, "6"},
+    {4, 3, 0, &Route110_TrickHousePuzzle7, "5"},
+    {1, 17, 0, &Route110_TrickHousePuzzle7, "8"},
+    {0, 11, 0, &Route110_TrickHousePuzzle7, "7"},
+    {2, 3, 0, &Route110_TrickHousePuzzle7, "10"},
+    {4, 13, 0, &Route110_TrickHousePuzzle7, "9"},
+    {1, 3, 0, &Route110_TrickHousePuzzle7, "12"},
+    {8, 12, 0, &Route110_TrickHousePuzzle7, "11"},
 };
 
 static CoordEvent Route110_TrickHousePuzzle7_coords[] = {
@@ -21666,12 +21669,12 @@ const Map Route110_TrickHousePuzzle7 = {
 };
 
 static WarpEvent AbandonedShip_HiddenFloorCorridors_warps[] = {
-    {3, 8, 3, "MAP_ABANDONED_SHIP_HIDDEN_FLOOR_ROOMS", "0"},
-    {6, 8, 3, "MAP_ABANDONED_SHIP_HIDDEN_FLOOR_ROOMS", "2"},
-    {9, 8, 3, "MAP_ABANDONED_SHIP_HIDDEN_FLOOR_ROOMS", "4"},
-    {3, 3, 3, "MAP_ABANDONED_SHIP_HIDDEN_FLOOR_ROOMS", "6"},
-    {6, 3, 3, "MAP_ABANDONED_SHIP_HIDDEN_FLOOR_ROOMS", "7"},
-    {9, 3, 3, "MAP_ABANDONED_SHIP_HIDDEN_FLOOR_ROOMS", "8"},
+    {3, 8, 3, &AbandonedShip_HiddenFloorRooms, "0"},
+    {6, 8, 3, &AbandonedShip_HiddenFloorRooms, "2"},
+    {9, 8, 3, &AbandonedShip_HiddenFloorRooms, "4"},
+    {3, 3, 3, &AbandonedShip_HiddenFloorRooms, "6"},
+    {6, 3, 3, &AbandonedShip_HiddenFloorRooms, "7"},
+    {9, 3, 3, &AbandonedShip_HiddenFloorRooms, "8"},
 };
 
 static BgEvent AbandonedShip_HiddenFloorCorridors_bg_events[] = {
@@ -21713,8 +21716,8 @@ static ObjectEvent SootopolisCity_LotadAndSeedotHouse_object_events[] = {
 };
 
 static WarpEvent SootopolisCity_LotadAndSeedotHouse_warps[] = {
-    {3, 6, 0, "MAP_SOOTOPOLIS_CITY", "11"},
-    {4, 6, 0, "MAP_SOOTOPOLIS_CITY", "11"},
+    {3, 6, 0, &SootopolisCity, "11"},
+    {4, 6, 0, &SootopolisCity, "11"},
 };
 
 static BgEvent SootopolisCity_LotadAndSeedotHouse_bg_events[] = {
@@ -21757,9 +21760,9 @@ static ObjectEvent MossdeepCity_PokemonCenter_2F_object_events[] = {
 };
 
 static WarpEvent MossdeepCity_PokemonCenter_2F_warps[] = {
-    {1, 6, 4, "MAP_MOSSDEEP_CITY_POKEMON_CENTER_1F", "2"},
-    {5, 1, 3, "MAP_UNION_ROOM", "0"},
-    {9, 1, 3, "MAP_TRADE_CENTER", "0"},
+    {1, 6, 4, &MossdeepCity_PokemonCenter_1F, "2"},
+    {5, 1, 3, &UnionRoom, "0"},
+    {9, 1, 3, &TradeCenter, "0"},
 };
 
 const Map MossdeepCity_PokemonCenter_2F = {
@@ -21789,10 +21792,10 @@ const Map MossdeepCity_PokemonCenter_2F = {
 };
 
 static WarpEvent EverGrandeCity_Hall1_warps[] = {
-    {5, 12, 3, "MAP_EVER_GRANDE_CITY_SIDNEYS_ROOM", "1"},
-    {5, 2, 0, "MAP_EVER_GRANDE_CITY_PHOEBES_ROOM", "0"},
-    {4, 12, 3, "MAP_EVER_GRANDE_CITY_SIDNEYS_ROOM", "1"},
-    {6, 12, 3, "MAP_EVER_GRANDE_CITY_SIDNEYS_ROOM", "1"},
+    {5, 12, 3, &EverGrandeCity_SidneysRoom, "1"},
+    {5, 2, 0, &EverGrandeCity_PhoebesRoom, "0"},
+    {4, 12, 3, &EverGrandeCity_SidneysRoom, "1"},
+    {6, 12, 3, &EverGrandeCity_SidneysRoom, "1"},
 };
 
 const Map EverGrandeCity_Hall1 = {
@@ -21827,8 +21830,8 @@ static ObjectEvent DewfordTown_House2_object_events[] = {
 };
 
 static WarpEvent DewfordTown_House2_warps[] = {
-    {3, 8, 0, "MAP_DEWFORD_TOWN", "4"},
-    {4, 8, 0, "MAP_DEWFORD_TOWN", "4"},
+    {3, 8, 0, &DewfordTown, "4"},
+    {4, 8, 0, &DewfordTown, "4"},
 };
 
 const Map DewfordTown_House2 = {
@@ -21858,7 +21861,7 @@ const Map DewfordTown_House2 = {
 };
 
 static WarpEvent Underwater_Route134_warps[] = {
-    {8, 8, 0, "MAP_UNDERWATER_SEALED_CHAMBER", "0"},
+    {8, 8, 0, &Underwater_SealedChamber, "0"},
 };
 
 const Map Underwater_Route134 = {
@@ -21896,9 +21899,9 @@ static ObjectEvent LilycoveCity_DepartmentStore_4F_object_events[] = {
 };
 
 static WarpEvent LilycoveCity_DepartmentStore_4F_warps[] = {
-    {16, 1, 0, "MAP_LILYCOVE_CITY_DEPARTMENT_STORE_3F", "1"},
-    {13, 1, 0, "MAP_LILYCOVE_CITY_DEPARTMENT_STORE_5F", "0"},
-    {2, 1, 0, "MAP_LILYCOVE_CITY_DEPARTMENT_STORE_ELEVATOR", "0"},
+    {16, 1, 0, &LilycoveCity_DepartmentStore_3F, "1"},
+    {13, 1, 0, &LilycoveCity_DepartmentStore_5F, "0"},
+    {2, 1, 0, &LilycoveCity_DepartmentStoreElevator, "0"},
 };
 
 const Map LilycoveCity_DepartmentStore_4F = {
@@ -21937,8 +21940,8 @@ static ObjectEvent RustboroCity_DevonCorp_2F_object_events[] = {
 };
 
 static WarpEvent RustboroCity_DevonCorp_2F_warps[] = {
-    {14, 1, 0, "MAP_RUSTBORO_CITY_DEVON_CORP_1F", "2"},
-    {2, 1, 0, "MAP_RUSTBORO_CITY_DEVON_CORP_3F", "0"},
+    {14, 1, 0, &RustboroCity_DevonCorp_1F, "2"},
+    {2, 1, 0, &RustboroCity_DevonCorp_3F, "0"},
 };
 
 const Map RustboroCity_DevonCorp_2F = {
@@ -21972,13 +21975,13 @@ static ObjectEvent GraniteCave_B1F_object_events[] = {
 };
 
 static WarpEvent GraniteCave_B1F_warps[] = {
-    {25, 13, 3, "MAP_GRANITE_CAVE_1F", "1"},
-    {4, 21, 3, "MAP_GRANITE_CAVE_1F", "2"},
-    {29, 13, 3, "MAP_GRANITE_CAVE_B2F", "0"},
-    {28, 21, 3, "MAP_GRANITE_CAVE_B2F", "1"},
-    {8, 5, 3, "MAP_GRANITE_CAVE_B2F", "2"},
-    {12, 3, 3, "MAP_GRANITE_CAVE_B2F", "3"},
-    {29, 2, 3, "MAP_GRANITE_CAVE_B2F", "4"},
+    {25, 13, 3, &GraniteCave_1F, "1"},
+    {4, 21, 3, &GraniteCave_1F, "2"},
+    {29, 13, 3, &GraniteCave_B2F, "0"},
+    {28, 21, 3, &GraniteCave_B2F, "1"},
+    {8, 5, 3, &GraniteCave_B2F, "2"},
+    {12, 3, 3, &GraniteCave_B2F, "3"},
+    {29, 2, 3, &GraniteCave_B2F, "4"},
 };
 
 const Map GraniteCave_B1F = {
@@ -22027,7 +22030,7 @@ static ObjectEvent LittlerootTown_MaysHouse_2F_object_events[] = {
 };
 
 static WarpEvent LittlerootTown_MaysHouse_2F_warps[] = {
-    {1, 1, 0, "MAP_LITTLEROOT_TOWN_MAYS_HOUSE_1F", "2"},
+    {1, 1, 0, &LittlerootTown_MaysHouse_1F, "2"},
 };
 
 static BgEvent LittlerootTown_MaysHouse_2F_bg_events[] = {
@@ -22071,9 +22074,9 @@ static ObjectEvent DewfordTown_PokemonCenter_2F_object_events[] = {
 };
 
 static WarpEvent DewfordTown_PokemonCenter_2F_warps[] = {
-    {1, 6, 4, "MAP_DEWFORD_TOWN_POKEMON_CENTER_1F", "2"},
-    {5, 1, 3, "MAP_UNION_ROOM", "0"},
-    {9, 1, 3, "MAP_TRADE_CENTER", "0"},
+    {1, 6, 4, &DewfordTown_PokemonCenter_1F, "2"},
+    {5, 1, 3, &UnionRoom, "0"},
+    {9, 1, 3, &TradeCenter, "0"},
 };
 
 const Map DewfordTown_PokemonCenter_2F = {
@@ -22103,8 +22106,8 @@ const Map DewfordTown_PokemonCenter_2F = {
 };
 
 static WarpEvent TrainerHill_2F_warps[] = {
-    {2, 1, 3, "MAP_TRAINER_HILL_1F", "1"},
-    {12, 1, 3, "MAP_TRAINER_HILL_3F", "0"},
+    {2, 1, 3, &TrainerHill_1F, "1"},
+    {12, 1, 3, &TrainerHill_3F, "0"},
 };
 
 const Map TrainerHill_2F = {
@@ -22138,8 +22141,8 @@ static MapConnection Underwater_Route105_connections[] = {
 };
 
 static WarpEvent Underwater_Route105_warps[] = {
-    {13, 4, 0, "MAP_UNDERWATER_MARINE_CAVE", "0"},
-    {17, 66, 0, "MAP_UNDERWATER_MARINE_CAVE", "0"},
+    {13, 4, 0, &Underwater_MarineCave, "0"},
+    {17, 66, 0, &Underwater_MarineCave, "0"},
 };
 
 const Map Underwater_Route105 = {
@@ -22173,8 +22176,8 @@ static ObjectEvent ArtisanCave_B1F_object_events[] = {
 };
 
 static WarpEvent ArtisanCave_B1F_warps[] = {
-    {8, 48, 0, "MAP_BATTLE_FRONTIER_OUTSIDE_WEST", "10"},
-    {38, 5, 0, "MAP_ARTISAN_CAVE_1F", "1"},
+    {8, 48, 0, &BattleFrontier_OutsideWest, "10"},
+    {38, 5, 0, &ArtisanCave_1F, "1"},
 };
 
 static BgEvent ArtisanCave_B1F_bg_events[] = {

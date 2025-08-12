@@ -8,15 +8,14 @@
 
 void game_init(GameState *state) {
 
-    state->currentMap = MapGroups[MAP_GROUP_TOWNS_AND_ROUTES][MAP_MAUVILLE_CITY];
-    MapLayout *mapLayout = state->currentMap->layout;
+    state->currentMap = MapGroups[MAP_GROUP_TOWNS_AND_ROUTES][MAP_ROUTE115];
 
 
-    state->player.x = -35;
-    state->player.y = -55;
+    state->player.x = 35;
+    state->player.y = 55;
     state->camera.rect = (SDL_FRect){
-		(state->player.x + 7) * 16,
-		(state->player.y + 4.5) * 16,
+		(-state->player.x + 7) * 16,
+		(-state->player.y + 4.5) * 16,
 		OVERWORLD_WIDTH * 16.0f,
 		OVERWORLD_HEIGHT * 16.0f
 	};

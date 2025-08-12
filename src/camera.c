@@ -6,7 +6,6 @@
 
 
 void camera_update(GameState *state) {
-    state->camera.move_ended = false;
     Camera *camera = &state->camera;
 
     if (state->player.state == PLAYER_MOVING) {
@@ -22,7 +21,7 @@ void camera_update(GameState *state) {
             camera->dir_x = 0;
             camera->dir_y = 0;
             camera->move_timer = 0;
-            camera->move_ended = true;
+            camera_move_ended(state);
         }
     }
 

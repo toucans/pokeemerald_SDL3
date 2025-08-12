@@ -32,6 +32,41 @@ int get_stopped_frame(PlayerFacing facing) {
     }
 }
 
+void stepTaken(GameState *state) {
+    Player *p = &state->player;
+    const Map *m = state->currentMap;
+    MapLayout *l = m->layout;
+    if(p->x >= l->overworld_pos_x + l->width 
+    || p->y >= l->overworld_pos_y + l->height
+    || p->x < l->overworld_pos_x
+    || p->y < l->overworld_pos_y) 
+    {
+        for (size_t i = 0; i < m->connections_count; i++)
+        {
+            s16 pos_x = m->connections[i].map->layout->overworld_pos_x;
+            s16 pos_y = m->connections[i].map->layout->overworld_pos_y;
+            u16 width = m->connections[i].map->layout->width;
+            u16 height = m->connections[i].map->layout->height;
+            if(p->x >= pos_x 
+            && p->x < pos_x + width
+            && p->y >= pos_y
+            && p->y < pos_y + height) {
+                state->currentMap = m->connections[i].map;
+                printf("new map is %s\n", m->connections[i].map->id);
+            }
+        }
+        
+
+    }
+}
+
+void camera_move_ended(GameState *state) {
+    Player *p = &state->player;
+    p->srcRect.y = get_stopped_frame(p->facing);
+    p->state = PLAYER_IDLE;
+    stepTaken(state);
+}
+
 void player_update(GameState *state) {
     Player *p = &state->player;
 
@@ -92,11 +127,7 @@ void player_update(GameState *state) {
     #define TURN_ANIMATION_DURATION (8.0 / 60.0)
     #define TURN_ANIMATION_FRAMES 8
     if(p->state == PLAYER_TURNING) {
-        if(state->camera.move_ended) {
-            p->srcRect.y = get_stopped_frame(p->facing);
-            p->state = PLAYER_IDLE;
-            return;
-        }
+
         p->anim_timer += state->timestep;
         
         // Calculate fractional progress

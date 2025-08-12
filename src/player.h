@@ -44,5 +44,6 @@ typedef struct Player {
 } Player;
 
 struct GameState;
+extern void camera_move_ended(struct GameState *state);
 extern void player_update(struct GameState *state);
 

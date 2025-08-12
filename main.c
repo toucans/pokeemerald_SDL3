@@ -79,12 +79,12 @@ int main(void) {
         game_update(&state);
         game_render(&state);
 
-        // counter++;
-        // if (counter % 60 == 0) {
-        //     //printf("Counter: %d\n", counter);
-        //     printf("%u\n", state.player.x);
-        //     printf("%u\n", state.player.y);
-        // }
+        counter++;
+        if (counter % 60 == 0) {
+            //printf("Counter: %d\n", counter);
+            printf("%u\n", state.player.x);
+            printf("%u\n", state.player.y);
+        }
         
     }
 
