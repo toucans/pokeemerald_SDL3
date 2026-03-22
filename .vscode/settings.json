@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "*.sym": "c",
+        "*.def": "c",
+        "*.ndw": "c",
+        "types.h": "c"
+    }
+}
