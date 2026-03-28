@@ -3,6 +3,7 @@
 #include "game.h"
 #include "map.h"
 #include "sprite_loader.h"
+#include "audio.h"
 
 
 
@@ -40,15 +41,13 @@ void game_init(GameState *state) {
         32
     };
     state->player.facing = FACING_DOWN;
-    
+
+    audio_init();
+    audio_play_music(state->currentMap->music);
 }
 
 void game_update(GameState *state) {
-    SDL_PumpEvents();
     const bool *keys = SDL_GetKeyboardState(NULL);
-    u16 *input = &state->input;
-    state->input = 0; //clear previous input
-
     state->input |= ((u16)keys[SDL_SCANCODE_UP] << 0);
     state->input |= ((u16)keys[SDL_SCANCODE_DOWN] << 1);
     state->input |= ((u16)keys[SDL_SCANCODE_LEFT] << 2);

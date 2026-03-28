@@ -1,6 +1,7 @@
 #include "game.h"
 #include "map.h"
 #include <string.h>
+#include <stdlib.h>
 
 
 void overworld_init(GameState *state) {
@@ -45,6 +46,19 @@ void overworld_init(GameState *state) {
     // Destroy surfaces after texture creation
     SDL_DestroySurface(overworld_bg_surface);
     SDL_DestroySurface(overworld_fg_surface);
+
+    // Build tile → map lookup table (calloc zeroes all entries to NULL)
+    state->tile_map = calloc(OVERWORLD_WIDTH * OVERWORLD_HEIGHT, sizeof(const Map *));
+    for (size_t i = 0; i < TOWNS_AND_ROUTES_COUNT; i++) {
+        const Map *map = MapGroups[MAP_GROUP_TOWNS_AND_ROUTES][i];
+        const MapLayout *layout = map->layout;
+        if (layout->overworld_pos_x == -1) continue;
+        for (int y = layout->overworld_pos_y; y < layout->overworld_pos_y + (int)layout->height; y++) {
+            for (int x = layout->overworld_pos_x; x < layout->overworld_pos_x + (int)layout->width; x++) {
+                state->tile_map[y * OVERWORLD_WIDTH + x] = map;
+            }
+        }
+    }
 }
 
 

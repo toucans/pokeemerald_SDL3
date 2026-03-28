@@ -40,40 +40,48 @@ int main(void) {
 
     SDL_Init(SDL_INIT_VIDEO);
 
-    game_init(&state);  
-    
-    
+    game_init(&state);
+    game_render(&state); // warmup: forces GPU initialization before the game loop
+
     int counter = 0;
+
 
     int running = 1;
     // Main game loop
     while (running) {
+        state.input = 0;
         while (SDL_PollEvent(&e)) {
             //printf("Counter: %d\n", e.type);
             if (e.type == SDL_EVENT_QUIT || e.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED) {
                 running = 0;
             } else if (e.type == SDL_EVENT_KEY_DOWN) {
-                switch (e.key.which) {
-                    case SDLK_ESCAPE:
+                switch (e.key.scancode) {
+                    case SDL_SCANCODE_ESCAPE:
                         running = 0;
                         break;
-                    case SDLK_1:
+                    case SDL_SCANCODE_1:
                         SDL_SetWindowSize(window, GAME_WIDTH, GAME_HEIGHT);
                         break;
-                    case SDLK_2:
+                    case SDL_SCANCODE_2:
                         SDL_SetWindowSize(window, GAME_WIDTH * 2, GAME_HEIGHT * 2);
                         break;
-                    case SDLK_3:
+                    case SDL_SCANCODE_3:
                         SDL_SetWindowSize(window, GAME_WIDTH * 3, GAME_HEIGHT * 3);
                         break;
-                    case SDLK_4:
+                    case SDL_SCANCODE_4:
                         SDL_SetWindowSize(window, GAME_WIDTH * 4, GAME_HEIGHT * 4);
                         break;
+                    case SDL_SCANCODE_UP:    state.input |= INPUT_UP;    break;
+                    case SDL_SCANCODE_DOWN:  state.input |= INPUT_DOWN;  break;
+                    case SDL_SCANCODE_LEFT:  state.input |= INPUT_LEFT;  break;
+                    case SDL_SCANCODE_RIGHT: state.input |= INPUT_RIGHT; break;
+                    default: break;
                 }
             }
         }
         uint64_t ticks_now = SDL_GetPerformanceCounter();
-        state.timestep = (double)(ticks_now - ticks_last_frame) / SDL_GetPerformanceFrequency(); //time elapsed since the last frame in seconds
+        state.timestep = (double)(ticks_now - ticks_last_frame) / SDL_GetPerformanceFrequency();
+        if (state.timestep > 1.0 / TARGET_FPS) state.timestep = 1.0 / TARGET_FPS;
         ticks_last_frame = ticks_now;
 
         game_update(&state);
@@ -81,9 +89,7 @@ int main(void) {
 
         counter++;
         if (counter % 60 == 0) {
-            //printf("Counter: %d\n", counter);
-            printf("%u\n", state.player.x);
-            printf("%u\n", state.player.y);
+            //do every second
         }
         
     }

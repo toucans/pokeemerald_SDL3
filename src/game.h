@@ -19,6 +19,7 @@ typedef struct GameState {
     Player player;
     Camera camera;
     const Map *currentMap;
+    const Map **tile_map; // flat [y * OVERWORLD_WIDTH + x] lookup, built at init
     SDL_Renderer *renderer;
     MapTextures overworld;
     MapTextures mapTextures;

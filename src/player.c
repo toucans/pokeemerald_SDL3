@@ -1,6 +1,8 @@
 #include "game.h"
 #include "player.h"
 #include "camera.h"
+#include "map.h"
+#include "audio.h"
 
 int get_walk1_frame(PlayerFacing facing) {
     switch (facing) {
@@ -34,29 +36,25 @@ int get_stopped_frame(PlayerFacing facing) {
 
 void stepTaken(GameState *state) {
     Player *p = &state->player;
-    const Map *m = state->currentMap;
-    MapLayout *l = m->layout;
-    if(p->x >= l->overworld_pos_x + l->width 
-    || p->y >= l->overworld_pos_y + l->height
-    || p->x < l->overworld_pos_x
-    || p->y < l->overworld_pos_y) 
-    {
-        for (size_t i = 0; i < m->connections_count; i++)
-        {
-            s16 pos_x = m->connections[i].map->layout->overworld_pos_x;
-            s16 pos_y = m->connections[i].map->layout->overworld_pos_y;
-            u16 width = m->connections[i].map->layout->width;
-            u16 height = m->connections[i].map->layout->height;
-            if(p->x >= pos_x 
-            && p->x < pos_x + width
-            && p->y >= pos_y
-            && p->y < pos_y + height) {
-                state->currentMap = m->connections[i].map;
-                printf("new map is %s\n", m->connections[i].map->id);
-            }
-        }
-        
 
+    const Map *map_here = NULL;
+    if (p->x >= 0 && p->x < OVERWORLD_WIDTH && p->y >= 0 && p->y < OVERWORLD_HEIGHT)
+        map_here = state->tile_map[p->y * OVERWORLD_WIDTH + p->x];
+
+    if (map_here != NULL) {
+        if (map_here != state->currentMap || p->outside_map) {
+            const char *prev_music = state->currentMap ? state->currentMap->music : NULL;
+            state->currentMap = map_here;
+            p->outside_map = false;
+            printf("Entered map: %s\n", map_here->id);
+            if (map_here->music && (!prev_music || SDL_strcmp(map_here->music, prev_music) != 0))
+                audio_play_music(map_here->music);
+        }
+    } else {
+        if (!p->outside_map) {
+            printf("Outside any map at (%d, %d)\n", p->x, p->y);
+            p->outside_map = true;
+        }
     }
 }
 
@@ -83,6 +81,7 @@ void player_update(GameState *state) {
                     p->y -= 1;
                     p->state = PLAYER_MOVING;
                     state->camera.dir_y = 1;
+                    state->camera.target_y = state->camera.rect.y + 16.0f;
                 }
             }
             else if (input & INPUT_DOWN) {
@@ -95,6 +94,7 @@ void player_update(GameState *state) {
                     p->y += 1;
                     p->state = PLAYER_MOVING;
                     state->camera.dir_y = -1;
+                    state->camera.target_y = state->camera.rect.y - 16.0f;
                 }
             }
             else if (input & INPUT_LEFT) {
@@ -107,6 +107,7 @@ void player_update(GameState *state) {
                     p->x -= 1;
                     p->state = PLAYER_MOVING;
                     state->camera.dir_x = 1;
+                    state->camera.target_x = state->camera.rect.x + 16.0f;
                 }
             }
             else if (input & INPUT_RIGHT) {
@@ -119,6 +120,7 @@ void player_update(GameState *state) {
                     p->x += 1;
                     p->state = PLAYER_MOVING;
                     state->camera.dir_x = -1;
+                    state->camera.target_x = state->camera.rect.x - 16.0f;
                 }
             }
         }

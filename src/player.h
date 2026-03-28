@@ -36,6 +36,7 @@ typedef struct Player {
     PlayerFacing facing;
     u8 stepLoop;
     PlayerState state;
+    bool outside_map;
     double anim_timer;
     u8 anim_frame;
     SDL_Texture *texture;
