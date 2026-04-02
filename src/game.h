@@ -12,10 +12,17 @@
 #define INPUT_DOWN  (1 << 1)
 #define INPUT_LEFT  (1 << 2)
 #define INPUT_RIGHT (1 << 3)
+#define INPUT_ENTER (1 << 4)
+
+typedef enum {
+    MODE_OVERWORLD,
+    MODE_FLY_MAP,
+} GameMode;
 
 typedef struct GameState {
     double timestep; //time elapsed since the last frame in seconds
     u16 input; //keyboard keys currently pressed
+    GameMode mode;
     Player player;
     Camera camera;
     const Map *currentMap;
@@ -24,6 +31,7 @@ typedef struct GameState {
     MapTextures overworld;
     MapTextures mapTextures;
     MapConnectionsTextures mapConnectionTextures;
+    SDL_Texture *fly_map_texture; // created on first MODE_FLY_MAP entry
 } GameState;
 
 

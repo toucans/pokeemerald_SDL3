@@ -38,6 +38,7 @@ extern void write_tile(
 );
 struct GameState;
 
+extern u8 *lz77_decompress(const u8 *src, u32 *out_size);
 extern MapSurfaces load_map_surfaces(MapLayout *mapLayout);
 extern MapTextures load_map_textures(struct GameState *state, MapLayout *mapLayout, SDL_FRect *dstRect);
 extern MapConnectionsTextures load_connections_textures(struct GameState *state);

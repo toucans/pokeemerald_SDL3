@@ -31,10 +31,11 @@ static void main_loop(void) {
                 case SDL_SCANCODE_2: SDL_SetWindowSize(window, GAME_WIDTH * 2, GAME_HEIGHT * 2); break;
                 case SDL_SCANCODE_3: SDL_SetWindowSize(window, GAME_WIDTH * 3, GAME_HEIGHT * 3); break;
                 case SDL_SCANCODE_4: SDL_SetWindowSize(window, GAME_WIDTH * 4, GAME_HEIGHT * 4); break;
-                case SDL_SCANCODE_UP:    state.input |= INPUT_UP;    break;
-                case SDL_SCANCODE_DOWN:  state.input |= INPUT_DOWN;  break;
-                case SDL_SCANCODE_LEFT:  state.input |= INPUT_LEFT;  break;
-                case SDL_SCANCODE_RIGHT: state.input |= INPUT_RIGHT; break;
+                case SDL_SCANCODE_UP:     state.input |= INPUT_UP;    break;
+                case SDL_SCANCODE_DOWN:   state.input |= INPUT_DOWN;  break;
+                case SDL_SCANCODE_LEFT:   state.input |= INPUT_LEFT;  break;
+                case SDL_SCANCODE_RIGHT:  state.input |= INPUT_RIGHT; break;
+                case SDL_SCANCODE_RETURN: state.input |= INPUT_ENTER; break;
                 default: break;
             }
         }

@@ -8,5 +8,6 @@ src/sprite_loader.c
 pokeemerald/maps.c
 pokeemerald/map_layouts.c
 pokeemerald/tilesets.c
+pokeemerald/fly_map_graphics.c
 src/fly_map_renderer.c
 src/audio.c
