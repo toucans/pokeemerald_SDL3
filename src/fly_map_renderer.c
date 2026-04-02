@@ -59,14 +59,11 @@ SDL_Surface *fly_map_surface_create(void)
     SDL_Surface *surf = SDL_CreateSurface(out_w, out_h, SDL_PIXELFORMAT_ABGR1555);
     u16 *pixels = surf->pixels;
 
-    int total = out_w * out_h;
-    for (int i = 0; i < total; i++) pixels[i] = pal[1]; /* water background */
-
     size_t num_tiles = tiles_size / 64;
     for (int ty = 0; ty < g->visible_rows; ty++) {
         for (int tx = 0; tx < g->visible_cols; tx++) {
             int tile_idx = tilemap[ty * g->tilemap_stride + tx];
-            if (tile_idx == 0 || (size_t)tile_idx >= num_tiles) continue;
+            if ((size_t)tile_idx >= num_tiles) continue;
             blit_tile_packed(tiles + (size_t)tile_idx * 64, pal,
                              g->slot_offset, pixels, tx * 8, ty * 8, out_w);
         }
