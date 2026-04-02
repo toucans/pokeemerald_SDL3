@@ -1,5 +1,6 @@
 #include <SDL3/SDL.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include "game.h"
 #include "map.h"
 #include "sprite_loader.h"
@@ -52,6 +53,14 @@ void game_update(GameState *state) {
     state->input |= ((u16)keys[SDL_SCANCODE_DOWN] << 1);
     state->input |= ((u16)keys[SDL_SCANCODE_LEFT] << 2);
     state->input |= ((u16)keys[SDL_SCANCODE_RIGHT] << 3);
+
+    // On first input, retry playing music (needed on web where autoplay is blocked
+    // until a user gesture; the game_init call silently fails there)
+    static bool audio_unlocked = false;
+    if (!audio_unlocked && state->input) {
+        audio_play_music(state->currentMap->music);
+        audio_unlocked = true;
+    }
 
     player_update(state);
     camera_update(state);

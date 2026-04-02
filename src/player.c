@@ -3,6 +3,7 @@
 #include "camera.h"
 #include "map.h"
 #include "audio.h"
+#include <stdio.h>
 
 int get_walk1_frame(PlayerFacing facing) {
     switch (facing) {
