@@ -13,6 +13,12 @@
  *                          64×64 affine map, 1 byte/cell = tile index
  *                          Top-left 32×20 cells = 256×160 visible screen
  */
+const FlyMapCursorGraphics gFlyMapCursorGraphics = {
+    .pal_offset       = 0x59F5ECU,  /* cursor.gbapal — raw 32 bytes          */
+    .tiles_offset     = 0x59F60CU,  /* cursor_small.4bpp.lz → 256 bytes      */
+    .tiles_data_size  = 100U,       /* compressed size upper bound           */
+};
+
 const FlyMapGraphics gFlyMapGraphics = {
     .pal_offset       = 5895996U,   /* 0x0059F73C */
     .pal_slots        = 2,

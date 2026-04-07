@@ -47,11 +47,72 @@ static void overworld_render(const GameState *state) {
 
 /* ── Mode: FLY_MAP ───────────────────────────────────────────────────────── */
 
+#define FLY_CURSOR_SPEED  120.0f   /* px/s — matches GBA: 2px/frame × 60fps */
+#define FLY_CURSOR_X_MIN  0
+#define FLY_CURSOR_X_MAX  27
+#define FLY_CURSOR_Y_MIN  1
+#define FLY_CURSOR_Y_MAX  15
+
+/* pixel top-left of cursor on screen given a tile position */
+#define CURSOR_PX(tx)  ((float)(8 * (tx) + 4))
+#define CURSOR_PY(ty)  ((float)(8 * (ty) + 4))
+
+static void fly_map_update(GameState *state) {
+    bool moving = (state->fly_cursor_dir_x != 0 || state->fly_cursor_dir_y != 0);
+
+    if (!moving) {
+        int dx = 0, dy = 0;
+        if      (state->input & INPUT_RIGHT && state->fly_cursor_x < FLY_CURSOR_X_MAX) dx = +1;
+        else if (state->input & INPUT_LEFT  && state->fly_cursor_x > FLY_CURSOR_X_MIN) dx = -1;
+        else if (state->input & INPUT_DOWN  && state->fly_cursor_y < FLY_CURSOR_Y_MAX) dy = +1;
+        else if (state->input & INPUT_UP    && state->fly_cursor_y > FLY_CURSOR_Y_MIN) dy = -1;
+
+        if (dx || dy) {
+            state->fly_cursor_x      += dx;
+            state->fly_cursor_y      += dy;
+            state->fly_cursor_dir_x   = dx;
+            state->fly_cursor_dir_y   = dy;
+            state->fly_cursor_target_px = CURSOR_PX(state->fly_cursor_x);
+            state->fly_cursor_target_py = CURSOR_PY(state->fly_cursor_y);
+        }
+    } else {
+        float step = FLY_CURSOR_SPEED * (float)state->timestep;
+        state->fly_cursor_px += (float)state->fly_cursor_dir_x * step;
+        state->fly_cursor_py += (float)state->fly_cursor_dir_y * step;
+
+        bool done = false;
+        if (state->fly_cursor_dir_x > 0 && state->fly_cursor_px >= state->fly_cursor_target_px)
+            { state->fly_cursor_px = state->fly_cursor_target_px; done = true; }
+        if (state->fly_cursor_dir_x < 0 && state->fly_cursor_px <= state->fly_cursor_target_px)
+            { state->fly_cursor_px = state->fly_cursor_target_px; done = true; }
+        if (state->fly_cursor_dir_y > 0 && state->fly_cursor_py >= state->fly_cursor_target_py)
+            { state->fly_cursor_py = state->fly_cursor_target_py; done = true; }
+        if (state->fly_cursor_dir_y < 0 && state->fly_cursor_py <= state->fly_cursor_target_py)
+            { state->fly_cursor_py = state->fly_cursor_target_py; done = true; }
+
+        if (done) {
+            state->fly_cursor_dir_x = 0;
+            state->fly_cursor_dir_y = 0;
+        }
+    }
+
+    state->fly_cursor_tick++;
+}
+
 static void fly_map_mode_render(const GameState *state) {
     SDL_Renderer *renderer = state->renderer;
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
-    SDL_RenderTexture(renderer, state->fly_map_texture, NULL, NULL); /* NULL dst = fill logical screen */
+
+    SDL_FRect src = { 0, 0, 240, 160 }; /* show left 240px of the 256-wide map */
+    SDL_RenderTexture(renderer, state->fly_map_texture, &src, NULL);
+
+    /* cursor: frame alternates every 20 ticks (~333 ms at 60 fps) */
+    int frame = (state->fly_cursor_tick / 40) & 1;
+
+    SDL_FRect cdst = { state->fly_cursor_px, state->fly_cursor_py, 16.0f, 16.0f };
+    SDL_RenderTexture(renderer, state->fly_map_cursor[frame], NULL, &cdst);
+
     SDL_RenderPresent(renderer);
 }
 
@@ -60,7 +121,18 @@ static void fly_map_mode_render(const GameState *state) {
 
 void game_init(GameState *state) {
     state->mode = MODE_OVERWORLD;
-    state->fly_map_texture = NULL;
+    state->fly_map_texture    = NULL;
+    state->fly_map_cursor[0]  = NULL;
+    state->fly_map_cursor[1]  = NULL;
+    state->fly_cursor_x          = 13;  /* start near centre of 0-27 range */
+    state->fly_cursor_y          = 8;   /* start near centre of 1-15 range */
+    state->fly_cursor_tick       = 0;
+    state->fly_cursor_px         = (float)(8 * 13 + 4);
+    state->fly_cursor_py         = (float)(8 * 8  + 4);
+    state->fly_cursor_target_px  = state->fly_cursor_px;
+    state->fly_cursor_target_py  = state->fly_cursor_py;
+    state->fly_cursor_dir_x      = 0;
+    state->fly_cursor_dir_y      = 0;
 
     state->currentMap = MapGroups[MAP_GROUP_TOWNS_AND_ROUTES][MAP_ROUTE115];
 
@@ -110,6 +182,9 @@ void game_update(GameState *state) {
                 state->fly_map_texture = SDL_CreateTextureFromSurface(state->renderer, surf);
                 SDL_SetTextureScaleMode(state->fly_map_texture, SDL_SCALEMODE_NEAREST);
                 SDL_DestroySurface(surf);
+                fly_map_cursor_textures_create(state->renderer,
+                    &state->fly_map_cursor[0], &state->fly_map_cursor[1]);
+                state->fly_cursor_tick = 0;
             }
         } else if (state->mode == MODE_FLY_MAP) {
             state->mode = MODE_OVERWORLD;
@@ -118,7 +193,7 @@ void game_update(GameState *state) {
 
     switch (state->mode) {
         case MODE_OVERWORLD: overworld_update(state); break;
-        case MODE_FLY_MAP:   /* no per-frame updates needed */  break;
+        case MODE_FLY_MAP:   fly_map_update(state); break;
     }
 }
 

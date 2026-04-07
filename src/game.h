@@ -31,7 +31,17 @@ typedef struct GameState {
     MapTextures overworld;
     MapTextures mapTextures;
     MapConnectionsTextures mapConnectionTextures;
-    SDL_Texture *fly_map_texture; // created on first MODE_FLY_MAP entry
+    SDL_Texture *fly_map_texture;        /* created on first MODE_FLY_MAP entry */
+    SDL_Texture *fly_map_cursor[2];      /* cursor frames 0 and 1               */
+    int          fly_cursor_x;           /* tile column, range 1–28             */
+    int          fly_cursor_y;           /* tile row, range 2–16                */
+    u32          fly_cursor_tick;        /* increments each frame for animation */
+    float        fly_cursor_px;          /* current rendered screen x (top-left)*/
+    float        fly_cursor_py;          /* current rendered screen y (top-left)*/
+    float        fly_cursor_target_px;
+    float        fly_cursor_target_py;
+    int          fly_cursor_dir_x;       /* -1, 0, +1 — nonzero means moving   */
+    int          fly_cursor_dir_y;
 } GameState;
 
 
