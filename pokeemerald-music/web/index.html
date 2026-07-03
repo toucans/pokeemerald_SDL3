@@ -35,6 +35,7 @@
   button:hover { border-color: var(--dim); }
   button.playing { background: var(--blue); border-color: var(--blue); color: #08111c; }
   #stop { margin-top: 1rem; padding: .35rem 1.1rem; }
+  #status { margin-left: .8rem; color: #e2777a; font-size: .8rem; }
   footer { color: var(--dim); font-size: .78rem; margin-top: 1.6rem; }
   footer code { color: var(--text); }
 </style>
@@ -43,13 +44,14 @@
 <main>
   <h1>Pokémon Emerald — overworld BGM</h1>
   <p class="sub">decoded from the pokeemerald source (MIDI + m4a voicegroups +
-  DirectSound samples), synthesized live in the browser by an AudioWorklet reimplementing the GBA m4a sound engine.</p>
+  DirectSound samples), synthesized live in the browser by a reimplementation of the GBA m4a sound engine.</p>
   <div id="songs"></div>
   <button id="stop">stop</button>
+  <span id="status"></span>
   <footer>Songs loop like on the GBA (loop points come from the
   <code>[</code>/<code>]</code> markers in the game's MIDI files).
   See <code>README.md</code> one directory up for how the engine works and how extraction was done.</footer>
 </main>
-<script src="player.js"></script>
+<script type="module" src="player.js"></script>
 </body>
 </html>
