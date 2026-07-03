@@ -230,18 +230,20 @@ function dsEnvelope(g, t0, tOff, peak, adsr, echoVol, echoLen) {
   if (r === 0) { g.setValueAtTime(0, tOff); return tOff + 0.01; }
   const tau = FRAME / Math.log(256 / r);
   g.setTargetAtTime(0, tOff, tau);
-  let stop = tOff + tau * 7;
   const echo = peak * echoVol / 256;
-  if (echoVol > 0 && echoLen > 0 && echo < valOff) {   // pseudo-echo tail
-    const tEcho = tOff + echoLen * FRAME;
-    g.setValueAtTime(echo, tEcho);
-    g.linearRampToValueAtTime(0, tEcho + 0.01);
-    stop = Math.max(stop, tEcho + 0.02);
+  if (echoVol > 0 && echoLen > 0) {
+    // pseudo-echo: the release decays DOWN INTO echoVol, holds there for
+    // echoLen frames, then the channel is cut (continuous - no jump).
+    const tReach = echo < valOff ? tOff + tau * Math.log(valOff / echo) : tOff;
+    const tCut = tReach + echoLen * FRAME;
+    g.setValueAtTime(echo, tReach);           // ends the decay, holds
+    g.linearRampToValueAtTime(0, tCut + 0.003);
+    return tCut + 0.01;
   }
-  return stop;
+  return tOff + tau * 7;
 }
 
-function psgEnvelope(g, t0, tOff, adsr, goal) {
+function psgEnvelope(g, t0, tOff, adsr, goal, echoVol, echoLen) {
   // GB envelope in quantised levels: one +-1 level step per <phase> frames.
   // g ramps 0..1 (fraction of the note's volume goal).
   const [a, d, s, r] = adsr;
@@ -269,8 +271,20 @@ function psgEnvelope(g, t0, tOff, adsr, goal) {
     }
   }
   if (r === 0) { g.setValueAtTime(0, tOff); return tOff + 0.01; }
-  const tRel = r * Math.max(1, valOff * goal) * FRAME;
   g.setValueAtTime(valOff, tOff);
+  // CGB pseudo-echo: the release steps down to ceil(goal*echoVol/256)
+  // levels, holds for echoLen frames, then cuts (continuous on hardware).
+  const echoLvl = (echoVol > 0 && echoLen > 0 && goal > 0)
+    ? ((goal * echoVol + 0xFF) >> 8) : 0;
+  const tRel = r * Math.max(1, valOff * goal - echoLvl) * FRAME;
+  if (echoLvl > 0 && echoLvl / goal < valOff) {
+    const tHold = tOff + tRel;
+    const tCut = tHold + echoLen * FRAME;
+    g.linearRampToValueAtTime(echoLvl / goal, tHold);
+    g.setValueAtTime(echoLvl / goal, tCut);
+    g.linearRampToValueAtTime(0, tCut + 0.003);
+    return tCut + 0.01;
+  }
   g.linearRampToValueAtTime(0, tOff + tRel);
   return tOff + tRel + 0.01;
 }
@@ -397,14 +411,14 @@ function playSong(song) {
         gR.gain.setValueAtTime(gr * scale, at);
       }
       srcs = [o];
-      stopAt = psgEnvelope(env.gain, at, tOff, v.adsr, goal);
+      stopAt = psgEnvelope(env.gain, at, tOff, v.adsr, goal, tk.echoV, tk.echoL);
     } else if (v.t === "noise") {
       const src = ctx.createBufferSource();
       src.buffer = noiseBuffer(v.period === 1);
       src.loop = true;
       src.playbackRate.setValueAtTime(noiseClock(playKey) / 48000, at);
       srcs = [src];
-      stopAt = psgEnvelope(env.gain, at, tOff, v.adsr, goal);
+      stopAt = psgEnvelope(env.gain, at, tOff, v.adsr, goal, tk.echoV, tk.echoL);
     }
 
     srcs.forEach(s => s.connect(env));

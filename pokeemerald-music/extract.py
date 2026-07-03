@@ -59,6 +59,7 @@ def parse_aif(path):
     assert d[:4] == b"FORM" and d[8:12] == b"AIFF", path
     i = 12
     rate = None
+    num_frames = None
     marks = {}
     sustain = None
     data = None
@@ -67,6 +68,7 @@ def parse_aif(path):
         sz = struct.unpack(">I", d[i + 4:i + 8])[0]
         body = d[i + 8:i + 8 + sz]
         if cid == b"COMM":
+            num_frames = struct.unpack(">I", body[2:6])[0]
             exp = struct.unpack(">h", body[8:10])[0]
             mant = struct.unpack(">Q", body[10:18])[0]
             rate = mant * 2.0 ** (exp - 16383 - 63)
@@ -89,11 +91,14 @@ def parse_aif(path):
     assert rate and data is not None, path
     loop = sustain is not None
     loop_start = marks.get(sustain[0], 0) if loop else 0
-    loop_end = marks.get(sustain[1], len(data)) if loop else len(data)
-    loop_end = min(loop_end, len(data))
+    # aif2pcm stores size = num_frames - 1: the final frame (a duplicate of
+    # the loop-start sample in these AIFFs) is NOT part of the playable/loop
+    # region. Keeping it makes every loop cycle play the join sample twice -
+    # an audible tick per cycle on sustained notes.
+    end = min(num_frames - 1, len(data))
     smp = {
         "rate": rate,
-        "data": bytearray(data[:loop_end] if loop else data),
+        "data": bytearray(data[:end]),
         "loop": loop,
         "loopStart": loop_start,
     }

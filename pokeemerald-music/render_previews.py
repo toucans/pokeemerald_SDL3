@@ -146,16 +146,22 @@ def ds_env(n_gate, n_total, adsr, peak, rate, echo_v, echo_l):
         lvl = env[min(n_gate, n_total - 1)]
         rel = lvl * np.exp(-(t[n_gate:] - t_off) / tau)
         if echo_v > 0 and echo_l > 0:
-            n_echo = n_gate + int(echo_l * FRAME * rate)
-            rel = np.maximum(rel, echo_v / 256.0)
-            cut = n_echo - n_gate
-            if cut < len(rel):
-                rel[cut:] = 0.0
+            # pseudo-echo: release decays DOWN INTO echoVol, holds echoLen
+            # frames, then the channel is cut (continuous - no jump).
+            echo = echo_v / 256.0
+            floor = np.maximum(rel, min(echo, lvl))
+            t_reach = tau * math.log(lvl / echo) if echo < lvl else 0.0
+            cut = int((t_reach + echo_l * FRAME) * rate)
+            if cut < len(floor):
+                fade = min(len(floor) - cut, max(1, int(0.003 * rate)))
+                floor[cut:cut + fade] *= np.linspace(1, 0, fade)
+                floor[cut + fade:] = 0.0
+            rel = floor
         env[n_gate:] = rel
     return env * peak
 
 
-def psg_env(n_gate, n_total, adsr, goal, rate):
+def psg_env(n_gate, n_total, adsr, goal, rate, echo_v=0, echo_l=0):
     """GB envelope as fraction 0..1 of the volume goal (level steps)."""
     a, d, s, r = adsr
     sus_level = ((goal * s + 15) >> 4) if goal > 0 else 0
@@ -175,8 +181,20 @@ def psg_env(n_gate, n_total, adsr, goal, rate):
         env[n_gate:] = 0.0
     else:
         lvl = env[min(n_gate, n_total - 1)]
-        t_r = r * max(1, lvl * goal) * FRAME
-        env[n_gate:] = np.clip(lvl * (1 - (t[n_gate:] - t_off) / max(t_r, 1e-9)), 0, 1)
+        echo_lvl = ((goal * echo_v + 0xFF) >> 8) if (echo_v > 0 and echo_l > 0
+                                                     and goal > 0) else 0
+        t_r = r * max(1, lvl * goal - echo_lvl) * FRAME
+        rel = np.clip(lvl * (1 - (t[n_gate:] - t_off) / max(t_r, 1e-9)), 0, 1)
+        if echo_lvl > 0 and echo_lvl / goal < lvl:
+            # CGB pseudo-echo: release steps down to echo_lvl levels, holds
+            # echoLen frames, then cuts.
+            rel = np.maximum(rel, echo_lvl / goal)
+            cut = int((t_r + echo_l * FRAME) * rate)
+            if cut < len(rel):
+                fade = min(len(rel) - cut, max(1, int(0.003 * rate)))
+                rel[cut:cut + fade] *= np.linspace(1, 0, fade)
+                rel[cut + fade:] = 0.0
+        env[n_gate:] = rel
     return env
 
 
@@ -289,6 +307,8 @@ def render_song(song, samples, total, rate):
             else:
                 goal_pre = psg_gains(vel, st["v"], st["p"], rp)[0]
                 tail = v["adsr"][3] * max(1, goal_pre) * FRAME + 0.01
+                if st["ev"] > 0 and st["el"] > 0:
+                    tail += st["el"] * FRAME
             n_tot = min(n_total - i0, n_gate + int(tail * rate) + 1)
             if n_tot <= 0:
                 continue
@@ -341,7 +361,8 @@ def render_song(song, samples, total, rate):
                     step = noise_clock(play_key) / rate
                     idx = np.mod((np.arange(n_tot) * step).astype(np.int64), len(nz))
                     sig = nz[idx]
-                env = psg_env(min(n_gate, n_tot), n_tot, v["adsr"], goal, rate)
+                env = psg_env(min(n_gate, n_tot), n_tot, v["adsr"], goal, rate,
+                              st["ev"], st["el"])
                 sig = sig[:n_tot] * env
                 psg_mix[i0:i0 + n_tot, 0] += sig * gl
                 psg_mix[i0:i0 + n_tot, 1] += sig * gr

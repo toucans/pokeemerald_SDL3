@@ -87,8 +87,11 @@ Engine behaviours that matter for faithful playback (all from `m4a.c`/`m4a_1.s`)
 - **"Reverb" (`-R50`)** is not reverb: the mixer re-feeds its own DMA buffer, ~7
   frames (117 ms) old, mono-summed at 50/128 with feedback — a short echo, and it
   only touches the PCM mix.
-- **Pseudo-echo** (XCMD IECV/IECL): after release, hold a low envelope level for n
-  frames — several overworld tracks use it for their percussion tails.
+- **Pseudo-echo** (XCMD IECV/IECL): the release decays *down into* the echo level,
+  holds there for n frames, then the channel is cut — several overworld tracks use
+  it for note tails. (Getting this wrong — e.g. jumping to the echo level at a fixed
+  time — produces an audible tick after every note.) CGB channels do it too, at
+  ceil(goal×echoVol/256) of their quantised volume.
 
 ## What extract.py does
 
@@ -101,7 +104,10 @@ No ROM and no emulation needed — everything is in the source tree:
    every `(program, key)` a note actually uses into a concrete voice; drums are
    flattened (per-key sub-voice, own pan, plays at its own base key).
 4. Decode the referenced `.aif` files (COMM rate, MARK/INST loop, SSND 8-bit PCM) and
-   the 4-bit wave patterns.
+   the 4-bit wave patterns. One trap: `aif2pcm` stores the playable size as
+   `num_frames − 1` — the AIFFs' final frame duplicates the loop-start sample and is
+   *not* played. Keep it and every loop cycle stutters on the join sample (an
+   audible tick per cycle on sustained notes).
 5. Emit `web/data/songs/<name>.json` (per-track event lists in seconds + resolved
    voices) and one shared `web/data/samples.json` (base64 PCM + rate + loop points).
    13 overworld songs come to ~36 samples / 343 KiB of PCM — the entire overworld
