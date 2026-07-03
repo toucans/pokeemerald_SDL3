@@ -44,7 +44,7 @@
 <main>
   <h1>Pokémon Emerald — overworld BGM</h1>
   <p class="sub">decoded from the pokeemerald source (MIDI + m4a voicegroups +
-  DirectSound samples), synthesized live in the browser by a reimplementation of the GBA m4a sound engine.</p>
+  DirectSound samples), synthesized live in the browser by an AudioWorklet reimplementing the GBA m4a sound engine.</p>
   <div id="songs"></div>
   <button id="stop">stop</button>
   <span id="status"></span>
@@ -52,6 +52,6 @@
   <code>[</code>/<code>]</code> markers in the game's MIDI files).
   See <code>README.md</code> one directory up for how the engine works and how extraction was done.</footer>
 </main>
-<script type="module" src="player.js"></script>
+<script src="player.js"></script>
 </body>
 </html>

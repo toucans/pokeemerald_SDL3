@@ -1,23 +1,17 @@
-/* player.js — main-thread shim for the m4a engine (ES module).
+/* player.js — main-thread shim for the m4a AudioWorklet.
  *
  * Loads the extracted data (manifest + samples + song JSON), decodes the base64
- * sample bank once, and drives the shared M4AEngine via one of two audio paths:
- *   - AudioWorklet, when the page is a secure context (https/localhost) — the
- *     engine runs off the main thread in m4a-worklet.js.
- *   - ScriptProcessorNode fallback, on plain http (e.g. the VPN dashboard at
- *     http://10.7.0.1) where AudioWorklet is not exposed — the same M4AEngine
- *     runs here on the main thread (workload is ~1% of a core, so it's fine).
+ * sample bank once, and drives a single AudioWorkletNode running m4a-worklet.js.
+ * All synthesis happens in the worklet; this file is just UI + data plumbing.
  *
- * No build step, no deps. See WORKLET_HANDOFF.md.
+ * No build step, no deps — vanilla, served static. See WORKLET_HANDOFF.md.
  */
-import { M4AEngine } from './m4a-engine.js';
+"use strict";
 
 const DATA = "data/";
 
 let ctx = null;
-let node = null;          // AudioWorkletNode OR ScriptProcessorNode
-let engine = null;        // local M4AEngine for the ScriptProcessorNode fallback
-let usingWorklet = false;
+let node = null;          // the AudioWorkletNode running the engine
 let bankSent = false;
 let bank = null;          // {label:{rate,loop,loopStart,data:Int8Array}}
 let samplesJson = null;
@@ -41,64 +35,32 @@ function b64ToInt8(b64) {
 function decodeBank() {
   bank = {};
   for (const [label, v] of Object.entries(samplesJson)) {
-    bank[label] = { rate: v.rate, loop: v.loop, loopStart: v.loopStart, data: b64ToInt8(v.b64) };
+    bank[label] = {
+      rate: v.rate, loop: v.loop, loopStart: v.loopStart,
+      data: b64ToInt8(v.b64),
+    };
   }
 }
 
 async function ensureAudio() {
-  if (ctx) {
-    if (ctx.state === "suspended") await ctx.resume();
-    return;
-  }
-  ctx = new (window.AudioContext || window.webkitAudioContext)();
-  if (!bank) decodeBank();
-
-  // Prefer AudioWorklet (secure contexts only); else ScriptProcessorNode.
-  let workletOk = false;
-  if (ctx.audioWorklet) {
-    try {
-      await ctx.audioWorklet.addModule("m4a-worklet.js");
-      node = new AudioWorkletNode(ctx, "m4a-processor", { outputChannelCount: [2] });
-      node.port.onmessage = (e) => { if (e.data && e.data.type === "ended") clearPlaying(); };
-      node.connect(ctx.destination);
-      workletOk = true;
-    } catch (err) {
-      console.warn("AudioWorklet unavailable, falling back to ScriptProcessorNode:", err);
-    }
-  }
-
-  if (workletOk) {
-    usingWorklet = true;
-    node.port.postMessage({ type: "bank", bank }, Object.values(bank).map((s) => s.data.buffer));
-    bank = null;                       // buffers transferred to the audio thread
-    bankSent = true;
-  } else {
-    // Fallback: run the same engine on the main thread via ScriptProcessorNode.
-    usingWorklet = false;
-    engine = new M4AEngine(ctx.sampleRate);
-    engine.onended = () => clearPlaying();
-    engine.loadBank(bank);             // main-thread engine keeps the bank (no transfer)
-    bankSent = true;
-    // 1 input channel (ignored): some browsers won't fire onaudioprocess with 0 inputs.
-    node = (ctx.createScriptProcessor || ctx.createJavaScriptNode).call(ctx, 2048, 1, 2);
-    node.onaudioprocess = (ev) => {
-      const out = ev.outputBuffer;
-      engine.render(out.getChannelData(0), out.getChannelData(1), out.length);
-    };
+  if (!ctx) {
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    await ctx.audioWorklet.addModule("m4a-worklet.js");
+    node = new AudioWorkletNode(ctx, "m4a-processor", { outputChannelCount: [2] });
     node.connect(ctx.destination);
+    node.port.onmessage = (e) => {
+      if (e.data && e.data.type === "ended") clearPlaying();
+    };
   }
-
   if (ctx.state === "suspended") await ctx.resume();
-}
-
-function sendPlay(song) {
-  if (usingWorklet) node.port.postMessage({ type: "play", song });
-  else engine.play(song);
-}
-function sendStop() {
-  if (!node) return;
-  if (usingWorklet) node.port.postMessage({ type: "stop" });
-  else if (engine) engine.stop();
+  if (!bankSent) {
+    if (!bank) decodeBank();
+    // transfer the sample ArrayBuffers to the audio thread (one-time)
+    const transfer = Object.values(bank).map((s) => s.data.buffer);
+    node.port.postMessage({ type: "bank", bank }, transfer);
+    bankSent = true;
+    bank = null;             // buffers are now owned by the worklet
+  }
 }
 
 function clearPlaying() {
@@ -125,22 +87,26 @@ async function main() {
       try {
         const wasPlaying = btn === playingBtn;
         await ensureAudio();
-        sendStop();
+        node.port.postMessage({ type: "stop" });
         clearPlaying();
         if (wasPlaying) return;
         if (!songCache[entry.file]) songCache[entry.file] = await fetchJson(entry.file);
-        sendPlay(songCache[entry.file]);
+        node.port.postMessage({ type: "play", song: songCache[entry.file] });
         btn.classList.add("playing");
         playingBtn = btn;
-        setStatus(usingWorklet ? "" : "");
+        setStatus("");
       } catch (err) {
         console.error(err);
+        // AudioWorklet needs a secure context (https/localhost) — most likely cause here.
         setStatus("audio error: " + (err && err.message ? err.message : err));
       }
     };
   }
 
-  document.getElementById("stop").onclick = () => { sendStop(); clearPlaying(); };
+  document.getElementById("stop").onclick = () => {
+    if (node) node.port.postMessage({ type: "stop" });
+    clearPlaying();
+  };
 }
 
 main();

@@ -8,9 +8,8 @@ emulator, no MP3s. Standalone; nothing here is wired into the SDL3 port.
 | Piece | What |
 |---|---|
 | `extract.py` | pokeemerald source → `web/data/` (song JSON + sample bank). Python stdlib only. |
-| `web/m4a-engine.js` | The engine: a runtime-agnostic class that synthesizes every sample per the m4a rules (vanilla ES module, no build). |
-| `web/m4a-worklet.js` | Thin `AudioWorkletProcessor` wrapping the engine (used on https/localhost). |
-| `web/player.js` + `index.html` | Main-thread shim (loads data, picks the audio path) + tiny UI. |
+| `web/m4a-worklet.js` | The engine: an `AudioWorkletProcessor` that synthesizes every sample per the m4a rules (vanilla, no build). Needs a secure context (https). |
+| `web/player.js` + `index.html` | Main-thread shim (loads data, drives the worklet) + tiny UI. |
 | `web/data/` | Committed song JSON + sample bank — self-contained, 13 town/route themes with proper GBA loop points. |
 | `render_previews.py` | Offline WAV renders of the same engine, used to A/B the worklet (needs numpy). |
 
@@ -125,28 +124,27 @@ pitch classes sounding in each window match the score (8/8 windows for Littleroo
 
 ## Playback (web/m4a-worklet.js + web/player.js)
 
-The player *is* the m4a engine — it generates every output sample itself in one
-per-sample mixing loop, rather than wiring up browser oscillators/resamplers per
-note. This is the faithful hardware model and keeps the whole signal path in code
-we own (no browser DSP black boxes).
+The player is a single **AudioWorklet** that *is* the m4a engine — it generates
+every output sample itself in one per-sample mixing loop, rather than wiring up
+browser oscillators/resamplers per note. This is the faithful hardware model and
+keeps the whole signal path in code we own (no browser DSP black boxes).
 
-- **`web/m4a-engine.js`** — the engine, as a runtime-agnostic class. The
-  sequencer and envelopes tick once per GBA frame (59.7275 Hz); audio is
-  synthesized per output sample: PCM voices by phase-accumulator resampling of
-  the 8-bit samples (looping between the AIFF points), pulses by a 4× box-averaged
-  pulse, the wavetable by 32-step interpolation at *half* the square rate, noise
-  from the GB LFSR at the NR43 clock. Envelopes, the linear pan/volume law, the
-  quantised PSG levels and 3-way PSG pan, vibrato, pseudo-echo and the `[`/`]`
-  loop all follow §"engine behaviours" above. The PCM sub-mix gets the engine's
-  real reverb (mono two-tap feedback echo at `-R`/128); PSG stays dry.
-- **Two audio paths, same engine.** On a **secure context** (https/localhost)
-  the engine runs off the main thread in `web/m4a-worklet.js` (an
-  `AudioWorkletProcessor`). On **plain http** — e.g. this box's VPN dashboard at
-  `http://10.7.0.1`, where browsers don't expose `AudioWorklet` — `player.js`
-  falls back to a `ScriptProcessorNode` running the *same* `M4AEngine` on the
-  main thread (the workload is ~1% of a core, so it's inaudible either way).
-- **`web/player.js`** — the main-thread shim (ES module): loads the JSON + sample
-  bank, base64-decodes the samples once, picks the audio path, drives it. UI only.
+- **`web/m4a-worklet.js`** — the `AudioWorkletProcessor`. The sequencer and
+  envelopes tick once per GBA frame (59.7275 Hz); audio is synthesized per output
+  sample: PCM voices by phase-accumulator resampling of the 8-bit samples
+  (looping between the AIFF points), pulses by a 4× box-averaged pulse, the
+  wavetable by 32-step interpolation at *half* the square rate, noise from the GB
+  LFSR at the NR43 clock. Envelopes, the linear pan/volume law, the quantised PSG
+  levels and 3-way PSG pan, vibrato, pseudo-echo and the `[`/`]` loop all follow
+  §"engine behaviours" above. The PCM sub-mix gets the engine's real reverb (mono
+  two-tap feedback echo at `-R`/128); PSG stays dry.
+- **`web/player.js`** — a thin main-thread shim: loads the JSON + sample bank,
+  base64-decodes the samples once, drives one `AudioWorkletNode`. UI only.
+- **Secure context required.** `AudioWorklet` is only exposed on https/localhost,
+  so the page must be served over TLS — on this box's dashboard that's the local
+  mkcert cert on the nginx front door (`https://10.7.0.1/`). Over plain http
+  `ctx.audioWorklet` is undefined and play surfaces an "audio error"; serve it
+  over https.
 - The output is deliberately **full-bandwidth** — the approach of the fan
   "Emerald Remastered" album (Kurausukun/ipatix): identical sequence data, mix
   rules and instruments, minus the GBA's output degradation (13.4 kHz
