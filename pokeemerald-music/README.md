@@ -1,14 +1,17 @@
 # pokeemerald-music
 
 Pokémon Emerald's **overworld background music**, decoded straight from the
-`pokeemerald` decompilation source and played live with **WebAudio** — no ROM,
-no emulator, no MP3s. Standalone; nothing here is wired into the SDL3 port.
+`pokeemerald` decompilation source and played live in the browser by an
+**AudioWorklet that reimplements the GBA m4a sound engine** — no ROM, no
+emulator, no MP3s. Standalone; nothing here is wired into the SDL3 port.
 
 | Piece | What |
 |---|---|
 | `extract.py` | pokeemerald source → `web/data/` (song JSON + sample bank). Python stdlib only. |
-| `web/` | The player: `index.html` + `player.js` (vanilla, no build) + committed `data/` — self-contained, 13 town/route themes with proper GBA loop points. |
-| `render_previews.py` | Optional offline WAV renders of the same data (needs numpy+scipy). |
+| `web/m4a-worklet.js` | The engine: an `AudioWorkletProcessor` that synthesizes every sample per the m4a rules (vanilla, no build). |
+| `web/player.js` + `index.html` | Main-thread shim (loads data, drives the worklet) + tiny UI. |
+| `web/data/` | Committed song JSON + sample bank — self-contained, 13 town/route themes with proper GBA loop points. |
+| `render_previews.py` | Offline WAV renders of the same engine, used to A/B the worklet (needs numpy). |
 
 Listen: serve `web/` with any static server (`cd web && python3 -m http.server`)
 and open the page.
@@ -119,22 +122,35 @@ No ROM and no emulation needed — everything is in the source tree:
 same envelope math; an FFT of the render was cross-checked against the MIDI — the
 pitch classes sounding in each window match the score (8/8 windows for Littleroot).
 
-## Playback (web/player.js)
+## Playback (web/m4a-worklet.js + web/player.js)
 
-- PCM voices → `AudioBufferSourceNode` at the sample's native rate with AIFF loop
-  points; pitch via `detune` = (key−60)×100 + bend cents. Pulse & wavetable voices →
-  `OscillatorNode` with a `PeriodicWave` (Fourier series of the duty cycle / DFT of
-  the 32-step table — band-limited for free), at the GB-register frequencies. Noise →
-  looped LFSR buffer at the NR43 clock. Per-note linear-pan gain pairs and the
-  quantised PSG levels implement the volume model above; loops follow the `[`/`]`
-  markers exactly like the engine's track jump.
+The player is a single **AudioWorklet** that *is* the m4a engine — it generates
+every output sample itself in one per-sample mixing loop, rather than wiring up
+browser oscillators/resamplers per note. This is the faithful hardware model and
+keeps the whole signal path in code we own (no browser DSP black boxes).
+
+- **`web/m4a-worklet.js`** — the `AudioWorkletProcessor`. The sequencer and
+  envelopes tick once per GBA frame (59.7275 Hz); audio is synthesized per
+  output sample: PCM voices by phase-accumulator resampling of the 8-bit samples
+  (looping between the AIFF points), pulses by a 4× box-averaged pulse, the
+  wavetable by 32-step interpolation at *half* the square rate, noise from the
+  GB LFSR at the NR43 clock. Envelopes, the linear pan/volume law, the quantised
+  PSG levels and 3-way PSG pan, vibrato, pseudo-echo and the `[`/`]` loop all
+  follow §"engine behaviours" above. The PCM sub-mix gets the engine's real
+  reverb (mono two-tap feedback echo at `-R`/128); PSG stays dry, as on hardware.
+- **`web/player.js`** — a thin main-thread shim: loads the JSON + sample bank,
+  base64-decodes the samples once, and drives one `AudioWorkletNode`. UI only.
 - The output is deliberately **full-bandwidth** — the approach of the fan
-  "Emerald Remastered" album (Kurausukun/ipatix): identical sequence data and mix
-  rules, identical instruments, minus the GBA's output degradation (13.4 kHz
-  nearest-neighbour resampling). The PCM bus gets the engine's real reverb
-  (117 ms mono feedback echo at `-R`/128); PSG stays dry, as on hardware.
-- Verified against that remaster: FFT peak-frequency match of 21–24/25 spectral
-  peaks per window and closely matching band balance on the tracks compared.
+  "Emerald Remastered" album (Kurausukun/ipatix): identical sequence data, mix
+  rules and instruments, minus the GBA's output degradation (13.4 kHz
+  nearest-neighbour resampling).
+- **Verified**: the worklet was driven headlessly in V8 and A/B'd against
+  `render_previews.py` (band balance matches to ≈0.02) and against the official
+  GBA recording (79% FFT peak-frequency match — same as the offline renderer,
+  confirming correct notes/octaves/tuning), with zero drum re-triggers, zero
+  high-band ticks, and seamless loops. No build step, no deps: two small vanilla
+  JS files. Plain JS was chosen over C→WASM — the workload is <1% of a core, so
+  WASM's edge is imperceptible while its toolchain/binary are pure overhead.
 
 ## Regenerating
 
