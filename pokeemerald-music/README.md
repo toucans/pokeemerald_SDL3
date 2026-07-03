@@ -104,10 +104,12 @@ No ROM and no emulation needed — everything is in the source tree:
    every `(program, key)` a note actually uses into a concrete voice; drums are
    flattened (per-key sub-voice, own pan, plays at its own base key).
 4. Decode the referenced `.aif` files (COMM rate, MARK/INST loop, SSND 8-bit PCM) and
-   the 4-bit wave patterns. One trap: `aif2pcm` stores the playable size as
-   `num_frames − 1` — the AIFFs' final frame duplicates the loop-start sample and is
-   *not* played. Keep it and every loop cycle stutters on the join sample (an
-   audible tick per cycle on sustained notes).
+   the 4-bit wave patterns. Two traps here: (a) `aif2pcm` stores the playable size
+   as `num_frames − 1` — the AIFFs' final frame duplicates the loop-start sample and
+   is *not* played (keep it and every loop cycle stutters); (b) **every** AIFF has a
+   boilerplate INST chunk claiming a sustain loop — a sample is only really looped
+   if the MARK chunk with the loop markers exists (that's what `aif2pcm` keys off).
+   Trust the INST alone and every one-shot drum machine-guns at ~10 Hz.
 5. Emit `web/data/songs/<name>.json` (per-track event lists in seconds + resolved
    voices) and one shared `web/data/samples.json` (base64 PCM + rate + loop points).
    13 overworld songs come to ~36 samples / 343 KiB of PCM — the entire overworld

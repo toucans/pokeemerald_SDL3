@@ -89,8 +89,12 @@ def parse_aif(path):
             data = body[8 + off:]
         i += 8 + sz + (sz % 2)
     assert rate and data is not None, path
-    loop = sustain is not None
-    loop_start = marks.get(sustain[0], 0) if loop else 0
+    # A real loop needs BOTH the INST sustain-loop AND its markers to exist:
+    # pcm2aif writes a boilerplate INST (playMode=1) into every file, but only
+    # looped samples get a MARK chunk. aif2pcm keys off the markers - so must
+    # we, or every one-shot drum becomes a machine-gun loop.
+    loop = (sustain is not None and sustain[0] in marks and sustain[1] in marks)
+    loop_start = marks[sustain[0]] if loop else 0
     # aif2pcm stores size = num_frames - 1: the final frame (a duplicate of
     # the loop-start sample in these AIFFs) is NOT part of the playable/loop
     # region. Keeping it makes every loop cycle play the join sample twice -
