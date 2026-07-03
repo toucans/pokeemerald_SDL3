@@ -1,0 +1,67 @@
+[
+ {
+  "file": "songs/mus_littleroot.json",
+  "name": "mus_littleroot",
+  "title": "Littleroot Town"
+ },
+ {
+  "file": "songs/mus_oldale.json",
+  "name": "mus_oldale",
+  "title": "Oldale Town"
+ },
+ {
+  "file": "songs/mus_petalburg.json",
+  "name": "mus_petalburg",
+  "title": "Petalburg City"
+ },
+ {
+  "file": "songs/mus_rustboro.json",
+  "name": "mus_rustboro",
+  "title": "Rustboro City"
+ },
+ {
+  "file": "songs/mus_dewford.json",
+  "name": "mus_dewford",
+  "title": "Dewford Town"
+ },
+ {
+  "file": "songs/mus_slateport.json",
+  "name": "mus_slateport",
+  "title": "Slateport City"
+ },
+ {
+  "file": "songs/mus_verdanturf.json",
+  "name": "mus_verdanturf",
+  "title": "Verdanturf Town"
+ },
+ {
+  "file": "songs/mus_fortree.json",
+  "name": "mus_fortree",
+  "title": "Fortree City"
+ },
+ {
+  "file": "songs/mus_route101.json",
+  "name": "mus_route101",
+  "title": "Route 101"
+ },
+ {
+  "file": "songs/mus_route104.json",
+  "name": "mus_route104",
+  "title": "Route 104"
+ },
+ {
+  "file": "songs/mus_route110.json",
+  "name": "mus_route110",
+  "title": "Route 110"
+ },
+ {
+  "file": "songs/mus_route119.json",
+  "name": "mus_route119",
+  "title": "Route 119"
+ },
+ {
+  "file": "songs/mus_surf.json",
+  "name": "mus_surf",
+  "title": "Surf"
+ }
+]

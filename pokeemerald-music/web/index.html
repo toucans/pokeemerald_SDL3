@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pokémon Emerald — overworld BGM (WebAudio)</title>
+<style>
+  :root {
+    --bg: #10141a; --panel: #1a2129; --line: #2a333f;
+    --text: #d7e0ea; --dim: #6b7a8c; --blue: #6db3f2;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 15px/1.5 system-ui, sans-serif;
+    display: flex; justify-content: center; min-height: 100vh;
+  }
+  main { width: min(680px, 94vw); padding: 2.2rem 0 3rem; }
+  h1 { font-size: 1.25rem; margin: 0 0 .2rem; letter-spacing: .02em; }
+  p.sub { color: var(--dim); margin: 0 0 1.4rem; font-size: .85rem; }
+  #songs { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .song {
+    display: flex; align-items: center; gap: .8rem;
+    padding: .6rem .9rem; background: var(--panel);
+    border-bottom: 1px solid var(--line);
+  }
+  .song:last-child { border-bottom: none; }
+  .title { flex: 1; }
+  .file { color: var(--dim); font-size: .75rem; font-family: ui-monospace, monospace; }
+  button {
+    background: none; border: 1px solid var(--line); color: var(--text);
+    border-radius: 6px; padding: .25rem .7rem; cursor: pointer;
+    font: inherit; font-size: .8rem;
+  }
+  button:hover { border-color: var(--dim); }
+  button.playing { background: var(--blue); border-color: var(--blue); color: #08111c; }
+  #stop { margin-top: 1rem; padding: .35rem 1.1rem; }
+  footer { color: var(--dim); font-size: .78rem; margin-top: 1.6rem; }
+  footer code { color: var(--text); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Pokémon Emerald — overworld BGM</h1>
+  <p class="sub">decoded from the pokeemerald source (MIDI + m4a voicegroups +
+  DirectSound samples), synthesized live with WebAudio to sound like the GBA.</p>
+  <div id="songs"></div>
+  <button id="stop">stop</button>
+  <footer>Songs loop like on the GBA (loop points come from the
+  <code>[</code>/<code>]</code> markers in the game's MIDI files).
+  See <code>FINDINGS.md</code> one directory up for how extraction works.</footer>
+</main>
+<script src="player.js"></script>
+</body>
+</html>
