@@ -4,7 +4,10 @@ Pokémon Emerald's **complete soundtrack** (204 tracks — every `mus_*` in the
 game, overworld to battles to fanfares), decoded straight from the
 `pokeemerald` decompilation source and played live in the browser by an
 **AudioWorklet that reimplements the GBA m4a sound engine** — no ROM, no
-emulator, no MP3s. Standalone; nothing here is wired into the SDL3 port.
+emulator, no MP3s. This is also the game's music source of truth: the data in
+`web/data/` feeds the game via `tools/pack_music.py`, and the worklet is the
+reference implementation that `src/m4a.c` (the in-game C engine) is verified
+against.
 
 | Piece | What |
 |---|---|

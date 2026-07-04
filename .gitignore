@@ -1,0 +1,17 @@
+# the ROM (user-provided, never committed) and runtime saves
+p.gba
+p.sav
+
+# build outputs
+poke
+poke.html
+poke.js
+poke.wasm
+poke.data
+
+# regenerable caches (see README: sources of truth)
+assets/music.pak
+vendor/
+
+# OS junk
+.DS_Store

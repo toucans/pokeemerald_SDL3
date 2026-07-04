@@ -169,7 +169,7 @@ void game_update(GameState *state) {
     /* unlock audio on first input (web autoplay policy) */
     static bool audio_unlocked = false;
     if (!audio_unlocked && state->input) {
-        audio_play_music(state->currentMap->music);
+        audio_unlock();
         audio_unlocked = true;
     }
 

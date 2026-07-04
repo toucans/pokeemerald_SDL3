@@ -1,31 +1,32 @@
 SRCFILES := $(shell cat srcfiles.txt)
 
-# ── Native build ──────────────────────────────────────────────────────────────
-SDKROOT  := $(shell xcrun --show-sdk-path)
-CC       := clang
-CFLAGS   := -std=c17 -Iinclude -isysroot $(SDKROOT)
-LDFLAGS  := $(shell pkg-config --cflags --libs sdl3 sdl3-mixer)
+# ── Native build (Linux/macOS: needs sdl3 via pkg-config) ────────────────────
+CC     ?= cc
+CFLAGS := -std=c17 -O2 -Wall -Iinclude $(shell pkg-config --cflags sdl3)
+LIBS   := $(shell pkg-config --libs sdl3) -lm
 
-# ── Web build (Emscripten) ────────────────────────────────────────────────────
-EMCC     := emcc
-EMCFLAGS := -std=c17 -Iinclude -sUSE_SDL=3 -sALLOW_MEMORY_GROWTH=1 \
-            -sINITIAL_MEMORY=67108864 \
-            --preload-file p.gba \
-            -O2
-# audio.c excluded: SDL_mixer has no Emscripten port yet; audio_web.c used instead
-EMSRCFILES := $(filter-out src/audio.c, $(SRCFILES)) src/audio_web.c
+poke: $(SRCFILES) src/*.h assets/music.pak
+	$(CC) $(SRCFILES) $(CFLAGS) $(LIBS) -o poke
 
-# ── Main build ────────────────────────────────────────────────────────────────
-poke: $(SRCFILES)
-	$(CC) $(SRCFILES) $(CFLAGS) $(LDFLAGS) -o poke
+# ── Web build (Emscripten; the real target — see README) ─────────────────────
+# SDL3 for wasm is built once by tools/build-sdl3-wasm.sh (emscripten has no
+# SDL3 port of its own).
+EMCC      := emcc
+SDL3_WASM := vendor/sdl3-wasm
+# MINIFY_HTML=0: Debian's emscripten lacks the html minifier it wants at -O2
+EMCFLAGS  := -std=c17 -O2 -Iinclude -I$(SDL3_WASM)/include \
+             -sALLOW_MEMORY_GROWTH=1 -sINITIAL_MEMORY=67108864 -sMINIFY_HTML=0 \
+             --preload-file p.gba --preload-file assets/music.pak
 
-# ── Web build ─────────────────────────────────────────────────────────────────
-web: $(EMSRCFILES)
-	$(EMCC) $(EMSRCFILES) $(EMCFLAGS) -o poke.html
+web: $(SRCFILES) src/*.h assets/music.pak $(SDL3_WASM)/lib/libSDL3.a
+	$(EMCC) $(SRCFILES) $(SDL3_WASM)/lib/libSDL3.a $(EMCFLAGS) -o poke.html
 
-# ── Misc ──────────────────────────────────────────────────────────────────────
-pre: main.c
-	clang -E main.c -Iinclude -std=c23 `pkg-config --cflags --libs sdl3` > main.pre.c
+$(SDL3_WASM)/lib/libSDL3.a:
+	tools/build-sdl3-wasm.sh
+
+# ── Music pack: regenerable cache of pokeemerald-music/web/data ──────────────
+assets/music.pak: tools/pack_music.py $(wildcard pokeemerald-music/web/data/**)
+	python3 tools/pack_music.py
 
 clean:
-	rm -f poke
+	rm -f poke poke.html poke.js poke.wasm poke.data

@@ -11,3 +11,4 @@ pokeemerald/tilesets.c
 pokeemerald/fly_map_graphics.c
 src/fly_map_renderer.c
 src/audio.c
+src/m4a.c
