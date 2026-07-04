@@ -1,6 +1,7 @@
 # pokeemerald-music
 
-Pokémon Emerald's **overworld background music**, decoded straight from the
+Pokémon Emerald's **complete soundtrack** (204 tracks — every `mus_*` in the
+game, overworld to battles to fanfares), decoded straight from the
 `pokeemerald` decompilation source and played live in the browser by an
 **AudioWorklet that reimplements the GBA m4a sound engine** — no ROM, no
 emulator, no MP3s. Standalone; nothing here is wired into the SDL3 port.
@@ -178,8 +179,19 @@ instruments; drums from the Charm soundfont). The PSG squares/wave/noise are
 copies of square waves would be a downgrade. That makes original-vs-sf2 a pure
 samples A/B.
 
-`extract_sf2.py` (stdlib only) resolves every `(voice, key)` the 13 songs
-actually play against the sf2's preset/instrument zones and emits
+**Preset matching is by sample *name*, not MIDI program.** The voicegroups'
+program numbers aren't reliable GM — Petalburg maps an accordion at program
+56, which is GM Trumpet, so program-based lookup played a trumpet there. The
+GBA sample names say what the instrument actually is (`sc88pro_accordion`,
+`sc88pro_flute`, …), so a curated name→GM table drives melodic matching, and
+drums go through the GM kit by MIDI key only when the name is western
+percussion the kits actually hold (snare/hihat/crash/conga/…). Anything that
+can't be matched with confidence — Japanese percussion, phonemes, one-off
+synth textures — is **not substituted**: a blind guess is worse than the
+original sample.
+
+`extract_sf2.py` (stdlib only) resolves every `(voice, key)` the overlay
+songs actually play against the sf2's preset/instrument zones and emits
 `web/data/sf2/`:
 
 - `samples.json` — 16-bit PCM, **only the ~120 samples the songs touch**
@@ -197,9 +209,22 @@ actually play against the sf2's preset/instrument zones and emits
   8-bit samples are normalized hot, while GM fonts carry headroom, so without
   this the untouched PSG layer would sit too loud over the sf2 instruments.
 
-The sf2 bank is fetched lazily on the first `sf2` play (~24 MB as JSON); the
+The sf2 bank is fetched lazily on the first `sf2` play (~27 MB as JSON); the
 original mode never pays for it. CPU cost is identical (~1.4% of a core either
 way — same engine, same voice count; only the sample arrays read differ).
+The full soundtrack plays with **original samples only**; the `sf2` A/B
+button exists for the 13 hand-titled overworld themes.
+
+### The sample A/B page (`web/samples.html`)
+
+One row per DirectSound sample the soundtrack uses (from
+`web/data/sf2/pairs.json`), with `gba` and `sf2` buttons that play one note
+through the same engine/envelope — the only difference heard is the sample.
+Rows without a confident same-instrument match show "no sf2". The **last**
+button clicked per sample is saved server-side by the serving shim
+(`POST api/pick`, list at `GET api/picks` — on the box:
+`~/pokeemerald-music/data/sample-picks.json`), as the input for a future
+best-of instrument set.
 
 ## Regenerating
 

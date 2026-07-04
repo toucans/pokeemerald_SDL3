@@ -27,13 +27,9 @@ import struct
 import sys
 from pathlib import Path
 
-DEFAULT_SONGS = [
-    "mus_littleroot", "mus_oldale", "mus_petalburg", "mus_rustboro",
-    "mus_dewford", "mus_slateport", "mus_verdanturf", "mus_fortree",
-    "mus_route101", "mus_route104", "mus_route110", "mus_route119",
-    "mus_surf",
-]
-
+# Hand-titled overworld set (the original scope); every other song in
+# midi.cfg gets a title prettified from its name. Pass song names to extract
+# a subset; the default is the complete soundtrack.
 TITLES = {
     "mus_littleroot": "Littleroot Town",
     "mus_oldale": "Oldale Town",
@@ -49,6 +45,19 @@ TITLES = {
     "mus_route119": "Route 119",
     "mus_surf": "Surf",
 }
+
+
+def title_for(name):
+    if name in TITLES:
+        return TITLES[name]
+    t = name[4:] if name.startswith("mus_") else name
+    t = t.replace("_", " ").title()
+    # cosmetic touch-ups for the auto-titles
+    for a, b in [("Rg ", "FRLG "), ("B ", "Battle "), ("Vs", "Vs."),
+                 ("Gsc ", "GSC "), ("Hg ", "HG "), ("Sootopolis", "Sootopolis")]:
+        if t.startswith(a):
+            t = b + t[len(a):]
+    return re.sub(r"\bRoute(\d+)", r"Route \1", t)
 
 
 # ---------------------------------------------------------------- AIFF samples
@@ -460,7 +469,7 @@ def extract_song(bank, src, name, cfg):
 
     song = {
         "name": name,
-        "title": TITLES.get(name, name),
+        "title": title_for(name),
         "reverb": cfg["reverb"],
         "loopStart": round(t2s(loop[0]), 5) if loop[0] is not None else None,
         "loopEnd": round(t2s(loop[1]), 5) if loop[1] is not None else None,
@@ -494,23 +503,34 @@ def main():
     ap.add_argument("--out", type=Path, default=Path(__file__).parent / "web" / "data")
     ap.add_argument("songs", nargs="*", default=None)
     args = ap.parse_args()
-    songs = args.songs or DEFAULT_SONGS
 
     bank = Bank(args.src)
     cfgs = parse_midi_cfg(args.src)
+    songs = args.songs or [n for n in cfgs if n.startswith("mus_")]
     (args.out / "songs").mkdir(parents=True, exist_ok=True)
 
     manifest = []
+    skipped = []
     for name in songs:
-        song = extract_song(bank, args.src, name, cfgs[name])
+        try:
+            if not cfgs[name]["group"]:
+                raise ValueError("no voicegroup (-G) in midi.cfg")
+            song = extract_song(bank, args.src, name, cfgs[name])
+            if not song["tracks"]:
+                raise ValueError("no playable notes")
+        except Exception as e:
+            skipped.append((name, str(e)))
+            continue
         p = args.out / "songs" / f"{name}.json"
         p.write_text(json.dumps(song, separators=(",", ":")))
         n_notes = sum(1 for t in song["tracks"] for e in t if e[1] == "n")
-        print(f"{name:18} tracks={len(song['tracks'])} notes={n_notes} "
+        print(f"{name:26} tracks={len(song['tracks'])} notes={n_notes} "
               f"loop={song['loopStart']}..{song['loopEnd']}s "
-              f"voices={len(song['voices'])} -> {p.name}")
+              f"voices={len(song['voices'])}")
         manifest.append({"file": f"songs/{name}.json", "name": name,
                          "title": song["title"]})
+    for name, why in skipped:
+        print(f"SKIPPED {name}: {why}")
 
     smp_out = {}
     for label in sorted(bank.used_samples):

@@ -80,10 +80,7 @@ async function ensureAudio() {
 function ensureSf2() {
   if (!sf2Loaded) {
     sf2Loaded = (async () => {
-      const [overlays, samples] = await Promise.all([
-        fetchJson("sf2/overlays.json"), fetchJson("sf2/samples.json"),
-      ]);
-      sf2Overlays = overlays;
+      const samples = await fetchJson("sf2/samples.json");
       const sfBank = {};
       for (const [label, v] of Object.entries(samples)) {
         sfBank[label] = {
@@ -126,10 +123,12 @@ function clearPlaying() {
 
 async function main() {
   const list = document.getElementById("songs");
-  const [manifest, samples] = await Promise.all([
+  const [manifest, samples, overlays] = await Promise.all([
     fetchJson("manifest.json"), fetchJson("samples.json"),
+    fetchJson("sf2/overlays.json").catch(() => ({})),   // small; the 24 MB bank stays lazy
   ]);
   samplesJson = samples;
+  sf2Overlays = overlays;
 
   const play = async (btn, entry, mode) => {
     try {
@@ -160,17 +159,29 @@ async function main() {
     }
   };
 
+  const rows = [];
   for (const entry of manifest) {
     const row = document.createElement("div");
     row.className = "song";
+    const hasSf2 = !!sf2Overlays[entry.name];
     row.innerHTML = `<span class="title">${entry.title}</span>
       <span class="file">${entry.name}</span>
-      <span class="btns"><button class="gba">play</button><button class="sf2" title="Roland/Charm soundfont samples instead of the GBA's — same sequence, same engine">sf2</button></span>`;
+      <span class="btns"><button class="gba">play</button>${hasSf2
+        ? '<button class="sf2" title="Roland/Charm soundfont samples instead of the GBA\'s — same sequence, same engine">sf2</button>' : ""}</span>`;
     list.appendChild(row);
     const gbaBtn = row.querySelector("button.gba");
-    const sf2Btn = row.querySelector("button.sf2");
     gbaBtn.onclick = () => play(gbaBtn, entry, "gba");
-    sf2Btn.onclick = () => play(sf2Btn, entry, "sf2");
+    const sf2Btn = row.querySelector("button.sf2");
+    if (sf2Btn) sf2Btn.onclick = () => play(sf2Btn, entry, "sf2");
+    rows.push({ row, text: (entry.title + " " + entry.name).toLowerCase() });
+  }
+
+  const search = document.getElementById("search");
+  if (search) {
+    search.oninput = () => {
+      const q = search.value.trim().toLowerCase();
+      for (const r of rows) r.row.style.display = !q || r.text.includes(q) ? "" : "none";
+    };
   }
 
   document.getElementById("stop").onclick = () => {

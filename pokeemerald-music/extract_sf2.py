@@ -26,10 +26,51 @@ import argparse
 import base64
 import json
 import math
+import re
 import struct
 from pathlib import Path
 
 FRAME = 1 / 59.7275   # GBA frame; m4a release constants are per-frame
+
+# GBA sample name -> GM program. The voicegroups' program numbers are NOT
+# reliable GM (Petalburg maps an accordion at program 56 = GM Trumpet, so
+# program-based lookup played a trumpet there); the sample names say what the
+# instrument actually is, so they take precedence. Melodic voices whose name
+# has no entry here are NOT substituted — a blind program guess is worse than
+# the original sample. Drums don't use this (the kit is keyed by MIDI key).
+NAME_PROG = {
+    "accordion": 21, "church_organ3": 19, "fingered_bass": 33, "flute": 73,
+    "french_horn": 60, "fretless_bass": 35, "glockenspiel": 9, "harp": 46,
+    "nylon_str_guitar": 24, "organ2": 17, "piano1": 0, "steinway_b_piano": 0,
+    "pizzicato_strings": 45, "slap_bass": 36, "unison_slap": 36,
+    "square_wave": 80, "string_ensemble": 48, "synth_bass": 38, "timpani": 47,
+    "trumpet": 56, "tuba": 58, "tubular_bell": 14, "xylophone": 13,
+    "choir_voice_ahhs": 52, "oboe": 68, "shakuhachi": 77,
+    "enhanced_delay_shaku": 77, "whistle": 78, "distortion_guitar": 30,
+    "overdrive_guitar": 29, "detuned_ep1": 4, "koto": 107, "taiko": 116,
+    "ambient_tom": 117,
+}
+
+# Drum voices resolve through the GM kit by MIDI key, which is only a *same
+# instrument* match for western percussion (verified: tambourine->054,
+# snare->040, crash->049, congas->063/064, ...). The games' Japanese
+# percussion (kotsuzumi, hyoushigi, atarigane, gamelan, ...) sits on those
+# same keys but is NOT what a GM kit has there — no substitute for those.
+DRUM_OK = re.compile(
+    r"(kick|snare|hihat|cymbal|crash|tambourine|conga|clap|cowbell|triangle"
+    r"|tom\b|ambient_tom|taiko|timbale|bongo|woodblock|ride)")
+
+
+def drum_ok(label):
+    return bool(DRUM_OK.search(label.lower()))
+
+
+def name_prog(label):
+    base = re.sub(r"^DirectSoundWaveData_", "", label)
+    base = re.sub(r"^(sc88pro_|sd90_|trinity_|unknown_|unused_|"
+                  r"heart_of_asia_|classical_|sc55_)+", "", base)
+    base = re.sub(r"(_duplicate|_high|_low|_with_snare|_\d+)$", "", base)
+    return NAME_PROG.get(base)
 
 
 def levels(data, full, loop, loop_start, rate):
@@ -225,6 +266,16 @@ def main():
     out_dir = args.data / "sf2"
     out_dir.mkdir(exist_ok=True)
 
+    # Songs that get full sf2 playback overlays (the hand-titled overworld
+    # set). Every OTHER song still contributes to pairs.json below, so the
+    # sample A/B page covers the whole soundtrack.
+    overlay_songs = {
+        "mus_littleroot", "mus_oldale", "mus_petalburg", "mus_rustboro",
+        "mus_dewford", "mus_slateport", "mus_verdanturf", "mus_fortree",
+        "mus_route101", "mus_route104", "mus_route110", "mus_route119",
+        "mus_surf",
+    }
+
     # loudness references: the GBA sample a voice originally plays. The m4a
     # mix law treats sample amplitude as the reference (its 8-bit samples are
     # normalized hot); GM fonts carry headroom + attenuation instead, so each
@@ -243,6 +294,8 @@ def main():
     overlays = {}
 
     for entry in manifest:
+        if entry["name"] not in overlay_songs:
+            continue
         song = json.loads((args.data / entry["file"]).read_text())
         used = {}    # vid -> {key: longest gate (s)}
         for tr in song["tracks"]:
@@ -257,9 +310,14 @@ def main():
             if v["t"] != "pcm" or "prog" not in v:
                 continue
             rhythm = bool(v.get("rhythm"))
+            if rhythm and not drum_ok(v["sample"]):
+                continue                       # kit-by-key would be a blind guess
+            prog = v["prog"] if rhythm else name_prog(v["sample"])
+            if prog is None:
+                continue                       # no trustworthy GM equivalent
             entries = []                       # (key, overlay voice id)
             for key in sorted(keys):
-                m = resolve_note(sf2, v["prog"], key, rhythm)
+                m = resolve_note(sf2, prog, key, rhythm)
                 if m is None:
                     continue
                 if m["sid"] not in sid_label:
@@ -320,6 +378,76 @@ def main():
               f"overlay voices {len(ov_voices)}")
 
     (out_dir / "overlays.json").write_text(json.dumps(overlays, separators=(",", ":")))
+
+    # ---- pairs.json: every PCM sample used by ANY song -> sf2 counterpart --
+    # (feeds the sample A/B page; PICK_GATE is the one-note audition length)
+    PICK_GATE = 2.0
+    ctxs = {}   # gba label -> {rhythm, voice, keys:set, prog}
+    for entry in manifest:
+        song = json.loads((args.data / entry["file"]).read_text())
+        used = {}
+        for tr in song["tracks"]:
+            for e in tr:
+                if e[1] == "n":
+                    used.setdefault(e[5], set()).add(e[2])
+        for vid, keys in used.items():
+            v = song["voices"][vid]
+            if v["t"] != "pcm":
+                continue
+            c = ctxs.setdefault(v["sample"], {
+                "rhythm": bool(v.get("rhythm")), "voice": v,
+                "keys": set(), "prog": v.get("prog", 0)})
+            c["keys"] |= keys
+    pairs = []
+    for label in sorted(ctxs):
+        c = ctxs[label]
+        rhythm = c["rhythm"]
+        keys = sorted(c["keys"])
+        gv = {k: v for k, v in c["voice"].items() if k != "prog"}
+        rep = c["voice"]["base"] if rhythm else keys[len(keys) // 2]
+        prog = c["prog"] if rhythm else name_prog(label)
+        if rhythm and not drum_ok(label):
+            prog = None                        # kit-by-key would be a blind guess
+        m = None
+        if prog is not None:
+            for key in [rep] + keys:            # rep first, any playable key else
+                m = resolve_note(sf2, prog, key, rhythm)
+                if m:
+                    rep = key
+                    break
+        pair = {"gba": label, "key": rep, "gbaVoice": gv, "sf2Voice": None}
+        if m:
+            if m["sid"] not in sid_label:
+                lab = "sf2_%s" % (m["sid"] if isinstance(m["sid"], int)
+                                  else "%d_%d" % m["sid"])
+                sid_label[m["sid"]] = lab
+                bank[lab] = {"rate": m["rate"], "loop": m["loop"],
+                             "loopStart": m["loopStart"], "name": m["name"],
+                             "data": m["data"], "need": 0}
+            b = bank[sid_label[m["sid"]]]
+            if not b["loop"]:
+                ratio = m["tune"] * 2 ** ((rep - 60) / 12)
+                sec = PICK_GATE + ring_time(gv["adsr"]) + 0.5
+                b["need"] = max(b["need"], int(sec * m["rate"] * ratio) + 1)
+            if m["sid"] not in sf2_lvl:
+                sf2_lvl[m["sid"]] = levels(m["data"], 32768, m["loop"],
+                                           m["loopStart"], m["rate"])
+            ref, got = gba_lvl.get(label, (0, 0)), sf2_lvl[m["sid"]]
+            gain = 1.0
+            if ref[0] and got[0] and ref[1] and got[1]:
+                gain = max(0.05, min(8.0, min(ref[0] / got[0], ref[1] / got[1])))
+            nv = {"t": "pcm", "sample": sid_label[m["sid"]], "base": 60,
+                  "fixed": False, "adsr": gv["adsr"],
+                  "tune": round(m["tune"], 6), "gain": round(gain, 4)}
+            if rhythm:
+                nv["rhythm"] = True
+                nv["base"] = rep
+                nv["pan"] = m["pan"] if m["pan"] else gv.get("pan", 0)
+            pair["sf2Voice"] = nv
+        pairs.append(pair)
+    (out_dir / "pairs.json").write_text(json.dumps(pairs, separators=(",", ":")))
+    n_sf2 = sum(1 for p in pairs if p["sf2Voice"])
+    print(f"pairs: {len(pairs)} gba samples, {n_sf2} with an sf2 counterpart")
     out_bank, total = {}, 0
     for label, b in bank.items():
         data = b["data"]

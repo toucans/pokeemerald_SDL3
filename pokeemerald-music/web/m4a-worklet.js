@@ -20,7 +20,7 @@
 
 const FRAME = 1 / 59.7275;            // GBA VBlank; sequencer + envelopes tick here
 const PSG_FULL = 15 * 8 / 1024;       // one full PSG channel vs full-scale PCM
-const MASTER = 0.45;                  // headroom so the loudest song peaks < 1
+const MASTER = 0.34;                  // headroom: loudest soundtrack song (mus_rg_vs_legend) peaks ~0.93
 const DS_RATE = 13379;                // Emerald DirectSound mix rate (reverb timing)
 
 // GB square frequency, from gCgbFreqTable/gCgbScaleTable (m4a_tables.c).
@@ -448,8 +448,10 @@ class M4AProcessor extends AudioWorkletProcessor {
         this.revIdx = (this.revIdx + 1) % sz;
       }
 
-      L[n] = (pcmL + e + psgL) * MASTER;
-      R[n] = (pcmR + e + psgR) * MASTER;
+      // clamp: MASTER keeps every rendered song under 1, this guards the rest
+      let l = (pcmL + e + psgL) * MASTER, r = (pcmR + e + psgR) * MASTER;
+      L[n] = l > 1 ? 1 : l < -1 ? -1 : l;
+      R[n] = r > 1 ? 1 : r < -1 ? -1 : r;
       this.sampleClock++;
     }
     return true;

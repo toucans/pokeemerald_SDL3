@@ -28,6 +28,13 @@
   .title { flex: 1; }
   .file { color: var(--dim); font-size: .75rem; font-family: ui-monospace, monospace; }
   .btns { display: flex; gap: .4rem; }
+  #search {
+    width: 100%; margin: 0 0 .8rem; padding: .45rem .8rem;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+    color: var(--text); font: inherit; font-size: .9rem; outline: none;
+  }
+  #search:focus { border-color: var(--dim); }
+  p.sub a { color: var(--blue); text-decoration: none; }
   button {
     background: none; border: 1px solid var(--line); color: var(--text);
     border-radius: 6px; padding: .25rem .7rem; cursor: pointer;
@@ -43,9 +50,11 @@
 </head>
 <body>
 <main>
-  <h1>Pokémon Emerald — overworld BGM</h1>
-  <p class="sub">decoded from the pokeemerald source (MIDI + m4a voicegroups +
-  DirectSound samples), synthesized live in the browser by an AudioWorklet reimplementing the GBA m4a sound engine.</p>
+  <h1>Pokémon Emerald — the soundtrack</h1>
+  <p class="sub">the complete BGM, decoded from the pokeemerald source (MIDI + m4a voicegroups +
+  DirectSound samples), synthesized live in the browser by an AudioWorklet reimplementing the GBA m4a sound engine.
+  <a href="samples.html">compare the instrument samples →</a></p>
+  <input id="search" type="search" placeholder="filter songs…" autocomplete="off">
   <div id="songs"></div>
   <button id="stop">stop</button>
   <span id="status"></span>
