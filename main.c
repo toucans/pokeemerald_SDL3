@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <types.h>
 #include "pokeemerald/maps.h"
+#include "src/audio.h"
 #include "src/game.h"
 
 #ifdef __EMSCRIPTEN__
@@ -31,6 +32,7 @@ static void main_loop(void) {
                 case SDL_SCANCODE_2: SDL_SetWindowSize(window, GAME_WIDTH * 2, GAME_HEIGHT * 2); break;
                 case SDL_SCANCODE_3: SDL_SetWindowSize(window, GAME_WIDTH * 3, GAME_HEIGHT * 3); break;
                 case SDL_SCANCODE_4: SDL_SetWindowSize(window, GAME_WIDTH * 4, GAME_HEIGHT * 4); break;
+                case SDL_SCANCODE_O:      audio_toggle_original();    break;
                 case SDL_SCANCODE_UP:     state.input |= INPUT_UP;    break;
                 case SDL_SCANCODE_DOWN:   state.input |= INPUT_DOWN;  break;
                 case SDL_SCANCODE_LEFT:   state.input |= INPUT_LEFT;  break;

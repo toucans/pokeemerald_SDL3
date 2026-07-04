@@ -14,7 +14,7 @@ let ctx = null;
 let node = null;          // the AudioWorkletNode hosting the engine
 let playingBtn = null;
 let onPlaying = null;     // one-shot: viz start once the worklet confirms
-let origAudio = null;     // <audio> for the original-MIDI comparison renders
+let onOrigReady = null;   // one-shot: resolves the lazy music-orig.pak load
 
 function setStatus(msg) {
   const el = document.getElementById("status");
@@ -26,8 +26,25 @@ function clearPlaying() {
   playingBtn = null;
 }
 
-function stopOriginal() {
-  if (origAudio) { origAudio.pause(); origAudio.src = ""; origAudio = null; }
+// The originals pak is 70+ MB, so it is fetched only on the first
+// "original" click, then lives in the engine for the session.
+let origState = null;     // null -> "loading" -> "ready" | "failed"
+async function ensureOrig() {
+  if (origState === "ready") return;
+  if (origState === "loading") throw new Error("still loading originals…");
+  origState = "loading";
+  setStatus("loading originals (~70 MB)…");
+  try {
+    const pak = await (await fetch("music-orig.pak")).arrayBuffer();
+    const done = new Promise((res, rej) => { onOrigReady = { res, rej }; });
+    node.port.postMessage({ type: "origpak", pak }, [pak]);
+    await done;
+    origState = "ready";
+    setStatus("");
+  } catch (err) {
+    origState = "failed";
+    throw err;
+  }
 }
 
 async function initAudio() {
@@ -42,12 +59,18 @@ async function initAudio() {
     fetch("m4a.wasm").then((r) => r.arrayBuffer()),
     fetch("music.pak").then((r) => r.arrayBuffer()),
   ]);
+  let initDone = false;
   const ready = new Promise((resolve, reject) => {
     node.port.onmessage = (e) => {
       const m = e.data;
       if (!m) return;
-      if (m.type === "ready") resolve(m.songs);
-      else if (m.type === "error") reject(new Error(m.message));
+      if (m.type === "ready") { initDone = true; resolve(m.songs); }
+      else if (m.type === "origready") { if (onOrigReady) onOrigReady.res(); onOrigReady = null; }
+      else if (m.type === "error") {
+        if (onOrigReady) { onOrigReady.rej(new Error(m.message)); onOrigReady = null; }
+        else if (!initDone) reject(new Error(m.message));
+        else { clearPlaying(); setStatus(m.message); }
+      }
       else if (m.type === "playing") { if (onPlaying) onPlaying(m.song); onPlaying = null; }
       else if (m.type === "ended") { clearPlaying(); M4AViz.stop(); }
       else if (m.type === "viz") M4AViz.frame(m);
@@ -59,7 +82,7 @@ async function initAudio() {
 
 async function main() {
   const list = document.getElementById("songs");
-  let songs, compare = {};
+  let songs;
   try {
     songs = await initAudio();
   } catch (err) {
@@ -68,24 +91,17 @@ async function main() {
     setStatus("audio error: " + (err && err.message ? err.message : err));
     return;
   }
-  // local-only A/B renders of the composers' original MIDIs (gitignored;
-  // tools/render_compare.py). Absent on a fresh checkout — buttons just
-  // don't appear.
-  try {
-    const r = await fetch("compare/index.json");
-    if (r.ok) compare = await r.json();
-  } catch (_) { /* no comparison renders present */ }
 
-  const play = async (btn, entry) => {
+  const play = async (btn, entry, orig) => {
     try {
       const wasPlaying = btn === playingBtn;
       if (ctx.state === "suspended") await ctx.resume();
-      stopOriginal();
+      if (orig && !wasPlaying) await ensureOrig();
       node.port.postMessage({ type: "stop" });
       clearPlaying();
       if (wasPlaying) { M4AViz.stop(); return; }
-      onPlaying = (song) => M4AViz.start({ song, title: entry.title, actx: ctx });
-      node.port.postMessage({ type: "play", i: entry.i });
+      onPlaying = (song) => M4AViz.start({ song, title: song.title, actx: ctx });
+      node.port.postMessage({ type: "play", i: entry.i, orig: !!orig });
       btn.classList.add("playing");
       playingBtn = btn;
       setStatus("");
@@ -93,21 +109,6 @@ async function main() {
       console.error(err);
       setStatus("audio error: " + (err && err.message ? err.message : err));
     }
-  };
-
-  const playOriginal = (btn, entry) => {
-    const wasPlaying = btn === playingBtn;
-    stopOriginal();
-    node.port.postMessage({ type: "stop" });
-    clearPlaying();
-    M4AViz.stop();
-    if (wasPlaying) return;
-    origAudio = new Audio(compare[entry.name].file);
-    origAudio.play().catch((err) => setStatus("audio error: " + err.message));
-    origAudio.onended = clearPlaying;
-    btn.classList.add("playing");
-    playingBtn = btn;
-    setStatus("");
   };
 
   // one section per category, in pak (= category) order
@@ -126,14 +127,13 @@ async function main() {
     }
     const row = document.createElement("div");
     row.className = "song";
-    const hasOrig = !!compare[entry.name];
     row.innerHTML = `<span class="title">${entry.title}</span>
       <span class="file">${entry.name}</span>
-      <span class="btns"><button>play</button>${hasOrig ? "<button>original</button>" : ""}</span>`;
+      <span class="btns"><button>play</button><button>original</button></span>`;
     list.appendChild(row);
     const [btn, origBtn] = row.querySelectorAll("button");
-    btn.onclick = () => play(btn, entry);
-    if (origBtn) origBtn.onclick = () => playOriginal(origBtn, entry);
+    btn.onclick = () => play(btn, entry, false);
+    origBtn.onclick = () => play(origBtn, entry, true);
     const r = { row, text: (entry.title + " " + entry.name).toLowerCase() };
     rows.push(r);
     section.rows.push(r);
@@ -152,7 +152,6 @@ async function main() {
 
   document.getElementById("stop").onclick = () => {
     if (node) node.port.postMessage({ type: "stop" });
-    stopOriginal();
     clearPlaying();
     M4AViz.stop();
   };

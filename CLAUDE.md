@@ -7,12 +7,14 @@ here.
 
 The rules that most often prevent wasted work:
 
-- **Music is done.** All 204 tracks are committed in
-  `pokeemerald-music/web/music.pak`; the game build has no music step. Never
-  extract or re-derive music from pret/pokeemerald or the ROM. `src/m4a.c` is
-  the one engine (game + site wasm); after changing it, re-verify with
-  `tools/m4a_dump.c` and rebuild `web/m4a.wasm` with `tools/build-m4a-wasm.sh`
-  (see README "How the music works").
+- **Music is done.** Both soundtracks are committed in
+  `pokeemerald-music/web/` (`music.pak` game arrangement, `music-orig.pak`
+  composers' originals); the game build has no music step. Never extract or
+  re-derive music from pret/pokeemerald or the ROM; the leak 7z, midi-orig/
+  and the sf2 in the repo root are gitignored regeneration inputs — never
+  commit them. `src/m4a.c` is the one engine (game + site wasm); after
+  changing it, re-verify with `tools/m4a_dump.c` and rebuild `web/m4a.wasm`
+  with `tools/build-m4a-wasm.sh` (see README "How the music works").
 - **pret/pokeemerald answers behavior questions.** Reference clone at
   `~/pokeemerald`. Don't guess how Emerald does something — read it.
 - **Don't build on the ROM-extraction loaders** (`map_loader.c`,

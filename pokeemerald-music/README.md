@@ -9,13 +9,15 @@ AudioWorklet — no ROM, no emulator, no MP3s, one engine everywhere.
 
 | Piece | What |
 |---|---|
-| `web/music.pak` | **The soundtrack.** All 204 tracks: sequences, voices, 8-bit samples, loop points, titles/categories. Committed; format documented in `tools/pack_music.py`. |
-| `web/m4a.wasm` | The engine: `src/m4a.c` built standalone by `tools/build-m4a-wasm.sh` (committed; ~21 KB). |
-| `web/m4a-worklet.js` | Thin `AudioWorkletProcessor` that hosts the wasm: feeds it the pak, pulls rendered samples + viz snapshots. No synthesis logic in JS. |
-| `web/player.js` + `index.html` | Main-thread shim + tiny UI: the soundtrack grouped into categories with a filter box. Needs a secure context (https) for the worklet. |
+| `web/music.pak` | **The game soundtrack.** All 204 tracks: sequences, voices, 8-bit samples, loop points, titles/categories. Committed; format documented in `tools/pack_music.py`. |
+| `web/music-orig.pak` | **The original soundtrack**: the composers' 480-tpqn MIDIs + the SC-88Pro samples they were written for (trimmed to what's used). Committed; format in `tools/extract_orig.py`. |
+| `web/m4a.wasm` | The engine: `src/m4a.c` built standalone by `tools/build-m4a-wasm.sh` (committed; ~32 KB). Plays both paks. |
+| `web/m4a-worklet.js` | Thin `AudioWorkletProcessor` that hosts the wasm: feeds it the paks, pulls rendered samples + viz snapshots. No synthesis logic in JS. |
+| `web/player.js` + `index.html` | Main-thread shim + tiny UI: every song has a `play` (game version) and an `original` button; the originals pak is fetched lazily on first use. |
 | `web/viz.js` | Live 16:9 canvas visualization of what the engine is playing (see below). |
 | `extract.py` | pokeemerald source → `web/data/` JSON (regeneration-time intermediate, gitignored). Python stdlib only. |
 | `../tools/pack_music.py` | `web/data/` JSON → `web/music.pak`. |
+| `../tools/extract_orig.py` | `../midi-orig/` + the sf2 → `web/music-orig.pak`. |
 | `render_previews.py` | Offline WAV renders from the JSON intermediate, for A/B checks (needs numpy). |
 
 Listen: serve `web/` with any static server (`cd web && python3 -m http.server`)
@@ -23,15 +25,27 @@ and open the page.
 
 ## Where the notes come from (provenance)
 
-The MIDIs in pret/pokeemerald are **machine-derived from the game data**
-(24 ticks/beat — the m4a clock — and velocities quantized to the game's
-steps-of-4 LUT), so everything here is the **game arrangement**, rendered at
-full bandwidth instead of the GBA's 13 kHz output. The composers' original
-SC-88Pro MIDIs (higher tick resolution, unquantized velocities, pre-m4a
-mixing) leaked in late 2024 ("Teraleak") and are **not** used here — they are
-also not on this machine. If they ever land in a folder, re-extraction from
-them would be a separate project: they target a real SC-88 Pro, not the
-game's voicegroups, so they need instrument mapping, not just `extract.py`.
+Two arrangements of the same music, from two sources:
+
+- **Game arrangement** (`music.pak`): extracted from pret/pokeemerald. pret's
+  MIDIs are machine-derived from the game data (24 ticks/beat — the m4a
+  clock — velocities quantized to the game's steps-of-4 LUT), rendered at
+  full bandwidth instead of the GBA's 13 kHz output.
+- **Originals** (`music-orig.pak`): the composers' own MIDI sources from the
+  leaked Emerald sound source (`pm_eme_ose`, kept as a gitignored 7z in the
+  repo root; the working MIDIs live in gitignored `../midi-orig/`). Same
+  arrangements, but 480 ticks/beat, unquantized velocities, GM programs —
+  what Game Freak's composers played on their SC-88 Pro before mid2agb
+  squeezed it into the GBA. The samples come from the community
+  `GBApokemonTestLite.sf2` (SC-88Pro rips arranged in GM layout, also
+  gitignored), thinned to every 2nd key split, one-shots capped at 3 s, and
+  downsampled to the SC-88's native 32 kHz.
+
+The engine's GM voice path applies the gain model this soundfont was authored
+against: `initialAttenuation` at the EMU 0.4 convention plus GM square-law
+velocity/CC7 curves. (Rendering the bank with fluidsynth, which applies the
+full spec attenuation, puts instruments 10+ dB apart — that experiment is
+why the offline-render approach was dropped.)
 
 ---
 
@@ -204,12 +218,14 @@ scrolling waterfall (click ⛶ for fullscreen — sized for a YouTube frame):
 ## Regenerating
 
 Only needed when re-extracting from a pret checkout or after changing the
-engine — day to day, `web/music.pak` and `web/m4a.wasm` are committed and
-ready to go (the game build has **no music build step**).
+engine — day to day, `web/music.pak`, `web/music-orig.pak` and `web/m4a.wasm`
+are committed and ready to go (the game build has **no music build step**).
 
 ```bash
 ./extract.py --src ~/pokeemerald          # -> web/data/ JSON (gitignored intermediate)
 ../tools/pack_music.py                    # -> web/music.pak
+../tools/extract_orig.py                  # -> web/music-orig.pak (needs ../midi-orig/
+                                          #    + ../GBApokemonTestLite.sf2; scipy to downsample)
 ../tools/build-m4a-wasm.sh                # -> web/m4a.wasm (after src/m4a.c changes)
 ./render_previews.py --seconds 40 mus_littleroot ...  # optional WAV checks (numpy)
 ```

@@ -15,9 +15,11 @@
 
 #ifndef M4A_NO_STDIO
 bool m4a_init(const char *pak_path, int sample_rate);
+bool m4a_orig_init(const char *pak_path);   /* optional second pak (originals) */
 #endif
 /* wasm/worklet entry: buf is a malloc'd pak the engine takes ownership of */
 bool m4a_init_mem(void *buf, long size, int sample_rate);
+bool m4a_orig_mem(void *buf, long size);
 
 bool m4a_play_name(const char *name);   /* case-insensitive, e.g. "MUS_LITTLEROOT" */
 bool m4a_play_index(uint32_t i);
@@ -25,6 +27,15 @@ void m4a_stop(void);
 bool m4a_is_playing(void);
 const char *m4a_current(void);          /* current song name, or NULL */
 void m4a_render(float *stereo, int frames);  /* interleaved stereo f32 */
+
+/* the originals: composers' 480-tpqn MIDIs + SC-88Pro samples (music-orig.pak) */
+uint32_t m4a_orig_count(void);
+const char *m4a_orig_name(uint32_t i);
+int m4a_orig_find(const char *name);    /* -1 if that song has no original */
+bool m4a_play_orig_index(uint32_t i);
+bool m4a_orig_is_current(void);
+uint32_t m4a_orig_nvids(uint32_t i);    /* per-song instrument slots (viz) */
+const char *m4a_orig_vid_label(uint32_t i, uint32_t v);
 
 /* song-table introspection (site UI + viz; i < m4a_song_count()) */
 uint32_t m4a_song_count(void);

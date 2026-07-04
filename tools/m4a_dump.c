@@ -7,13 +7,24 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "../src/m4a.h"
 
 int main(int argc, char **argv) {
-    if (argc < 4) { fprintf(stderr, "usage: %s song seconds out.f32\n", argv[0]); return 2; }
+    int orig = argc > 1 && strcmp(argv[1], "--orig") == 0;
+    argv += orig; argc -= orig;
+    if (argc < 4) { fprintf(stderr, "usage: %s [--orig] song seconds out.f32\n", argv[0]); return 2; }
     if (!m4a_init("pokeemerald-music/web/music.pak", 48000)) return 1;
-    if (!m4a_play_name(argv[1])) { fprintf(stderr, "no song %s\n", argv[1]); return 1; }
+    if (orig) {
+        if (!m4a_orig_init("pokeemerald-music/web/music-orig.pak")) return 1;
+        int i = m4a_orig_find(argv[1]);
+        if (i < 0) { fprintf(stderr, "no original %s\n", argv[1]); return 1; }
+        m4a_play_orig_index((uint32_t)i);
+    } else if (!m4a_play_name(argv[1])) {
+        fprintf(stderr, "no song %s\n", argv[1]);
+        return 1;
+    }
     FILE *f = fopen(argv[3], "wb");
     long frames = (long)(atof(argv[2]) * 48000);
     float buf[128 * 2];

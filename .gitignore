@@ -14,8 +14,10 @@ vendor/
 pokeemerald-music/web/data/
 pokeemerald-music/__pycache__/
 
-# local-only comparison renders of the leaked original MIDIs (never commit)
-pokeemerald-music/web/compare/
+# leaked original sound source + SC-88Pro soundfont: local tooling inputs only
+pm_eme_ose.7z
+midi-orig/
+GBApokemonTestLite.sf2
 
 # OS junk
 .DS_Store

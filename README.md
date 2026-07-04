@@ -18,7 +18,8 @@ make web                      # browser build -> poke.html/.js/.wasm/.data
                               #  once via tools/build-sdl3-wasm.sh)
 ```
 
-Arrows move, Enter toggles the fly map, 1–4 set window scale, Esc quits.
+Arrows move, Enter toggles the fly map, O switches between the game (m4a)
+and original (SC-88Pro) soundtrack, 1–4 set window scale, Esc quits.
 
 ## Sources of truth
 
@@ -28,7 +29,7 @@ first — never introduce a second copy of something listed here.
 | What | Source of truth |
 |---|---|
 | Game data & behavior (maps, graphics, names, mechanics) | [pret/pokeemerald](https://github.com/pret/pokeemerald), the Emerald decompilation. A reference clone lives at `~/pokeemerald` (not part of this repo). When in doubt about how Emerald does something, read it there. |
-| **All music** | `pokeemerald-music/web/music.pak` — the complete 204-track soundtrack, committed, ready to go (no build step). **Never extract music from pret/pokeemerald or from the ROM**; this data is already the extracted, verified version (see `pokeemerald-music/README.md`, incl. provenance: pret's MIDIs are the game arrangement, the 2024-leak composer MIDIs are not used and not on this machine). |
+| **All music** | `pokeemerald-music/web/music.pak` (game arrangement, 204 tracks) + `music-orig.pak` (the composers' original MIDIs with SC-88Pro samples, 210 tracks) — committed, ready to go, no build step. **Never extract music from pret/pokeemerald or from the ROM**; see `pokeemerald-music/README.md` for provenance and regeneration (the leak 7z and soundfont stay gitignored in the repo root). |
 | Music engine behavior | `src/m4a.c` **is** the engine, everywhere: the game links it, and the pokeemerald-music site runs the same file compiled to wasm (`tools/build-m4a-wasm.sh`). After changing it, rebuild the wasm and re-verify (below). |
 | Remastered-mp3 comparison material | `music-remaster-mp3/` — the fan "Emerald Remastered" album from [khinsider](https://downloads.khinsider.com/game-soundtracks/album/pokemon-emerald-remastered-complete-original-soundtrack). Kept **only** to A/B against our renders; the game never uses it. |
 | Tile/map data the game currently draws | Extracted **from the ROM** (`p.gba`) at runtime plus generated tables in `pokeemerald/` (this repo's dir, *not* pret). This is legacy — see roadmap: it should move to data generated from pret/pokeemerald. |
@@ -45,12 +46,14 @@ engine; the extraction turned the decomp source into JSON data, and the
 AudioWorklet engine plays it at full bandwidth — better than the GBA's
 13 kHz output, with the original loop points intact.
 
-The game and the site play the identical committed file through the identical
+The game and the site play the identical committed files through the identical
 C engine:
 
 ```
-pokeemerald-music/web/music.pak        THE soundtrack (committed, no build step)
-        │
+pokeemerald-music/web/music.pak        the game soundtrack (m4a synthesis)
+pokeemerald-music/web/music-orig.pak   the composers' originals (GM/SC-88Pro
+        │                              synthesis; O key in game, "original"
+        │                              buttons on the site, lazily fetched)
         ├── src/m4a.c + src/audio.c    game: one SDL3 audio stream, native + web
         └── web/m4a.wasm               site: same m4a.c, standalone wasm in an
                                        AudioWorklet (bit-identical output)
@@ -100,12 +103,9 @@ graphics_extractor     legacy macOS binary that generated pokeemerald/*.c;
   from pret data, interiors later.
 - **Pokémon**: wild encounters as things to see and hear (cries!) rather than
   battle mechanics.
-- Unused-map songs (`MUS_GSC_PEWTER`) aren't in the extraction; extend
+- Unused-map songs (`MUS_GSC_PEWTER`) aren't in the game-arrangement
+  extraction (the originals pak has them); extend
   `pokeemerald-music/extract.py` only if a map we actually render needs one.
-- **Composers' original MIDIs (optional, far future)**: the 2024 Teraleak
-  contained Game Freak's original SC-88Pro MIDIs — finer than pret's
-  game-derived ones (see provenance in `pokeemerald-music/README.md`). Not on
-  this machine. If they ever are, rendering them faithfully is its own
-  project (they target a real SC-88 Pro, not the game's m4a voicegroups) —
-  the current soundtrack is the verified game arrangement at full bandwidth
-  and stays the default.
+- The originals' GM synth is deliberately minimal (no filters — the sf2 uses
+  none; fixed light room reverb; snapshot PSG-style vibrato). Refine only
+  against listening complaints, not speculatively.

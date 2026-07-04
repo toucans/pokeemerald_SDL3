@@ -7,11 +7,13 @@
  * block asks the engine to render and forwards its per-GBA-frame viz
  * snapshots. No synthesis logic lives here.
  *
- * Messages in:  {type:'init', wasm, pak}  {type:'play', i}  {type:'stop'}
+ * Messages in:  {type:'init', wasm, pak}  {type:'origpak', pak}
+ *               {type:'play', i, orig}    {type:'stop'}
  * Messages out: {type:'ready', songs:[{i,name,title,cat}]}
+ *               {type:'origready', has:{name:true,...}}
  *               {type:'playing', song:{name,title,reverb,range,voices}}
  *               {type:'viz', t, wrapped, v:[vid,pitch,level,pan,...]}
- *               {type:'ended'}
+ *               {type:'ended'}  {type:'error', message}
  */
 "use strict";
 
@@ -71,24 +73,55 @@ class M4AHost extends AudioWorkletProcessor {
         this.e = null;
         this.port.postMessage({ type: "error", message: String(err && err.message || err) });
       }
+    } else if (msg.type === "origpak" && this.e) {
+      try {
+        const e = this.e;
+        const pak = new Uint8Array(msg.pak);
+        const p = e.malloc(pak.length);
+        this.views()._u8.set(pak, p);
+        if (!e.m4a_orig_mem(p, pak.length))
+          throw new Error("bad music-orig.pak");
+        const has = {};
+        for (let i = 0; i < e.m4a_orig_count(); i++)
+          has[this.cstr(e.m4a_orig_name(i))] = true;
+        this.port.postMessage({ type: "origready", has });
+      } catch (err) {
+        this.port.postMessage({ type: "error", message: String(err && err.message || err) });
+      }
     } else if (msg.type === "play" && this.e) {
       const e = this.e, i = msg.i;
       const voices = {};
-      for (let v = 0; v < e.m4a_song_nvoices(i); v++) {
-        voices["v" + v] = {
-          t: VOICE_T[e.m4a_voice_type(i, v)],
-          duty: e.m4a_voice_duty(i, v),
-          rhythm: !!e.m4a_voice_rhythm(i, v),
-          base: e.m4a_voice_base(i, v),
-          sample: this.cstr(e.m4a_voice_label(i, v)),
-        };
+      let origIdx = -1;
+      if (msg.orig) {
+        const namePtr = e.m4a_song_name(i);
+        origIdx = e.m4a_orig_find(namePtr);
+        if (origIdx < 0) {
+          this.port.postMessage({ type: "error",
+            message: "no original for " + this.cstr(namePtr) });
+          return;
+        }
+        for (let v = 0; v < e.m4a_orig_nvids(origIdx); v++) {
+          voices["v" + v] = { t: "pcm", duty: 0, rhythm: false, base: 60,
+                              sample: this.cstr(e.m4a_orig_vid_label(origIdx, v)) };
+        }
+        e.m4a_play_orig_index(origIdx);
+      } else {
+        for (let v = 0; v < e.m4a_song_nvoices(i); v++) {
+          voices["v" + v] = {
+            t: VOICE_T[e.m4a_voice_type(i, v)],
+            duty: e.m4a_voice_duty(i, v),
+            rhythm: !!e.m4a_voice_rhythm(i, v),
+            base: e.m4a_voice_base(i, v),
+            sample: this.cstr(e.m4a_voice_label(i, v)),
+          };
+        }
+        e.m4a_play_index(i);
       }
-      e.m4a_play_index(i);
       this.wasPlaying = true;
       this.lastVizSeq = e.m4a_viz_seq();
       this.port.postMessage({ type: "playing", song: {
         name: this.cstr(e.m4a_song_name(i)),
-        title: this.cstr(e.m4a_song_title(i)),
+        title: this.cstr(e.m4a_song_title(i)) + (msg.orig ? " (original)" : ""),
         reverb: e.m4a_song_reverb(i),
         range: [e.m4a_song_key_lo(i), e.m4a_song_key_hi(i)],
         voices,

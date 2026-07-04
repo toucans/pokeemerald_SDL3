@@ -22,7 +22,7 @@
 #define MASTER      0.34f               /* headroom: loudest song peaks ~0.93 */
 #define DS_RATE     13379               /* Emerald DirectSound mix rate (reverb timing) */
 
-#define MAX_TRACKS  12
+#define MAX_TRACKS  16                  /* m4a songs use <=10; MIDI originals <=16 */
 #define MAX_VOICES  48                  /* live voices per track (JS is unbounded) */
 #define REV_MAX     16384               /* reverb ring; needs 7*224/13379*rate + 4 */
 
@@ -66,12 +66,50 @@ typedef struct {
     uint32_t nEv[MAX_TRACKS];
 } Song;
 
+/* ---- music-orig.pak: the composers' original MIDIs + SC-88Pro samples ----
+ * (tools/extract_orig.py; GM-subset synthesis, voice type 4) */
+
+typedef struct {
+    float rate;
+    int loop;
+    uint32_t loopStart, loopEnd, length;
+    const int16_t *data;
+} OSample;
+
+typedef struct {
+    uint8_t keyLo, keyHi, velLo, velHi;
+    uint16_t sampleIdx;
+    uint8_t rootKey, excl;
+    int8_t coarse, fine;
+    uint16_t att;                       /* initialAttenuation, cB */
+    int16_t pan10;                      /* -500..500 (0.1%) */
+    int16_t tc[5];                      /* delay,attack,hold,decay,release timecents */
+    uint16_t sus;                       /* sustain attenuation, cB */
+} OZone;
+_Static_assert(sizeof(OZone) == 26, "orig pak zone layout");
+
+typedef struct {
+    char label[32];
+    uint16_t gm, nZones;
+    const OZone *zones;
+} OProg;
+
+typedef struct {
+    char name[32];
+    float loopStart, loopEnd;
+    uint32_t nTracks;
+    const Event *ev[MAX_TRACKS];
+    uint32_t nEv[MAX_TRACKS];
+    uint32_t nVids;
+    const uint16_t *vids;               /* song voice slot -> prog index */
+} OSong;
+
 /* ------------------------------ engine state ------------------------------ */
 
 typedef struct {
     const VoiceDef *def;
     const Sample *smp;
-    uint8_t t;                          /* voice type, copied from def */
+    uint8_t t;                          /* voice type; 4 = GM (orig pak) */
     int playKey, rp, vel, vid;
     float visPitch;                     /* sounding pitch, for the viz */
     uint64_t born;                      /* frame index at note-on */
@@ -84,6 +122,12 @@ typedef struct {
     int goal;                                     /* psg */
     int psgCached;
     float psgGl, psgGr;
+    /* GM (orig) voice */
+    const OZone *oz;
+    const OSample *osmp;
+    float gBase;                        /* attenuation x velocity gain */
+    float zPan;                         /* zone pan, -1..1 */
+    float tDelay, tAttack, tHold, tDecay, tRelease, susLvl;
 } Voice;
 
 typedef struct {
@@ -91,6 +135,7 @@ typedef struct {
     uint32_t n, i;
     int pass, done, hasLoop;
     int vol, pan, bend, bendRange, mod, ls, echoV, echoL;
+    float bendSemis;                    /* GM: resolved bend in semitones */
     Voice voices[MAX_VOICES];
     int nv;
 } Track;
@@ -103,7 +148,14 @@ static struct {
     uint32_t nSongs;
     int rate;
 
+    uint8_t *opak;                      /* music-orig.pak (optional) */
+    OSample *oSamples;
+    OProg *oProgs;
+    OSong *oSongs;
+    uint32_t nOSamples, nOProgs, nOSongs;
+
     const Song *song;
+    const OSong *osong;                 /* set instead of song for originals */
     int playing, looping;
     float loopStart, loopEnd, passLen;
     Track tracks[MAX_TRACKS];
@@ -115,6 +167,12 @@ static struct {
     float reverb, revG;
     int revA, revB, revN, revIdx;
     float revBuf[REV_MAX];
+
+    /* Freeverb-style room for the originals (SC-88 defaults to a light
+     * hall; the m4a two-tap echo above is a different, GBA-only thing) */
+    float gmCombBuf[4][1600], gmCombLP[4];
+    float gmApBuf[2][640];
+    int gmIdx;
 
     int8_t lfsr15[32767], lfsr7[127];
     uint8_t noiseTable[60];
@@ -265,6 +323,156 @@ static float psg_env(const Voice *v, float dt) {
     return rel;
 }
 
+/* --------------------- GM voices (the originals pak) ---------------------- */
+/* SF2-subset synthesis for the composers' original MIDIs. The gain model is
+ * the one the soundfont was authored against: initialAttenuation at the EMU
+ * 0.4 convention (players that apply the full spec value are why fluidsynth
+ * renders of this bank have instruments 10+ dB apart), and the GM square-law
+ * curves for velocity and CC7. */
+
+#define GM_MASTER 0.35f                 /* loudest original (rg_vs_legend) peaks ~0.87 */
+
+static float cb_to_amp(float cb) { return powf(10.0f, -cb / 200.0f); }
+static float tc_to_sec(int tc) { return tc <= -12000 ? 0 : powf(2.0f, tc / 1200.0f); }
+
+static void spawn_gm_note(Track *tk, const Event *e) {
+    const OSong *s = E.osong;
+    if (e->vid >= s->nVids) return;
+    uint16_t pi = s->vids[e->vid];
+    if (pi >= E.nOProgs) return;
+    const OProg *prog = &E.oProgs[pi];
+    for (uint32_t zi = 0; zi < prog->nZones; zi++) {
+        const OZone *z = &prog->zones[zi];
+        if (e->key < z->keyLo || e->key > z->keyHi) continue;
+        if (e->vel < z->velLo || e->vel > z->velHi) continue;
+        if (z->excl) {                  /* exclusive class: choke (hi-hats) */
+            for (int k = 0; k < tk->nv; k++) {
+                Voice *o = &tk->voices[k];
+                if (o->t == 4 && o->oz->excl == z->excl)
+                    o->gate = 0;        /* force into release now */
+            }
+        }
+        if (tk->nv >= MAX_VOICES) return;
+        Voice *v = &tk->voices[tk->nv++];
+        memset(v, 0, sizeof(*v));
+        v->t = 4;
+        v->oz = z;
+        v->osmp = &E.oSamples[z->sampleIdx];
+        v->vid = e->vid;
+        v->playKey = e->key;
+        v->vel = e->vel;
+        v->born = E.frame;
+        v->gate = e->x;
+        v->visPitch = (float)e->key;
+        v->gBase = cb_to_amp(0.4f * z->att) *
+                   ((float)(e->vel * e->vel) / (127.0f * 127.0f));
+        v->zPan = z->pan10 / 500.0f;
+        v->tDelay = tc_to_sec(z->tc[0]);
+        v->tAttack = tc_to_sec(z->tc[1]);
+        v->tHold = tc_to_sec(z->tc[2]);
+        v->tDecay = tc_to_sec(z->tc[3]);
+        v->tRelease = fmaxf(tc_to_sec(z->tc[4]), 0.01f);
+        v->susLvl = z->sus >= 1440 ? 0 : cb_to_amp(z->sus);
+    }
+}
+
+/* volume envelope value (amplitude) at dt seconds after note-on, gate-free */
+static float gm_env_gated(const Voice *v, float dt) {
+    if (dt < v->tDelay) return 0;
+    dt -= v->tDelay;
+    if (dt < v->tAttack) return dt / v->tAttack;
+    dt -= v->tAttack;
+    if (dt < v->tHold) return 1;
+    dt -= v->tHold;
+    /* decay: 96 dB linear-in-dB slope over tDecay, floored at sustain */
+    float lvl = v->tDecay > 0 ? powf(10.0f, -(dt / v->tDecay) * 96 / 20.0f) : v->susLvl;
+    return fmaxf(lvl, v->susLvl);
+}
+
+static int gm_update_voice(Track *tk, Voice *v) {
+    float dt = (float)((E.frame - v->born) * (double)FRAME);
+    float env;
+    if (dt < v->gate) {
+        env = gm_env_gated(v, dt);
+    } else {
+        float lvl = gm_env_gated(v, v->gate);
+        env = lvl * powf(10.0f, -((dt - v->gate) / v->tRelease) * 96 / 20.0f);
+        if (env < 1e-4f) return 0;      /* -80 dB: dead */
+    }
+    /* one-shot that ran off the end of its sample */
+    if (!v->osmp->loop && v->phase >= v->osmp->length - 1) return 0;
+    v->envHeld = env;
+
+    float vib = 0;
+    if (tk->mod) {                      /* triangle LFO, 5.2 Hz, mod/127 * 50 cents */
+        float ph = fmodf((float)(E.frame - v->born) * FRAME * 5.2f, 1.0f);
+        float tri = ph < 0.25f ? ph * 4 : ph < 0.75f ? 2 - ph * 4 : ph * 4 - 4;
+        vib = (tk->mod / 127.0f) * 0.5f * tri;
+    }
+    float semis = (v->playKey - v->oz->rootKey) + v->oz->coarse +
+                  v->oz->fine / 100.0f + tk->bendSemis + vib;
+    v->visPitch = v->playKey + tk->bendSemis + vib;
+    v->incr = v->osmp->rate * pow(2, semis / 12.0) / E.rate;
+
+    float g = v->gBase * ((float)(tk->vol * tk->vol) / (127.0f * 127.0f));
+    float p = v->zPan + tk->pan / 64.0f;
+    if (p < -1) p = -1;
+    if (p > 1) p = 1;
+    /* equal-power pan */
+    float a = (p + 1) * 0.78539816f;    /* pi/4 */
+    v->glHeld = g * cosf(a);
+    v->grHeld = g * sinf(a);
+    return 1;
+}
+
+static float gm_render_sample(Voice *v) {
+    const OSample *s = v->osmp;
+    double p = v->phase;
+    uint32_t n = s->length;
+    if (s->loop && s->loopEnd > s->loopStart) {
+        if (p >= s->loopEnd) {
+            double span = s->loopEnd - s->loopStart;
+            p = s->loopStart + fmod(p - s->loopStart, span);
+        }
+    } else if (p >= n - 1) {
+        return 0;
+    }
+    uint32_t i = (uint32_t)p;
+    float frac = (float)(p - i);
+    uint32_t j = i + 1 < n ? i + 1 : i;
+    v->phase = v->phase + v->incr;
+    return (s->data[i] * (1 - frac) + s->data[j] * frac) * (1.0f / 32768);
+}
+
+/* fixed light room (Freeverb-style: 4 combs + 2 allpasses, mono in/out) */
+static const int GM_COMB[4] = {1214, 1293, 1390, 1476};   /* at 48 kHz */
+static const int GM_AP[2] = {605, 480};
+
+static float gm_reverb(float in) {
+    float out = 0;
+    for (int c = 0; c < 4; c++) {
+        float *buf = E.gmCombBuf[c];
+        int i = E.gmIdx % GM_COMB[c];
+        float y = buf[i];
+        E.gmCombLP[c] = y * 0.7f + E.gmCombLP[c] * 0.3f;
+        float w = in + E.gmCombLP[c] * 0.79f;
+        if (w < 1e-15f && w > -1e-15f) w = 0;   /* flush denormals */
+        buf[i] = w;
+        out += y;
+    }
+    for (int a = 0; a < 2; a++) {
+        float *buf = E.gmApBuf[a];
+        int i = E.gmIdx % GM_AP[a];
+        float y = buf[i];
+        float w = out + y * 0.5f;
+        if (w < 1e-15f && w > -1e-15f) w = 0;
+        buf[i] = w;
+        out = y - w * 0.5f;
+    }
+    E.gmIdx++;
+    return out * 0.25f;
+}
+
 /* ------------------------------- sequencer -------------------------------- */
 
 static void spawn_note(Track *tk, const Event *e) {
@@ -311,7 +519,7 @@ static void spawn_note(Track *tk, const Event *e) {
 
 static void apply_event(Track *tk, const Event *e) {
     switch (e->type) {
-    case 0: spawn_note(tk, e); break;
+    case 0: if (E.osong) spawn_gm_note(tk, e); else spawn_note(tk, e); break;
     case 1: tk->vol = (int)e->x; break;
     case 2: tk->pan = (int)e->x; break;
     case 3: tk->bend = (int)e->x; break;
@@ -320,6 +528,7 @@ static void apply_event(Track *tk, const Event *e) {
     case 6: tk->ls = (int)e->x; break;
     case 7: tk->echoV = (int)e->x; break;
     case 8: tk->echoL = (int)e->x; break;
+    case 9: tk->bendSemis = e->x; break;          /* GM: bend in semitones */
     }
 }
 
@@ -383,6 +592,7 @@ static float abs_time(const Track *tk, float s) {
 static void end_song(void) {
     E.playing = 0;
     E.song = NULL;
+    E.osong = NULL;
 }
 
 /* One GBA frame: fire due events, then update every live voice. */
@@ -408,7 +618,9 @@ static void frame_tick(void) {
             tk->i++;
         }
         for (int k = tk->nv - 1; k >= 0; k--) {
-            if (!update_voice(tk, &tk->voices[k]))
+            Voice *v = &tk->voices[k];
+            int alive = v->t == 4 ? gm_update_voice(tk, v) : update_voice(tk, v);
+            if (!alive)
                 tk->voices[k] = tk->voices[--tk->nv];   /* swap-remove */
         }
     }
@@ -437,8 +649,9 @@ static void frame_tick(void) {
             for (int vi = 0; vi < tk->nv; vi++) {
                 Voice *v = &tk->voices[vi];
                 float g = v->glHeld + v->grHeld;
-                float level = v->t == 0 ? v->envHeld * g * 0.5f
-                                        : v->envHeld * g / (2 * PSG_FULL);
+                float level = (v->t == 0 || v->t == 4)
+                                  ? v->envHeld * g * 0.5f
+                                  : v->envHeld * g / (2 * PSG_FULL);
                 *o++ = (float)v->vid;
                 *o++ = v->visPitch;
                 *o++ = level > 1 ? 1 : level;
@@ -507,7 +720,7 @@ static float render_sample(Voice *v) {
 /* --------------------------------- public --------------------------------- */
 
 void m4a_render(float *out, int frames) {
-    if (!E.playing || !E.song) {
+    if (!E.playing || (!E.song && !E.osong)) {
         memset(out, 0, (size_t)frames * 2 * sizeof(float));
         return;
     }
@@ -527,45 +740,54 @@ void m4a_render(float *out, int frames) {
             Track *tk = &E.tracks[ti];
             for (int vi = 0; vi < tk->nv; vi++) {
                 Voice *v = &tk->voices[vi];
-                float s = render_sample(v) * v->envHeld;
-                if (v->t == 0) { pcmL += s * v->glHeld; pcmR += s * v->grHeld; }
-                else           { psgL += s * v->glHeld; psgR += s * v->grHeld; }
+                float s = (v->t == 4 ? gm_render_sample(v) : render_sample(v))
+                          * v->envHeld;
+                if (v->t == 0 || v->t == 4) { pcmL += s * v->glHeld; pcmR += s * v->grHeld; }
+                else                        { psgL += s * v->glHeld; psgR += s * v->grHeld; }
             }
         }
 
-        /* m4a reverb: mono two-tap feedback echo on the PCM sub-mix only */
-        float e = 0;
-        if (E.reverb > 0) {
-            float a = E.revBuf[(E.revIdx - E.revA + E.revN) % E.revN];
-            float b = E.revBuf[(E.revIdx - E.revB + E.revN) % E.revN];
-            e = E.revG * (a + b);
-            float w = 0.5f * (pcmL + pcmR) + e;
-            /* flush denormals: subnormal feedback tails are 10-100x slower
-             * on x86 — a CPU spike in the middle of silence */
-            if (w < 1e-15f && w > -1e-15f) w = 0;
-            E.revBuf[E.revIdx] = w;
-            E.revIdx = (E.revIdx + 1) % E.revN;
+        float l, r;
+        if (E.osong) {
+            /* originals: dry mix + fixed light room */
+            float wet = gm_reverb(0.5f * (pcmL + pcmR));
+            l = (pcmL + wet) * GM_MASTER;
+            r = (pcmR + wet) * GM_MASTER;
+        } else {
+            /* m4a reverb: mono two-tap feedback echo on the PCM sub-mix only */
+            float e = 0;
+            if (E.reverb > 0) {
+                float a = E.revBuf[(E.revIdx - E.revA + E.revN) % E.revN];
+                float b = E.revBuf[(E.revIdx - E.revB + E.revN) % E.revN];
+                e = E.revG * (a + b);
+                float w = 0.5f * (pcmL + pcmR) + e;
+                /* flush denormals: subnormal feedback tails are 10-100x slower
+                 * on x86 — a CPU spike in the middle of silence */
+                if (w < 1e-15f && w > -1e-15f) w = 0;
+                E.revBuf[E.revIdx] = w;
+                E.revIdx = (E.revIdx + 1) % E.revN;
+            }
+            l = (pcmL + e + psgL) * MASTER;
+            r = (pcmR + e + psgR) * MASTER;
         }
-
-        float l = (pcmL + e + psgL) * MASTER, r = (pcmR + e + psgR) * MASTER;
         out[n * 2]     = l > 1 ? 1 : l < -1 ? -1 : l;
         out[n * 2 + 1] = r > 1 ? 1 : r < -1 ? -1 : r;
         E.sampleClock++;
     }
 }
 
-static void start_song(const Song *s) {
-    E.song = s;
-    E.looping = s->loopStart >= 0 && s->loopEnd > s->loopStart;
-    E.loopStart = s->loopStart;
-    E.loopEnd = s->loopEnd;
-    E.passLen = E.looping ? s->loopEnd - s->loopStart : 0;
-    E.nTracks = s->nTracks;
-    for (uint32_t ti = 0; ti < s->nTracks; ti++) {
+static void start_tracks(uint32_t nTracks, const Event *const *ev,
+                         const uint32_t *nEv, float loopStart, float loopEnd) {
+    E.looping = loopStart >= 0 && loopEnd > loopStart;
+    E.loopStart = loopStart;
+    E.loopEnd = loopEnd;
+    E.passLen = E.looping ? loopEnd - loopStart : 0;
+    E.nTracks = nTracks;
+    for (uint32_t ti = 0; ti < nTracks; ti++) {
         Track *tk = &E.tracks[ti];
         memset(tk, 0, sizeof(*tk));
-        tk->ev = s->ev[ti];
-        tk->n = s->nEv[ti];
+        tk->ev = ev[ti];
+        tk->n = nEv[ti];
         tk->vol = 100;
         tk->bendRange = 2;
         tk->ls = 22;
@@ -574,6 +796,18 @@ static void start_song(const Song *s) {
             if (tk->ev[i].t >= E.loopStart && tk->ev[i].t < E.loopEnd)
                 tk->hasLoop = 1;
     }
+    E.frame = 0;
+    E.framePeriod = E.rate / 59.7275;
+    E.nextFrameSample = 0;
+    E.sampleClock = 0;
+    E.silentFrames = 0;
+    E.playing = 1;
+    frame_tick();                       /* fire t=0 events before first sample */
+}
+
+static void start_song(const Song *s) {
+    E.osong = NULL;
+    E.song = s;
     /* reverb ring buffer (PCM sub-mix only) */
     E.reverb = s->reverb;
     E.revA = (int)lround(7.0 * 224 / DS_RATE * E.rate);
@@ -583,14 +817,18 @@ static void start_song(const Song *s) {
     memset(E.revBuf, 0, sizeof(E.revBuf));
     E.revIdx = 0;
     E.revG = s->reverb / 256.0f;
+    start_tracks(s->nTracks, s->ev, s->nEv, s->loopStart, s->loopEnd);
+}
 
-    E.frame = 0;
-    E.framePeriod = E.rate / 59.7275;
-    E.nextFrameSample = 0;
-    E.sampleClock = 0;
-    E.silentFrames = 0;
-    E.playing = 1;
-    frame_tick();                       /* fire t=0 events before first sample */
+static void start_orig_song(const OSong *s) {
+    E.song = NULL;
+    E.osong = s;
+    E.reverb = 0;
+    memset(E.gmCombBuf, 0, sizeof(E.gmCombBuf));
+    memset(E.gmApBuf, 0, sizeof(E.gmApBuf));
+    memset(E.gmCombLP, 0, sizeof(E.gmCombLP));
+    E.gmIdx = 0;
+    start_tracks(s->nTracks, s->ev, s->nEv, s->loopStart, s->loopEnd);
 }
 
 bool m4a_play_name(const char *name) {
@@ -613,11 +851,44 @@ bool m4a_play_index(uint32_t i) {
 void m4a_stop(void) {
     E.playing = 0;
     E.song = NULL;
+    E.osong = NULL;
 }
 
 bool m4a_is_playing(void) { return E.playing; }
 
-const char *m4a_current(void) { return E.song ? E.song->name : NULL; }
+const char *m4a_current(void) {
+    return E.song ? E.song->name : E.osong ? E.osong->name : NULL;
+}
+
+/* --------------------------- originals (orig pak) -------------------------- */
+
+uint32_t m4a_orig_count(void) { return E.nOSongs; }
+const char *m4a_orig_name(uint32_t i) { return i < E.nOSongs ? E.oSongs[i].name : ""; }
+
+int m4a_orig_find(const char *name) {
+    for (uint32_t i = 0; i < E.nOSongs; i++) {
+        const char *a = E.oSongs[i].name, *b = name;
+        for (; *a && *b; a++, b++)
+            if ((*a | 32) != (*b | 32)) break;
+        if (!*a && !*b) return (int)i;
+    }
+    return -1;
+}
+
+bool m4a_play_orig_index(uint32_t i) {
+    if (i >= E.nOSongs) return false;
+    start_orig_song(&E.oSongs[i]);
+    return true;
+}
+
+bool m4a_orig_is_current(void) { return E.osong != NULL; }
+
+uint32_t m4a_orig_nvids(uint32_t i) { return i < E.nOSongs ? E.oSongs[i].nVids : 0; }
+const char *m4a_orig_vid_label(uint32_t i, uint32_t v) {
+    if (i >= E.nOSongs || v >= E.oSongs[i].nVids) return "";
+    uint16_t pi = E.oSongs[i].vids[v];
+    return pi < E.nOProgs ? E.oProgs[pi].label : "";
+}
 
 /* ----------------------- song-table introspection ------------------------- */
 
@@ -716,7 +987,88 @@ bool m4a_init_mem(void *buf, long size, int sample_rate) {
     return p - E.pak <= size;
 }
 
+bool m4a_orig_mem(void *buf, long size) {
+    E.opak = buf;
+    const uint8_t *p = E.opak;
+    uint32_t magic, version;
+    rd(&p, &magic, 4);
+    rd(&p, &version, 4);
+    rd(&p, &E.nOSamples, 4);
+    rd(&p, &E.nOProgs, 4);
+    rd(&p, &E.nOSongs, 4);
+    if (magic != 0x4f41344d || version != 1)     /* "M4AO" */
+        return false;
+
+    E.oSamples = calloc(E.nOSamples, sizeof(OSample));
+    for (uint32_t i = 0; i < E.nOSamples; i++) {
+        OSample *s = &E.oSamples[i];
+        uint32_t loop;
+        rd(&p, &s->rate, 4);
+        rd(&p, &loop, 4);
+        s->loop = (int)loop;
+        rd(&p, &s->loopStart, 4);
+        rd(&p, &s->loopEnd, 4);
+        rd(&p, &s->length, 4);
+        s->data = (const int16_t *)p;
+        p += (s->length * 2 + 3) & ~3u;
+    }
+    E.oProgs = calloc(E.nOProgs, sizeof(OProg));
+    for (uint32_t i = 0; i < E.nOProgs; i++) {
+        OProg *g = &E.oProgs[i];
+        rd(&p, g->label, 32);
+        rd(&p, &g->gm, 2);
+        rd(&p, &g->nZones, 2);
+        g->zones = (const OZone *)p;
+        p += (g->nZones * sizeof(OZone) + 3) & ~3u;   /* padded to 4 in the pak */
+    }
+    E.oSongs = calloc(E.nOSongs, sizeof(OSong));
+    for (uint32_t i = 0; i < E.nOSongs; i++) {
+        OSong *s = &E.oSongs[i];
+        rd(&p, s->name, 32);
+        rd(&p, &s->loopStart, 4);
+        rd(&p, &s->loopEnd, 4);
+        rd(&p, &s->nTracks, 4);
+        if (s->nTracks > MAX_TRACKS) return false;
+        for (uint32_t t = 0; t < s->nTracks; t++) {
+            rd(&p, &s->nEv[t], 4);
+            s->ev[t] = (const Event *)p;
+            p += s->nEv[t] * sizeof(Event);
+        }
+        rd(&p, &s->nVids, 4);
+        s->vids = (const uint16_t *)p;
+        p += (s->nVids * 2 + 3) & ~3u;
+    }
+    return p - E.opak <= size;
+}
+
 #ifndef M4A_NO_STDIO
+static void *read_file(const char *path, long *size) {
+    FILE *f = fopen(path, "rb");
+    if (!f) return NULL;
+    fseek(f, 0, SEEK_END);
+    *size = ftell(f);
+    fseek(f, 0, SEEK_SET);
+    void *buf = malloc((size_t)*size);
+    if (!buf || fread(buf, 1, (size_t)*size, f) != (size_t)*size) {
+        fclose(f);
+        free(buf);
+        return NULL;
+    }
+    fclose(f);
+    return buf;
+}
+
+bool m4a_orig_init(const char *pak_path) {
+    long size;
+    void *buf = read_file(pak_path, &size);
+    if (!buf) return false;
+    if (!m4a_orig_mem(buf, size)) {
+        fprintf(stderr, "m4a: bad orig pak %s\n", pak_path);
+        return false;
+    }
+    return true;
+}
+
 bool m4a_init(const char *pak_path, int sample_rate) {
     FILE *f = fopen(pak_path, "rb");
     if (!f) { fprintf(stderr, "m4a: cannot open %s\n", pak_path); return false; }
