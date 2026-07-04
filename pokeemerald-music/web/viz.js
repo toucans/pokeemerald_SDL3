@@ -60,15 +60,8 @@ const M4AViz = (() => {
       else if (v.t === "wave") palette[vid] = { h: 268, s: 90, l: 66, kind: "wave", name: shortName(v) };
       else if (v.t === "noise") palette[vid] = { h: 0, s: 0, l: 78, kind: "noise", name: shortName(v) };
     }
-    // pitch range from the actual notes, padded
-    let lo = 127, hi = 0;
-    for (const tr of s.tracks) for (const e of tr) {
-      if (e[1] !== "n") continue;
-      const v = s.voices[e[5]];
-      const k = v && v.rhythm ? v.base : e[2];
-      if (k < lo) lo = k;
-      if (k > hi) hi = k;
-    }
+    // pitch range from the actual notes, padded (precomputed in music.pak)
+    const [lo, hi] = s.range || [60, 60];
     pitchLo = Math.min(lo - 3, 48); pitchHi = Math.max(hi + 3, 84);
   }
 

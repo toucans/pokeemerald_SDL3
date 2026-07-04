@@ -28,13 +28,13 @@ first — never introduce a second copy of something listed here.
 | What | Source of truth |
 |---|---|
 | Game data & behavior (maps, graphics, names, mechanics) | [pret/pokeemerald](https://github.com/pret/pokeemerald), the Emerald decompilation. A reference clone lives at `~/pokeemerald` (not part of this repo). When in doubt about how Emerald does something, read it there. |
-| **All music** | `pokeemerald-music/` in this repo — the complete 204-track soundtrack as extracted sequence/instrument data plus the m4a engine that plays it (see below). **Never extract music from pret/pokeemerald or from the ROM**; this data is already the better, verified version. |
-| Music engine behavior | `pokeemerald-music/web/m4a-worklet.js` is the verified reference implementation. `src/m4a.c` is its C port (A/B'd sample-exact). Engine changes go into the worklet first, then get ported. |
+| **All music** | `pokeemerald-music/web/music.pak` — the complete 204-track soundtrack, committed, ready to go (no build step). **Never extract music from pret/pokeemerald or from the ROM**; this data is already the extracted, verified version (see `pokeemerald-music/README.md`, incl. provenance: pret's MIDIs are the game arrangement, the 2024-leak composer MIDIs are not used and not on this machine). |
+| Music engine behavior | `src/m4a.c` **is** the engine, everywhere: the game links it, and the pokeemerald-music site runs the same file compiled to wasm (`tools/build-m4a-wasm.sh`). After changing it, rebuild the wasm and re-verify (below). |
 | Remastered-mp3 comparison material | `music-remaster-mp3/` — the fan "Emerald Remastered" album from [khinsider](https://downloads.khinsider.com/game-soundtracks/album/pokemon-emerald-remastered-complete-original-soundtrack). Kept **only** to A/B against our renders; the game never uses it. |
 | Tile/map data the game currently draws | Extracted **from the ROM** (`p.gba`) at runtime plus generated tables in `pokeemerald/` (this repo's dir, *not* pret). This is legacy — see roadmap: it should move to data generated from pret/pokeemerald. |
 
-Regenerable caches (never edit, never commit): `assets/music.pak`, `vendor/`,
-build outputs. `make` rebuilds them.
+Regenerable caches (never edit, never commit): `vendor/`, build outputs,
+`pokeemerald-music/web/data/` (re-extraction intermediate).
 
 ## How the music works
 
@@ -45,16 +45,15 @@ engine; the extraction turned the decomp source into JSON data, and the
 AudioWorklet engine plays it at full bandwidth — better than the GBA's
 13 kHz output, with the original loop points intact.
 
-The game plays the same data through the same engine, in C:
+The game and the site play the identical committed file through the identical
+C engine:
 
 ```
-pokeemerald-music/web/data/*.json      committed source of truth (204 songs)
-        │  tools/pack_music.py         (make assets/music.pak)
-        ▼
-assets/music.pak                       compact binary, gitignored
-        │  src/m4a.c                   the m4a engine in C (port of the worklet)
-        ▼
-src/audio.c                            one SDL3 audio stream, native + web
+pokeemerald-music/web/music.pak        THE soundtrack (committed, no build step)
+        │
+        ├── src/m4a.c + src/audio.c    game: one SDL3 audio stream, native + web
+        └── web/m4a.wasm               site: same m4a.c, standalone wasm in an
+                                       AudioWorklet (bit-identical output)
 ```
 
 No SDL_mixer, no mp3s, no decoded audio assets: music is synthesized in the
@@ -64,12 +63,13 @@ web. Maps name their song by pret id (`.music = "MUS_LITTLEROOT"` in
 `MUS_NONE` means silence, and crossing between maps that share a song does not
 restart it.
 
-**Verifying the port** (after touching `src/m4a.c` or the pak format): build
-`tools/m4a_dump.c`, render a few songs to raw f32, and compare against the
-worklet rendered headless — they must match to int16-quantization level
-(diff RMS ≈ 2e-5, correlation ≈ 1.0). The worklet harness from the original
-verification is `run_worklet.py` (py_mini_racer; add `scale: 1/128` to the
-bank entries, as player.js does).
+**Verifying after touching `src/m4a.c` or the pak format**: build
+`tools/m4a_dump.c`, render a few songs to raw f32, and compare against a
+known-good render — either a dump from the previous engine build, or the
+retired reference JS engine (`web/m4a-worklet.js` before the wasm switch, in
+git history) driven headless, which the C port matches to int16-quantization
+level (diff RMS ≈ 2e-5, correlation ≈ 1.0). Then rerun
+`tools/build-m4a-wasm.sh` — the wasm build must stay bit-identical to native.
 
 ## Layout
 
@@ -102,3 +102,10 @@ graphics_extractor     legacy macOS binary that generated pokeemerald/*.c;
   battle mechanics.
 - Unused-map songs (`MUS_GSC_PEWTER`) aren't in the extraction; extend
   `pokeemerald-music/extract.py` only if a map we actually render needs one.
+- **Composers' original MIDIs (optional, far future)**: the 2024 Teraleak
+  contained Game Freak's original SC-88Pro MIDIs — finer than pret's
+  game-derived ones (see provenance in `pokeemerald-music/README.md`). Not on
+  this machine. If they ever are, rendering them faithfully is its own
+  project (they target a real SC-88 Pro, not the game's m4a voicegroups) —
+  the current soundtrack is the verified game arrangement at full bandwidth
+  and stays the default.

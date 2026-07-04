@@ -10,8 +10,9 @@ poke.wasm
 poke.data
 
 # regenerable caches (see README: sources of truth)
-assets/music.pak
 vendor/
+pokeemerald-music/web/data/
+pokeemerald-music/__pycache__/
 
 # OS junk
 .DS_Store

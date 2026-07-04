@@ -29,6 +29,7 @@
 /* ---- pak layout (tools/pack_music.py writes these, packed little-endian) ---- */
 
 typedef struct {
+    const char *label;
     float rate;
     int loop;
     uint32_t loopStart;
@@ -56,8 +57,9 @@ typedef struct {
 _Static_assert(sizeof(Event) == 12, "pak event layout");
 
 typedef struct {
-    char name[32], title[48];
+    char name[32], title[48], cat[32];
     float reverb, loopStart, loopEnd;   /* loopStart < 0 = non-looping */
+    uint8_t keyLo, keyHi;               /* sounding-pitch range, for the viz */
     uint32_t nVoices, nTracks;
     const VoiceDef *voices;
     const Event *ev[MAX_TRACKS];
@@ -70,7 +72,8 @@ typedef struct {
     const VoiceDef *def;
     const Sample *smp;
     uint8_t t;                          /* voice type, copied from def */
-    int playKey, rp, vel;
+    int playKey, rp, vel, vid;
+    float visPitch;                     /* sounding pitch, for the viz */
     uint64_t born;                      /* frame index at note-on */
     double phase, incr;
     float envHeld, glHeld, grHeld;
@@ -115,6 +118,10 @@ static struct {
 
     int8_t lfsr15[32767], lfsr7[127];
     uint8_t noiseTable[60];
+
+    int vizOn;
+    uint32_t vizSeq;
+    float vizBuf[3 + MAX_TRACKS * MAX_VOICES * 4];
 } E;
 
 /* ------------------------- tables (worklet header) ------------------------- */
@@ -268,7 +275,9 @@ static void spawn_note(Track *tk, const Event *e) {
     memset(v, 0, sizeof(*v));
     v->def = def;
     v->t = def->type;
+    v->vid = e->vid;
     v->playKey = def->rhythm ? def->base : e->key;
+    v->visPitch = (float)v->playKey;
     v->rp = def->pan;
     v->vel = e->vel;
     v->born = E.frame;
@@ -326,6 +335,7 @@ static int update_voice(Track *tk, Voice *v) {
         vibSemi = (tk->mod * 16 / 256.0f) * tri;
     }
     float bendSemi = tk->bend * tk->bendRange / 64.0f;
+    v->visPitch = v->playKey + bendSemi + vibSemi;
 
     if (v->t == 0) {                    /* pcm */
         float e = ds_env(v, dt);
@@ -378,12 +388,13 @@ static void end_song(void) {
 /* One GBA frame: fire due events, then update every live voice. */
 static void frame_tick(void) {
     float now = (float)(E.frame * (double)FRAME);
+    int wrapped = 0;
 
     for (uint32_t ti = 0; ti < E.nTracks; ti++) {
         Track *tk = &E.tracks[ti];
         while (!tk->done) {
             if (tk->i >= tk->n) {
-                if (E.looping && tk->hasLoop) { tk->i = 0; tk->pass++; continue; }
+                if (E.looping && tk->hasLoop) { tk->i = 0; tk->pass++; wrapped = 1; continue; }
                 tk->done = 1;
                 break;
             }
@@ -412,6 +423,31 @@ static void frame_tick(void) {
         } else {
             E.silentFrames = 0;
         }
+    }
+
+    /* viz snapshot: [t, wrapped, n, then vid/pitch/level/pan per live voice] */
+    if (E.vizOn) {
+        float *o = E.vizBuf;
+        *o++ = now;
+        *o++ = (float)wrapped;
+        float *nslot = o++;
+        int n = 0;
+        for (uint32_t ti = 0; ti < E.nTracks; ti++) {
+            Track *tk = &E.tracks[ti];
+            for (int vi = 0; vi < tk->nv; vi++) {
+                Voice *v = &tk->voices[vi];
+                float g = v->glHeld + v->grHeld;
+                float level = v->t == 0 ? v->envHeld * g * 0.5f
+                                        : v->envHeld * g / (2 * PSG_FULL);
+                *o++ = (float)v->vid;
+                *o++ = v->visPitch;
+                *o++ = level > 1 ? 1 : level;
+                *o++ = g > 0 ? (v->grHeld - v->glHeld) / g : 0;
+                n++;
+            }
+        }
+        *nslot = (float)n;
+        E.vizSeq++;
     }
     E.frame++;
 }
@@ -568,6 +604,12 @@ bool m4a_play_name(const char *name) {
     return false;
 }
 
+bool m4a_play_index(uint32_t i) {
+    if (i >= E.nSongs) return false;
+    start_song(&E.songs[i]);
+    return true;
+}
+
 void m4a_stop(void) {
     E.playing = 0;
     E.song = NULL;
@@ -577,6 +619,33 @@ bool m4a_is_playing(void) { return E.playing; }
 
 const char *m4a_current(void) { return E.song ? E.song->name : NULL; }
 
+/* ----------------------- song-table introspection ------------------------- */
+
+uint32_t m4a_song_count(void) { return E.nSongs; }
+const char *m4a_song_name(uint32_t i) { return i < E.nSongs ? E.songs[i].name : ""; }
+const char *m4a_song_title(uint32_t i) { return i < E.nSongs ? E.songs[i].title : ""; }
+const char *m4a_song_cat(uint32_t i) { return i < E.nSongs ? E.songs[i].cat : ""; }
+float m4a_song_reverb(uint32_t i) { return i < E.nSongs ? E.songs[i].reverb : 0; }
+int m4a_song_key_lo(uint32_t i) { return i < E.nSongs ? E.songs[i].keyLo : 60; }
+int m4a_song_key_hi(uint32_t i) { return i < E.nSongs ? E.songs[i].keyHi : 60; }
+uint32_t m4a_song_nvoices(uint32_t i) { return i < E.nSongs ? E.songs[i].nVoices : 0; }
+
+static const VoiceDef *voice_at(uint32_t i, uint32_t v) {
+    return (i < E.nSongs && v < E.songs[i].nVoices) ? &E.songs[i].voices[v] : NULL;
+}
+int m4a_voice_type(uint32_t i, uint32_t v) { const VoiceDef *d = voice_at(i, v); return d ? d->type : 0; }
+int m4a_voice_duty(uint32_t i, uint32_t v) { const VoiceDef *d = voice_at(i, v); return d ? d->duty : 0; }
+int m4a_voice_rhythm(uint32_t i, uint32_t v) { const VoiceDef *d = voice_at(i, v); return d ? d->rhythm : 0; }
+int m4a_voice_base(uint32_t i, uint32_t v) { const VoiceDef *d = voice_at(i, v); return d ? d->base : 0; }
+const char *m4a_voice_label(uint32_t i, uint32_t v) {
+    const VoiceDef *d = voice_at(i, v);
+    return (d && d->sampleIdx < E.nSamples) ? E.samples[d->sampleIdx].label : "";
+}
+
+void m4a_set_viz(bool on) { E.vizOn = on; }
+uint32_t m4a_viz_seq(void) { return E.vizSeq; }
+const float *m4a_viz_data(void) { return E.vizBuf; }
+
 /* ------------------------------- pak loading ------------------------------ */
 
 static const uint8_t *rd(const uint8_t **p, void *dst, size_t n) {
@@ -585,8 +654,9 @@ static const uint8_t *rd(const uint8_t **p, void *dst, size_t n) {
     return *p;
 }
 
-bool m4a_init(const char *pak_path, int sample_rate) {
+bool m4a_init_mem(void *buf, long size, int sample_rate) {
     E.rate = sample_rate;
+    E.pak = buf;
     make_lfsr(E.lfsr15, 32767, 0);
     make_lfsr(E.lfsr7, 127, 1);
     int ni = 0;
@@ -595,32 +665,20 @@ bool m4a_init(const char *pak_path, int sample_rate) {
     E.noiseTable[ni++] = 3; E.noiseTable[ni++] = 2;
     E.noiseTable[ni++] = 1; E.noiseTable[ni] = 0;
 
-    FILE *f = fopen(pak_path, "rb");
-    if (!f) { fprintf(stderr, "m4a: cannot open %s\n", pak_path); return false; }
-    fseek(f, 0, SEEK_END);
-    long size = ftell(f);
-    fseek(f, 0, SEEK_SET);
-    E.pak = malloc((size_t)size);
-    if (!E.pak || fread(E.pak, 1, (size_t)size, f) != (size_t)size) {
-        fclose(f);
-        return false;
-    }
-    fclose(f);
-
     const uint8_t *p = E.pak;
     uint32_t magic, version;
     rd(&p, &magic, 4);
     rd(&p, &version, 4);
     rd(&p, &E.nSamples, 4);
     rd(&p, &E.nSongs, 4);
-    if (magic != 0x5041344d || version != 1) {   /* "M4AP" */
-        fprintf(stderr, "m4a: bad pak %s\n", pak_path);
+    if (magic != 0x5041344d || version != 2)     /* "M4AP" */
         return false;
-    }
 
     E.samples = calloc(E.nSamples, sizeof(Sample));
     for (uint32_t i = 0; i < E.nSamples; i++) {
         Sample *s = &E.samples[i];
+        s->label = (const char *)p;
+        p += 64;
         rd(&p, &s->rate, 4);
         uint32_t loop;
         rd(&p, &loop, 4);
@@ -636,9 +694,14 @@ bool m4a_init(const char *pak_path, int sample_rate) {
         Song *s = &E.songs[i];
         rd(&p, s->name, 32);
         rd(&p, s->title, 48);
+        rd(&p, s->cat, 32);
         rd(&p, &s->reverb, 4);
         rd(&p, &s->loopStart, 4);
         rd(&p, &s->loopEnd, 4);
+        uint32_t range;
+        rd(&p, &range, 4);
+        s->keyLo = range & 0xFF;
+        s->keyHi = (range >> 8) & 0xFF;
         rd(&p, &s->nVoices, 4);
         rd(&p, &s->nTracks, 4);
         s->voices = (const VoiceDef *)p;
@@ -650,9 +713,26 @@ bool m4a_init(const char *pak_path, int sample_rate) {
             p += s->nEv[t] * sizeof(Event);
         }
     }
-    if (p - E.pak > size) {
-        fprintf(stderr, "m4a: truncated pak %s\n", pak_path);
+    return p - E.pak <= size;
+}
+
+#ifndef M4A_NO_STDIO
+bool m4a_init(const char *pak_path, int sample_rate) {
+    FILE *f = fopen(pak_path, "rb");
+    if (!f) { fprintf(stderr, "m4a: cannot open %s\n", pak_path); return false; }
+    fseek(f, 0, SEEK_END);
+    long size = ftell(f);
+    fseek(f, 0, SEEK_SET);
+    void *buf = malloc((size_t)size);
+    if (!buf || fread(buf, 1, (size_t)size, f) != (size_t)size) {
+        fclose(f);
+        return false;
+    }
+    fclose(f);
+    if (!m4a_init_mem(buf, size, sample_rate)) {
+        fprintf(stderr, "m4a: bad pak %s\n", pak_path);
         return false;
     }
     return true;
 }
+#endif

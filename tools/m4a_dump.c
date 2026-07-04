@@ -12,7 +12,7 @@
 
 int main(int argc, char **argv) {
     if (argc < 4) { fprintf(stderr, "usage: %s song seconds out.f32\n", argv[0]); return 2; }
-    if (!m4a_init("assets/music.pak", 48000)) return 1;
+    if (!m4a_init("pokeemerald-music/web/music.pak", 48000)) return 1;
     if (!m4a_play_name(argv[1])) { fprintf(stderr, "no song %s\n", argv[1]); return 1; }
     FILE *f = fopen(argv[3], "wb");
     long frames = (long)(atof(argv[2]) * 48000);

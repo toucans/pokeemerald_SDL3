@@ -2,24 +2,36 @@
 
 Pokémon Emerald's **complete soundtrack** (204 tracks — every `mus_*` in the
 game, overworld to battles to fanfares), decoded straight from the
-`pokeemerald` decompilation source and played live in the browser by an
-**AudioWorklet that reimplements the GBA m4a sound engine** — no ROM, no
-emulator, no MP3s. This is also the game's music source of truth: the data in
-`web/data/` feeds the game via `tools/pack_music.py`, and the worklet is the
-reference implementation that `src/m4a.c` (the in-game C engine) is verified
-against.
+`pokeemerald` decompilation source into **`web/music.pak`** — the single
+committed music format. The game (`src/m4a.c`) loads it directly, and this
+site plays it through the **same C engine compiled to wasm** inside an
+AudioWorklet — no ROM, no emulator, no MP3s, one engine everywhere.
 
 | Piece | What |
 |---|---|
-| `extract.py` | pokeemerald source → `web/data/` (song JSON + sample bank + categorized manifest). Python stdlib only. |
-| `web/m4a-worklet.js` | The engine: an `AudioWorkletProcessor` that synthesizes every sample per the m4a rules (vanilla, no build). Needs a secure context (https). |
-| `web/player.js` + `index.html` | Main-thread shim (loads data, drives the worklet) + tiny UI: the soundtrack grouped into categories (towns, routes, battles, fanfares, …) with a filter box. |
+| `web/music.pak` | **The soundtrack.** All 204 tracks: sequences, voices, 8-bit samples, loop points, titles/categories. Committed; format documented in `tools/pack_music.py`. |
+| `web/m4a.wasm` | The engine: `src/m4a.c` built standalone by `tools/build-m4a-wasm.sh` (committed; ~21 KB). |
+| `web/m4a-worklet.js` | Thin `AudioWorkletProcessor` that hosts the wasm: feeds it the pak, pulls rendered samples + viz snapshots. No synthesis logic in JS. |
+| `web/player.js` + `index.html` | Main-thread shim + tiny UI: the soundtrack grouped into categories with a filter box. Needs a secure context (https) for the worklet. |
 | `web/viz.js` | Live 16:9 canvas visualization of what the engine is playing (see below). |
-| `web/data/` | Committed song JSON + sample bank — self-contained, all 204 tracks with proper GBA loop points. |
-| `render_previews.py` | Offline WAV renders of the same engine, used to A/B the worklet (needs numpy). |
+| `extract.py` | pokeemerald source → `web/data/` JSON (regeneration-time intermediate, gitignored). Python stdlib only. |
+| `../tools/pack_music.py` | `web/data/` JSON → `web/music.pak`. |
+| `render_previews.py` | Offline WAV renders from the JSON intermediate, for A/B checks (needs numpy). |
 
 Listen: serve `web/` with any static server (`cd web && python3 -m http.server`)
 and open the page.
+
+## Where the notes come from (provenance)
+
+The MIDIs in pret/pokeemerald are **machine-derived from the game data**
+(24 ticks/beat — the m4a clock — and velocities quantized to the game's
+steps-of-4 LUT), so everything here is the **game arrangement**, rendered at
+full bandwidth instead of the GBA's 13 kHz output. The composers' original
+SC-88Pro MIDIs (higher tick resolution, unquantized velocities, pre-m4a
+mixing) leaked in late 2024 ("Teraleak") and are **not** used here — they are
+also not on this machine. If they ever land in a folder, re-extraction from
+them would be a separate project: they target a real SC-88 Pro, not the
+game's voicegroups, so they need instrument mapping, not just `extract.py`.
 
 ---
 
@@ -127,50 +139,46 @@ No ROM and no emulation needed — everything is in the source tree:
 same envelope math; an FFT of the render was cross-checked against the MIDI — the
 pitch classes sounding in each window match the score (8/8 windows for Littleroot).
 
-## Playback (web/m4a-worklet.js + web/player.js)
+## Playback (src/m4a.c as web/m4a.wasm, hosted by web/m4a-worklet.js)
 
-The player is a single **AudioWorklet** that *is* the m4a engine — it generates
-every output sample itself in one per-sample mixing loop, rather than wiring up
-browser oscillators/resamplers per note. This is the faithful hardware model and
-keeps the whole signal path in code we own (no browser DSP black boxes).
+The engine is **`src/m4a.c` in the game repo** — one per-sample mixing loop
+that follows the decomp's rules exactly, with no browser DSP between it and
+the speaker. The sequencer and envelopes tick once per GBA frame (59.7275 Hz);
+audio is synthesized per output sample: PCM voices by phase-accumulator
+resampling of the 8-bit samples (looping between the AIFF points), pulses by a
+4× box-averaged pulse, the wavetable by 32-step interpolation at *half* the
+square rate, noise from the GB LFSR at the NR43 clock. Envelopes, the linear
+pan/volume law, the quantised PSG levels and 3-way PSG pan, vibrato,
+pseudo-echo and the `[`/`]` loop all follow §"engine behaviours" above. The
+PCM sub-mix gets the engine's real reverb (mono two-tap feedback echo at
+`-R`/128); PSG stays dry.
 
-- **`web/m4a-worklet.js`** — the `AudioWorkletProcessor`. The sequencer and
-  envelopes tick once per GBA frame (59.7275 Hz); audio is synthesized per output
-  sample: PCM voices by phase-accumulator resampling of the 8-bit samples
-  (looping between the AIFF points), pulses by a 4× box-averaged pulse, the
-  wavetable by 32-step interpolation at *half* the square rate, noise from the GB
-  LFSR at the NR43 clock. Envelopes, the linear pan/volume law, the quantised PSG
-  levels and 3-way PSG pan, vibrato, pseudo-echo and the `[`/`]` loop all follow
-  §"engine behaviours" above. The PCM sub-mix gets the engine's real reverb (mono
-  two-tap feedback echo at `-R`/128); PSG stays dry.
-- **`web/player.js`** — a thin main-thread shim: loads the JSON + sample bank,
-  base64-decodes the samples once, drives one `AudioWorkletNode`. UI only.
-- **Secure context required.** `AudioWorklet` is only exposed on https/localhost,
-  so the page must be served over TLS — on this box's dashboard that's the local
-  mkcert cert on the nginx front door (`https://10.7.0.1/`). Over plain http
-  `ctx.audioWorklet` is undefined and play surfaces an "audio error"; serve it
-  over https.
+- **`web/m4a.wasm`** — that C file compiled standalone (no emscripten JS
+  runtime); `tools/build-m4a-wasm.sh` rebuilds it after engine changes.
+- **`web/m4a-worklet.js`** — hosts the wasm in an `AudioWorkletProcessor`:
+  passes music.pak into wasm memory, copies rendered blocks out, forwards the
+  engine's per-frame viz snapshots. **`web/player.js`** is UI + fetch only.
+- **Secure context required.** `AudioWorklet` is only exposed on
+  https/localhost — on this box's dashboard that's the local mkcert cert on
+  the nginx front door (`https://10.7.0.1/`). Over plain http play surfaces
+  an "audio error".
 - The output is deliberately **full-bandwidth** — the approach of the fan
   "Emerald Remastered" album (Kurausukun/ipatix): identical sequence data, mix
   rules and instruments, minus the GBA's output degradation (13.4 kHz
   nearest-neighbour resampling).
-- **Verified**: the worklet was driven headlessly in V8 and A/B'd against
-  `render_previews.py` (band balance matches to ≈0.02) and against the official
-  GBA recording (79% FFT peak-frequency match — same as the offline renderer,
-  confirming correct notes/octaves/tuning), with zero drum re-triggers, zero
-  high-band ticks, and seamless loops. No build step, no deps: two small vanilla
-  JS files. Plain JS was chosen over C→WASM — the workload is <1% of a core, so
-  WASM's edge is imperceptible while its toolchain/binary are pure overhead.
-- **Real-time robustness** (the "tiny glitches sometimes" class of bug): the
-  per-sample render path allocates nothing (GC pauses on the audio thread are
-  audible dropouts — this is also the only real advantage a WASM build would
-  have had); the reverb feedback tail flushes subnormal floats (10–100×
-  slower arithmetic on x86 = a CPU spike mid-silence); a PSG note whose
-  quantised volume goal is 0 no longer computes a 0/0 = NaN attack (NaN
-  poisoned ~67 ms of output per occurrence); and the `AudioContext` uses
+- **Verified**: the engine lineage is (1) the original JS worklet, A/B'd
+  against `render_previews.py` and the official GBA recordings (79% FFT
+  peak-frequency match, zero drum re-triggers, seamless loops); (2) the C
+  port, sample-exact against that worklet (corr 1.000000, diff at int16
+  quantization level, all 204 songs NaN-free); (3) this wasm build,
+  bit-identical to the native C build. The retired JS engine lives in git
+  history (`web/m4a-worklet.js` before the wasm switch).
+- **Real-time robustness**: the render path allocates nothing; the reverb
+  feedback tail flushes subnormal floats (10–100× slower arithmetic on x86 =
+  a CPU spike mid-silence); a PSG note whose quantised volume goal is 0 does
+  not compute a 0/0 = NaN attack; and the `AudioContext` uses
   `latencyHint: "playback"` — a music player wants a big buffer, not low
-  latency, and the default interactive-size buffer underruns when the
-  listening machine is busy.
+  latency.
 
 ## The visualization (`web/viz.js`)
 
@@ -195,12 +203,17 @@ scrolling waterfall (click ⛶ for fullscreen — sized for a YouTube frame):
 
 ## Regenerating
 
+Only needed when re-extracting from a pret checkout or after changing the
+engine — day to day, `web/music.pak` and `web/m4a.wasm` are committed and
+ready to go (the game build has **no music build step**).
+
 ```bash
-./extract.py --src <path to a pokeemerald checkout>   # -> web/data/ (all 204 tracks)
-./render_previews.py --seconds 40 mus_littleroot ...  # -> previews/*.wav (needs numpy+scipy)
+./extract.py --src ~/pokeemerald          # -> web/data/ JSON (gitignored intermediate)
+../tools/pack_music.py                    # -> web/music.pak
+../tools/build-m4a-wasm.sh                # -> web/m4a.wasm (after src/m4a.c changes)
+./render_previews.py --seconds 40 mus_littleroot ...  # optional WAV checks (numpy)
 ```
 
-`web/data/` is committed (small, makes the player self-contained); previews are
-optional offline renders of the same data (gitignored, regenerable). To listen, serve this directory with any
-static file server (e.g. `python3 -m http.server` in `web/`) and open the page —
-`fetch()` needs http, not file://.
+To listen locally, serve `web/` with any static file server
+(`python3 -m http.server` in `web/`) and open the page — `fetch()` needs
+http, not file://.

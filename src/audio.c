@@ -30,8 +30,8 @@ static void callback(void *userdata, SDL_AudioStream *s, int additional, int tot
 }
 
 void audio_init(void) {
-    if (!m4a_init("assets/music.pak", RATE)) {
-        SDL_Log("audio: assets/music.pak missing (run tools/pack_music.py) - no music");
+    if (!m4a_init("pokeemerald-music/web/music.pak", RATE)) {
+        SDL_Log("audio: pokeemerald-music/web/music.pak missing - no music");
         return;
     }
     SDL_AudioSpec spec = { SDL_AUDIO_F32, 2, RATE };

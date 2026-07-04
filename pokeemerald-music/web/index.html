@@ -72,7 +72,8 @@
 <main>
   <h1>Pokémon Emerald — the soundtrack</h1>
   <p class="sub">the complete BGM, decoded from the pokeemerald source (MIDI + m4a voicegroups +
-  DirectSound samples), synthesized live in the browser by an AudioWorklet reimplementing the GBA m4a sound engine.</p>
+  DirectSound samples), synthesized live in the browser by the game's own C m4a engine
+  compiled to wasm, running in an AudioWorklet.</p>
   <div id="viz-wrap" hidden>
     <canvas id="viz"></canvas>
     <button id="viz-fs" title="fullscreen">⛶</button>
