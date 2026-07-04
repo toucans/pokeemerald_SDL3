@@ -9,6 +9,9 @@ poke.js
 poke.wasm
 poke.data
 
+# local-only fluidsynth comparison renders (never commit)
+pokeemerald-music/web/compare/
+
 # regenerable caches (see README: sources of truth)
 vendor/
 pokeemerald-music/web/data/

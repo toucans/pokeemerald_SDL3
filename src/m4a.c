@@ -449,6 +449,9 @@ static const int GM_COMB[4] = {1214, 1293, 1390, 1476};   /* at 48 kHz */
 static const int GM_AP[2] = {605, 480};
 
 static float gm_reverb(float in) {
+    /* comb input gain matters: fed at full level the feedback network sits
+     * ~30x hotter than the dry signal and swallows the mix */
+    in *= 0.03f;
     float out = 0;
     for (int c = 0; c < 4; c++) {
         float *buf = E.gmCombBuf[c];
@@ -470,7 +473,7 @@ static float gm_reverb(float in) {
         out = y - w * 0.5f;
     }
     E.gmIdx++;
-    return out * 0.25f;
+    return out;
 }
 
 /* ------------------------------- sequencer -------------------------------- */

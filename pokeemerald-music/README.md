@@ -13,7 +13,7 @@ AudioWorklet — no ROM, no emulator, no MP3s, one engine everywhere.
 | `web/music-orig.pak` | **The original soundtrack**: the composers' 480-tpqn MIDIs + the SC-88Pro samples they were written for (trimmed to what's used). Committed; format in `tools/extract_orig.py`. |
 | `web/m4a.wasm` | The engine: `src/m4a.c` built standalone by `tools/build-m4a-wasm.sh` (committed; ~32 KB). Plays both paks. |
 | `web/m4a-worklet.js` | Thin `AudioWorkletProcessor` that hosts the wasm: feeds it the paks, pulls rendered samples + viz snapshots. No synthesis logic in JS. |
-| `web/player.js` + `index.html` | Main-thread shim + tiny UI: every song has a `play` (game version) and an `original` button; the originals pak is fetched lazily on first use. |
+| `web/player.js` + `index.html` | Main-thread shim + tiny UI: every song has `play` (game version) and `original` (engine GM synth) buttons, plus `rendered` (fluidsynth opus from `tools/render_compare.py`, local-only/gitignored) when present — for A/B'ing the engine against a second synth. The originals pak is fetched lazily on first use. |
 | `web/viz.js` | Live 16:9 canvas visualization of what the engine is playing (see below). |
 | `extract.py` | pokeemerald source → `web/data/` JSON (regeneration-time intermediate, gitignored). Python stdlib only. |
 | `../tools/pack_music.py` | `web/data/` JSON → `web/music.pak`. |

@@ -15,6 +15,7 @@ let node = null;          // the AudioWorkletNode hosting the engine
 let playingBtn = null;
 let onPlaying = null;     // one-shot: viz start once the worklet confirms
 let onOrigReady = null;   // one-shot: resolves the lazy music-orig.pak load
+let fileAudio = null;     // <audio> for the fluidsynth "rendered" comparisons
 
 function setStatus(msg) {
   const el = document.getElementById("status");
@@ -24,6 +25,10 @@ function setStatus(msg) {
 function clearPlaying() {
   document.querySelectorAll("button.playing").forEach((b) => b.classList.remove("playing"));
   playingBtn = null;
+}
+
+function stopFileAudio() {
+  if (fileAudio) { fileAudio.pause(); fileAudio.src = ""; fileAudio = null; }
 }
 
 // The originals pak is 70+ MB, so it is fetched only on the first
@@ -82,7 +87,7 @@ async function initAudio() {
 
 async function main() {
   const list = document.getElementById("songs");
-  let songs;
+  let songs, rendered = {};
   try {
     songs = await initAudio();
   } catch (err) {
@@ -91,12 +96,17 @@ async function main() {
     setStatus("audio error: " + (err && err.message ? err.message : err));
     return;
   }
+  try {
+    const r = await fetch("compare/index.json");
+    if (r.ok) rendered = await r.json();
+  } catch (_) { /* no local renders present: no "rendered" buttons */ }
 
   const play = async (btn, entry, orig) => {
     try {
       const wasPlaying = btn === playingBtn;
       if (ctx.state === "suspended") await ctx.resume();
       if (orig && !wasPlaying) await ensureOrig();
+      stopFileAudio();
       node.port.postMessage({ type: "stop" });
       clearPlaying();
       if (wasPlaying) { M4AViz.stop(); return; }
@@ -109,6 +119,23 @@ async function main() {
       console.error(err);
       setStatus("audio error: " + (err && err.message ? err.message : err));
     }
+  };
+
+  // fluidsynth renders of the same original MIDIs (local-only opus files;
+  // tools/render_compare.py). For comparing against the engine's synthesis.
+  const playRendered = (btn, entry, file) => {
+    const wasPlaying = btn === playingBtn;
+    stopFileAudio();
+    node.port.postMessage({ type: "stop" });
+    clearPlaying();
+    M4AViz.stop();
+    if (wasPlaying) return;
+    fileAudio = new Audio(file);
+    fileAudio.play().catch((err) => setStatus("audio error: " + err.message));
+    fileAudio.onended = clearPlaying;
+    btn.classList.add("playing");
+    playingBtn = btn;
+    setStatus("");
   };
 
   // one section per category, in pak (= category) order
@@ -127,13 +154,16 @@ async function main() {
     }
     const row = document.createElement("div");
     row.className = "song";
+    const hasRender = !!rendered[entry.name];
     row.innerHTML = `<span class="title">${entry.title}</span>
       <span class="file">${entry.name}</span>
-      <span class="btns"><button>play</button><button>original</button></span>`;
+      <span class="btns"><button>play</button><button>original</button>${
+        hasRender ? "<button>rendered</button>" : ""}</span>`;
     list.appendChild(row);
-    const [btn, origBtn] = row.querySelectorAll("button");
+    const [btn, origBtn, renBtn] = row.querySelectorAll("button");
     btn.onclick = () => play(btn, entry, false);
     origBtn.onclick = () => play(origBtn, entry, true);
+    if (renBtn) renBtn.onclick = () => playRendered(renBtn, entry, rendered[entry.name].file);
     const r = { row, text: (entry.title + " " + entry.name).toLowerCase() };
     rows.push(r);
     section.rows.push(r);
@@ -152,6 +182,7 @@ async function main() {
 
   document.getElementById("stop").onclick = () => {
     if (node) node.port.postMessage({ type: "stop" });
+    stopFileAudio();
     clearPlaying();
     M4AViz.stop();
   };
