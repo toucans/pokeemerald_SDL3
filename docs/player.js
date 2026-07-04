@@ -31,13 +31,11 @@ function stopFileAudio() {
   if (fileAudio) { fileAudio.pause(); fileAudio.src = ""; fileAudio = null; }
 }
 
-// The SC-88 pak is ~50 MB, so it is fetched only on the first
-// "SC-88" click, then lives in the engine for the session. On GitHub Pages
-// the Opus transport pak (~14 MB, sc88z.js) is fetched instead — strictly a
-// Pages thing; everything local plays the original. ?sc88z forces the
-// compressed path for local testing.
-const sc88Compressed = location.hostname.endsWith(".github.io")
-  || new URLSearchParams(location.search).has("sc88z");
+// The SC-88 pak is fetched only on the first "SC-88" click, then lives in
+// the engine for the session. It travels as the Opus transport pak (~17 MB,
+// rebuilt to the original bytes by sc88z.js); ?sc88full fetches the full
+// 50 MB original instead, for A/B'ing the codec.
+const sc88Compressed = !new URLSearchParams(location.search).has("sc88full");
 const sc88DecodeCtxs = {};
 function sc88DecodeBlob(blob, rate) {
   // an OfflineAudioContext at the pak's own rate pins decodeAudioData's
@@ -50,7 +48,7 @@ async function ensureSC88() {
   if (sc88State === "ready") return;
   if (sc88State === "loading") throw new Error("still loading the SC-88 soundtrack…");
   sc88State = "loading";
-  setStatus(`loading SC-88 soundtrack (~${sc88Compressed ? 14 : 50} MB)…`);
+  setStatus(`loading SC-88 soundtrack (~${sc88Compressed ? 17 : 50} MB)…`);
   try {
     let pak;
     if (sc88Compressed) {

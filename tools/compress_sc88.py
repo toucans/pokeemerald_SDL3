@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """compress_sc88.py — docs/music-sc88.pak -> docs/music-sc88-compressed.pak.
 
-The GitHub Pages transport format, nothing else: the same pak with every
-sample's i16 PCM replaced by an Ogg/Opus blob (opusenc, 96 kbps mono VBR).
-docs/sc88z.js decodes the blobs with WebAudio decodeAudioData in the browser
-and rebuilds the exact M4AO byte layout of music-sc88.pak before handing it
-to the engine — src/m4a.c never sees this file, and the distinct "M4AZ"
-magic makes it unloadable by mistake. Everything local (game, dashboard
-shim) keeps using music-sc88.pak.
+The web transport format: the same pak with every sample's i16 PCM replaced
+by an Ogg/Opus blob (opusenc, 120 kbps mono VBR). The site player always
+fetches it (?sc88full plays the original instead) and the web game build
+preloads it (Makefile + tools/sc88z-prejs.js); in both, docs/sc88z.js
+decodes the blobs with WebAudio decodeAudioData and rebuilds the exact M4AO
+byte layout of music-sc88.pak before the engine sees anything — src/m4a.c
+never reads this file, and the distinct "M4AZ" magic makes it unloadable by
+mistake. The native game keeps reading the original music-sc88.pak.
 
 Format "M4AZ" v1 (little-endian; counts u32):
   header: "M4AZ" u32 ver=1, u32 nSamples, u32 nProgs, u32 nSongs  (as M4AO)
@@ -30,7 +31,7 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 WEB = Path(__file__).resolve().parent.parent / "docs"
-BITRATE_KBPS = 96
+BITRATE_KBPS = 120
 
 
 def encode_opus(pcm, rate, tmpdir, idx):
