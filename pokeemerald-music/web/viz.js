@@ -29,7 +29,7 @@ const M4AViz = (() => {
   let running = false, raf = 0;
   let frames = [];           // [{t, v:[vid,pitch,level,pan,...]}]
   let loopMarks = [];        // song-times where the loop wrapped
-  let song = null, title = "", mode = "";
+  let song = null, title = "";
   let palette = {};          // vid -> {h,s,l, name, kind}
   let pitchLo = 36, pitchHi = 96;
   let audioLatency = 0.1;
@@ -41,7 +41,7 @@ const M4AViz = (() => {
     if (v.t === "wave") return "wavetable";
     if (v.t === "noise") return "noise";
     return v.sample.replace(/^DirectSoundWaveData_/, "")
-      .replace(/^(sc88pro_|sd90_|trinity_|unknown_|unused_|sf2_\d+_?)/, "")
+      .replace(/^(sc88pro_|sd90_|trinity_|unknown_|unused_)/, "")
       .replace(/_/g, " ");
   }
 
@@ -73,7 +73,7 @@ const M4AViz = (() => {
   }
 
   function start(opts) {
-    song = opts.song; title = opts.title || song.name; mode = opts.mode || "";
+    song = opts.song; title = opts.title || song.name;
     frames = []; loopMarks = []; active.clear();
     buildPalette(song);
     dispNow = 0; lastRaf = 0;
@@ -193,8 +193,7 @@ const M4AViz = (() => {
     g.fillText(title, W * 0.015, H * 0.075);
     g.font = `${Math.round(fs * 0.62)}px ui-monospace, monospace`;
     g.fillStyle = "rgba(107,122,140,.9)";
-    g.fillText((mode === "sf2" ? "soundfont samples" : "GBA samples") +
-      " · m4a engine @ 59.7275 Hz", W * 0.015, H * 0.075 + fs * 0.85);
+    g.fillText("m4a engine @ 59.7275 Hz", W * 0.015, H * 0.075 + fs * 0.85);
     const mm = Math.floor(dispNow / 60), ss = ("0" + Math.floor(dispNow % 60)).slice(-2);
     g.textAlign = "right";
     g.fillText(`${mm}:${ss}`, W * 0.985, H * 0.06);

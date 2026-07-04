@@ -172,9 +172,7 @@ class M4AProcessor extends AudioWorkletProcessor {
 
   onMessage(msg) {
     if (msg.type === 'bank') {
-      // {label:{rate,loop,loopStart,scale,data:TypedArray}} — merged, so the
-      // player can send additional banks (e.g. the soundfont one) later.
-      this.bank = Object.assign(this.bank || {}, msg.bank);
+      this.bank = msg.bank;   // {label:{rate,loop,loopStart,scale,data:Int8Array}}
     } else if (msg.type === 'play') {
       this.startSong(msg.song);
     } else if (msg.type === 'stop') {
@@ -314,9 +312,7 @@ class M4AProcessor extends AudioWorkletProcessor {
       const tau_d = d === 0 ? 0 : FRAME / Math.log(256 / d);
       const tau_r = r === 0 ? 0 : FRAME / Math.log(256 / r);
       const env = { a, d, s: ss, r, gate: dur, t_a, sus, tau_d, tau_r,
-                    echoV: tk.echoV, echoL: tk.echoL,
-                    // gain: sf2 initialAttenuation baked in by extract_sf2.py
-                    peak: (vel / 127) * (voice.gain || 1), valOff: 0 };
+                    echoV: tk.echoV, echoL: tk.echoL, peak: vel / 127, valOff: 0 };
       // env value at end of gate (start of release)
       let vo;
       if (dur < t_a) vo = t_a > 0 ? dur / t_a : 1;
@@ -355,8 +351,7 @@ class M4AProcessor extends AudioWorkletProcessor {
       if (e < 0) return false;
       v.envHeld = e;
       pcmGainsInto(v, tk.vol, tk.pan, v.rp);             // live vol/pan
-      let ratio = voice.fixed ? 1 : Math.pow(2, (v.playKey - 60 + bendSemi + vibSemi) / 12);
-      if (voice.tune) ratio *= voice.tune;               // sf2 root-key/cents correction
+      const ratio = voice.fixed ? 1 : Math.pow(2, (v.playKey - 60 + bendSemi + vibSemi) / 12);
       v.incr = v.smp.rate * ratio / sampleRate;          // source samples / output sample
     } else {
       const e = psgEnv(v, dt);

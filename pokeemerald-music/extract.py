@@ -47,6 +47,49 @@ TITLES = {
 }
 
 
+# Soundtrack categories, in page order. First matching rule wins: exact name
+# sets, then prefix rules. Names are without the mus_ prefix.
+CATEGORIES = [
+    ("Towns & cities", {
+        "littleroot", "littleroot_test", "oldale", "petalburg", "rustboro",
+        "dewford", "slateport", "verdanturf", "fortree", "lilycove",
+        "fallarbor", "sootopolis", "ever_grande"}, ()),
+    ("Routes & travel", {
+        "cycling", "surf", "sailing", "cable_car", "underwater"}, ("route",)),
+    ("Caves & nature", {
+        "petalburg_woods", "cave_of_origin", "mt_chimney", "mt_pyre",
+        "mt_pyre_exterior", "abandoned_ship", "safari_zone", "victory_road",
+        "sealed_chamber", "aqua_magma_hideout"}, ()),
+    ("Buildings & places", {
+        "poke_center", "poke_mart", "gym", "school", "birch_lab",
+        "oceanic_museum", "lilycove_museum", "trick_house", "game_corner",
+        "roulette"}, ()),
+    ("Trainer encounters", set(), ("encounter_",)),
+    ("Battles", set(), ("vs_",)),
+    ("Victory & catch", {"caught"}, ("victory_",)),
+    ("Contests", set(), ("contest", "link_contest")),
+    ("Battle Frontier", set(), ("b_",)),
+    ("Story & events", {
+        "intro", "intro_battle", "title", "credits", "end", "help",
+        "follow_me", "hall_of_fame", "hall_of_fame_room", "abnormal_weather",
+        "weather_groudon", "rayquaza_appears", "evolution",
+        "evolution_intro"}, ()),
+    ("Fanfares & jingles", {
+        "heal", "level_up", "evolved", "move_deleted", "too_bad",
+        "register_match_call", "slots_jackpot", "slots_win",
+        "awaken_legend"}, ("obtain_",)),
+    ("FireRed & LeafGreen", set(), ("rg_",)),
+]
+
+
+def category_for(name):
+    short = name[4:] if name.startswith("mus_") else name
+    for label, names, prefixes in CATEGORIES:
+        if short in names or any(short.startswith(p) for p in prefixes):
+            return label
+    return "Other"
+
+
 def title_for(name):
     if name in TITLES:
         return TITLES[name]
@@ -421,7 +464,6 @@ def extract_song(bank, src, name, cfg):
         v = bank.resolve(cfg["group"], prog, key)
         if v is None:
             return None
-        v["prog"] = prog   # MIDI program — lets extract_sf2.py map onto sf2 presets
         sig = json.dumps(v, sort_keys=True)
         if sig not in voice_ids:
             voice_ids[sig] = f"v{len(voice_ids)}"
@@ -528,9 +570,16 @@ def main():
               f"loop={song['loopStart']}..{song['loopEnd']}s "
               f"voices={len(song['voices'])}")
         manifest.append({"file": f"songs/{name}.json", "name": name,
-                         "title": song["title"]})
+                         "title": song["title"], "cat": category_for(name)})
     for name, why in skipped:
         print(f"SKIPPED {name}: {why}")
+
+    # manifest in category order (page sections), titles alphabetical within
+    order = {label: i for i, (label, _, _) in enumerate(CATEGORIES)}
+    manifest.sort(key=lambda e: (order.get(e["cat"], 99), e["title"]))
+    uncat = [e["name"] for e in manifest if e["cat"] == "Other"]
+    if uncat:
+        print("UNCATEGORIZED:", " ".join(uncat))
 
     smp_out = {}
     for label in sorted(bank.used_samples):

@@ -13,11 +13,9 @@ const DATA = "data/";
 let ctx = null;
 let node = null;          // the AudioWorkletNode running the engine
 let bankSent = false;
-let bank = null;          // {label:{rate,loop,loopStart,scale,data:TypedArray}}
+let bank = null;          // {label:{rate,loop,loopStart,scale,data:Int8Array}}
 let samplesJson = null;
-let sf2Loaded = null;     // promise: sf2 bank sent + overlays parsed (lazy, ~24 MB)
-let sf2Overlays = null;   // {songName: {voices, map}}
-const songCache = {};     // per (file + mode) prepared song objects
+const songCache = {};
 let playingBtn = null;
 
 function setStatus(msg) {
@@ -32,13 +30,6 @@ function b64ToInt8(b64) {
   const out = new Int8Array(raw.length);
   for (let i = 0; i < raw.length; i++) out[i] = raw.charCodeAt(i) << 24 >> 24;
   return out;
-}
-
-function b64ToInt16(b64) {
-  const raw = atob(b64);
-  const bytes = new Uint8Array(raw.length);
-  for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
-  return new Int16Array(bytes.buffer);   // little-endian, as written by extract_sf2.py
 }
 
 function decodeBank() {
@@ -78,47 +69,6 @@ async function ensureAudio() {
   }
 }
 
-// Fetch + send the soundfont bank once, on first sf2 play (it's ~24 MB, so
-// the original mode never pays for it).
-function ensureSf2() {
-  if (!sf2Loaded) {
-    sf2Loaded = (async () => {
-      const samples = await fetchJson("sf2/samples.json");
-      const sfBank = {};
-      for (const [label, v] of Object.entries(samples)) {
-        sfBank[label] = {
-          rate: v.rate, loop: v.loop, loopStart: v.loopStart,
-          scale: 1 / 32768,              // 16-bit signed PCM -> [-1, 1)
-          data: b64ToInt16(v.b64),
-        };
-      }
-      const transfer = Object.values(sfBank).map((s) => s.data.buffer);
-      node.port.postMessage({ type: "bank", bank: sfBank }, transfer);
-    })();
-  }
-  return sf2Loaded;
-}
-
-// The sf2 variant of a song: same events, same envelopes — only the PCM
-// voices are remapped to the overlay's soundfont voices (per key range).
-function sf2Song(song) {
-  const ov = sf2Overlays[song.name];
-  if (!ov) return song;
-  const voices = Object.assign({}, song.voices, ov.voices);
-  const tracks = song.tracks.map((ev) => ev.map((e) => {
-    if (e[1] !== "n") return e;
-    const zones = ov.map[e[5]];
-    if (!zones) return e;
-    for (const [lo, hi, sid] of zones) {
-      if (e[2] >= lo && e[2] <= hi) {
-        const c = e.slice(); c[5] = sid; return c;
-      }
-    }
-    return e;
-  }));
-  return Object.assign({}, song, { voices, tracks });
-}
-
 function clearPlaying() {
   document.querySelectorAll("button.playing").forEach((b) => b.classList.remove("playing"));
   playingBtn = null;
@@ -126,33 +76,21 @@ function clearPlaying() {
 
 async function main() {
   const list = document.getElementById("songs");
-  const [manifest, samples, overlays] = await Promise.all([
+  const [manifest, samples] = await Promise.all([
     fetchJson("manifest.json"), fetchJson("samples.json"),
-    fetchJson("sf2/overlays.json").catch(() => ({})),   // small; the 24 MB bank stays lazy
   ]);
   samplesJson = samples;
-  sf2Overlays = overlays;
 
-  const play = async (btn, entry, mode) => {
+  const play = async (btn, entry) => {
     try {
       const wasPlaying = btn === playingBtn;
       await ensureAudio();
       node.port.postMessage({ type: "stop" });
       clearPlaying();
       if (wasPlaying) { M4AViz.stop(); return; }
-      if (mode === "sf2") {
-        setStatus("loading soundfont…");
-        await ensureSf2();
-        setStatus("");
-      }
       if (!songCache[entry.file]) songCache[entry.file] = await fetchJson(entry.file);
-      const key = entry.file + ":" + mode;
-      if (!songCache[key]) {
-        songCache[key] = mode === "sf2" ? sf2Song(songCache[entry.file])
-                                        : songCache[entry.file];
-      }
-      node.port.postMessage({ type: "play", song: songCache[key] });
-      M4AViz.start({ song: songCache[key], title: entry.title, mode, actx: ctx });
+      node.port.postMessage({ type: "play", song: songCache[entry.file] });
+      M4AViz.start({ song: songCache[entry.file], title: entry.title, actx: ctx });
       btn.classList.add("playing");
       playingBtn = btn;
       setStatus("");
@@ -163,21 +101,31 @@ async function main() {
     }
   };
 
+  // one section per category, in manifest (= category) order
+  const sections = [];
   const rows = [];
+  let cat = null, section = null;
   for (const entry of manifest) {
+    if (entry.cat !== cat) {
+      cat = entry.cat;
+      const head = document.createElement("div");
+      head.className = "cat";
+      head.textContent = cat || "Other";
+      list.appendChild(head);
+      section = { head, rows: [] };
+      sections.push(section);
+    }
     const row = document.createElement("div");
     row.className = "song";
-    const hasSf2 = !!sf2Overlays[entry.name];
     row.innerHTML = `<span class="title">${entry.title}</span>
       <span class="file">${entry.name}</span>
-      <span class="btns"><button class="gba">play</button>${hasSf2
-        ? '<button class="sf2" title="Roland/Charm soundfont samples instead of the GBA\'s — same sequence, same engine">sf2</button>' : ""}</span>`;
+      <span class="btns"><button>play</button></span>`;
     list.appendChild(row);
-    const gbaBtn = row.querySelector("button.gba");
-    gbaBtn.onclick = () => play(gbaBtn, entry, "gba");
-    const sf2Btn = row.querySelector("button.sf2");
-    if (sf2Btn) sf2Btn.onclick = () => play(sf2Btn, entry, "sf2");
-    rows.push({ row, text: (entry.title + " " + entry.name).toLowerCase() });
+    const btn = row.querySelector("button");
+    btn.onclick = () => play(btn, entry);
+    const r = { row, text: (entry.title + " " + entry.name).toLowerCase() };
+    rows.push(r);
+    section.rows.push(r);
   }
 
   const search = document.getElementById("search");
@@ -185,6 +133,9 @@ async function main() {
     search.oninput = () => {
       const q = search.value.trim().toLowerCase();
       for (const r of rows) r.row.style.display = !q || r.text.includes(q) ? "" : "none";
+      for (const s of sections) {
+        s.head.style.display = s.rows.some((r) => r.row.style.display !== "none") ? "" : "none";
+      }
     };
   }
 

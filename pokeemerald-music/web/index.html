@@ -19,6 +19,13 @@
   h1 { font-size: 1.25rem; margin: 0 0 .2rem; letter-spacing: .02em; }
   p.sub { color: var(--dim); margin: 0 0 1.4rem; font-size: .85rem; }
   #songs { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .cat {
+    padding: .55rem .9rem .35rem; background: #131922;
+    border-bottom: 1px solid var(--line);
+    color: var(--blue); font-size: .78rem; font-weight: 600;
+    letter-spacing: .08em; text-transform: uppercase;
+  }
+  .cat:not(:first-child) { border-top: 1px solid var(--line); }
   .song {
     display: flex; align-items: center; gap: .8rem;
     padding: .6rem .9rem; background: var(--panel);
@@ -65,8 +72,7 @@
 <main>
   <h1>Pokémon Emerald — the soundtrack</h1>
   <p class="sub">the complete BGM, decoded from the pokeemerald source (MIDI + m4a voicegroups +
-  DirectSound samples), synthesized live in the browser by an AudioWorklet reimplementing the GBA m4a sound engine.
-  <a href="samples.html">compare the instrument samples →</a></p>
+  DirectSound samples), synthesized live in the browser by an AudioWorklet reimplementing the GBA m4a sound engine.</p>
   <div id="viz-wrap" hidden>
     <canvas id="viz"></canvas>
     <button id="viz-fs" title="fullscreen">⛶</button>
@@ -75,10 +81,7 @@
   <div id="songs"></div>
   <button id="stop">stop</button>
   <span id="status"></span>
-  <footer><code>play</code> uses the game's own 8-bit samples;
-  <code>sf2</code> swaps in the SC-88-quality Roland instruments + Charm drums
-  from the <em>GBApokemonTestLite</em> soundfont (same sequence, same engine —
-  first use fetches ~24&nbsp;MB). Songs loop like on the GBA (loop points come from the
+  <footer>Songs loop like on the GBA (loop points come from the
   <code>[</code>/<code>]</code> markers in the game's MIDI files).
   See <code>README.md</code> one directory up for how the engine works and how extraction was done.</footer>
 </main>

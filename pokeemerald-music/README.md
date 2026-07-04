@@ -8,13 +8,11 @@ emulator, no MP3s. Standalone; nothing here is wired into the SDL3 port.
 
 | Piece | What |
 |---|---|
-| `extract.py` | pokeemerald source → `web/data/` (song JSON + sample bank). Python stdlib only. |
-| `extract_sf2.py` | GBApokemonTestLite.sf2 → `web/data/sf2/` (the optional soundfont sample bank — see *The sf2 mode* below). Python stdlib only. |
+| `extract.py` | pokeemerald source → `web/data/` (song JSON + sample bank + categorized manifest). Python stdlib only. |
 | `web/m4a-worklet.js` | The engine: an `AudioWorkletProcessor` that synthesizes every sample per the m4a rules (vanilla, no build). Needs a secure context (https). |
-| `web/player.js` + `index.html` | Main-thread shim (loads data, drives the worklet) + tiny UI. Each song has a `play` (GBA samples) button; the 13 overworld themes also an `sf2` one. |
+| `web/player.js` + `index.html` | Main-thread shim (loads data, drives the worklet) + tiny UI: the soundtrack grouped into categories (towns, routes, battles, fanfares, …) with a filter box. |
 | `web/viz.js` | Live 16:9 canvas visualization of what the engine is playing (see below). |
-| `web/samples.html` + `samples.js` | The per-sample GBA-vs-sf2 A/B page (see below). |
-| `web/data/` | Committed song JSON + sample bank — self-contained, 13 town/route themes with proper GBA loop points. `data/sf2/` is the alternate bank (~24 MB, fetched only when first used). |
+| `web/data/` | Committed song JSON + sample bank — self-contained, all 204 tracks with proper GBA loop points. |
 | `render_previews.py` | Offline WAV renders of the same engine, used to A/B the worklet (needs numpy). |
 
 Listen: serve `web/` with any static server (`cd web && python3 -m http.server`)
@@ -171,52 +169,6 @@ keeps the whole signal path in code we own (no browser DSP black boxes).
   latency, and the default interactive-size buffer underruns when the
   listening machine is busy.
 
-## The sf2 mode
-
-Each song row has a second button, `sf2`: same sequence data, same engine,
-same envelopes/velocity/pan law — only the **PCM instruments and drums** are
-swapped for the ones in *GBApokemonTestLite.sf2* (SC-88-quality Roland
-instruments; drums from the Charm soundfont). The PSG squares/wave/noise are
-**not** substituted: they're already synthesized bit-faithfully, and sampled
-copies of square waves would be a downgrade. That makes original-vs-sf2 a pure
-samples A/B.
-
-**Preset matching is by sample *name*, not MIDI program.** The voicegroups'
-program numbers aren't reliable GM — Petalburg maps an accordion at program
-56, which is GM Trumpet, so program-based lookup played a trumpet there. The
-GBA sample names say what the instrument actually is (`sc88pro_accordion`,
-`sc88pro_flute`, …), so a curated name→GM table drives melodic matching, and
-drums go through the GM kit by MIDI key only when the name is western
-percussion the kits actually hold (snare/hihat/crash/conga/…). Anything that
-can't be matched with confidence — Japanese percussion, phonemes, one-off
-synth textures — is **not substituted**: a blind guess is worse than the
-original sample.
-
-`extract_sf2.py` (stdlib only) resolves every `(voice, key)` the overlay
-songs actually play against the sf2's preset/instrument zones and emits
-`web/data/sf2/`:
-
-- `samples.json` — 16-bit PCM, **only the ~120 samples the songs touch**
-  (~17 MB of the sf2's 440 MB), with three trims: looped samples cut at their
-  loop end; unlooped natural-decay samples cut at the most any song can make
-  audible (longest gate + m4a release ring-out, × pitch ratio); trailing
-  content below −54 dB dropped. Stereo zone pairs are mono-mixed (m4a is a
-  mono-source engine).
-- `overlays.json` — per song: replacement voices + a `{vid: [[keyLo, keyHi,
-  newVid], …]}` remap the player applies to note events at play time. Each
-  replacement voice carries `tune` (sf2 root key + cents, folded into the
-  pitch ratio) and `gain` — each sf2 sample is **loudness-matched to the GBA
-  sample it replaces** (sustained-RMS match, capped at the original's peak):
-  the m4a mix law treats sample amplitude as the reference and the GBA's
-  8-bit samples are normalized hot, while GM fonts carry headroom, so without
-  this the untouched PSG layer would sit too loud over the sf2 instruments.
-
-The sf2 bank is fetched lazily on the first `sf2` play (~27 MB as JSON); the
-original mode never pays for it. CPU cost is identical (~1.4% of a core either
-way — same engine, same voice count; only the sample arrays read differ).
-The full soundtrack plays with **original samples only**; the `sf2` A/B
-button exists for the 13 hand-titled overworld themes.
-
 ## The visualization (`web/viz.js`)
 
 While a song plays, a 16:9 canvas above the list draws the engine's state
@@ -238,22 +190,10 @@ scrolling waterfall (click ⛶ for fullscreen — sized for a YouTube frame):
   title round it out. Drawing is output-latency-compensated so it lines up
   with what you hear.
 
-### The sample A/B page (`web/samples.html`)
-
-One row per DirectSound sample the soundtrack uses (from
-`web/data/sf2/pairs.json`), with `gba` and `sf2` buttons that play one note
-through the same engine/envelope — the only difference heard is the sample.
-Rows without a confident same-instrument match show "no sf2". The **last**
-button clicked per sample is saved server-side by the serving shim
-(`POST api/pick`, list at `GET api/picks` — on the box:
-`~/pokeemerald-music/data/sample-picks.json`), as the input for a future
-best-of instrument set.
-
 ## Regenerating
 
 ```bash
-./extract.py --src <path to a pokeemerald checkout>   # -> web/data/ (13 songs)
-./extract_sf2.py --sf2 <GBApokemonTestLite.sf2>       # -> web/data/sf2/ (soundfont bank; run after extract.py)
+./extract.py --src <path to a pokeemerald checkout>   # -> web/data/ (all 204 tracks)
 ./render_previews.py --seconds 40 mus_littleroot ...  # -> previews/*.wav (needs numpy+scipy)
 ```
 
