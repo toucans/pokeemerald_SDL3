@@ -36,9 +36,12 @@ Two arrangements of the same music, from two sources:
   repo root; the working MIDIs live in gitignored `../midi-orig/`). Same
   arrangements, but 480 ticks/beat, unquantized velocities, GM programs —
   what Game Freak's composers played on their SC-88 Pro before mid2agb
-  squeezed it into the GBA. The samples come from the community
-  `GBApokemonTestLite.sf2` (SC-88Pro rips arranged in GM layout, also
-  gitignored), thinned to every 2nd key split, one-shots capped at 3 s, and
+  squeezed it into the GBA. The samples come from the
+  [Pokemon Emerald XQ++ SC-88Pro Soundfont](https://musical-artifacts.com/artifacts/1306)
+  (by stgiga, Zandro Reville, GASHISoft, MezmerKaizer et al. — our local
+  copy is its `GBApokemonTestLite.sf2`, Sep 2020, gitignored; the artifact
+  page has been updated since), thinned to every 2nd key split for melodic
+  multisamples only (kits keep every zone), one-shots capped at 3 s,
   downsampled to the SC-88's native 32 kHz.
 
 The engine's GM voice path applies the gain model this soundfont was authored
@@ -46,6 +49,31 @@ against: `initialAttenuation` at the EMU 0.4 convention plus GM square-law
 velocity/CC7 curves. (Rendering the bank with fluidsynth, which applies the
 full spec attenuation, puts instruments 10+ dB apart — that experiment is
 why the offline-render approach was dropped.)
+
+### What the originals' sounds actually are
+
+The XQ++ soundfont is a deliberate hybrid, and it helps to know which class
+each sound falls in (verified against the sf2's own preset/sample data; the
+soundtrack uses 72 of its programs):
+
+| Class | Programs (by soundtrack note count) | What they are |
+|---|---|---|
+| **Roland SC-88Pro** (HiDef-derived rips) | ~55 programs, all named `000:NNN <SC-88 patch>`: Strings, Nylon Gt, Trumpet, Piano 1/2/3, Fingered/Fretless/Slap/Synth Bass, Timpani, Harp, Organ 2, French Horns, Flute, E.Piano 1/2, Xylophone, Tuba, Harpsichord, Pizzicato, Tubular-bell, Glockenspiel, Oboe, Pan Flute, … | **Exactly what the composers played**: the very patches their SC-88 Pro produced, at full sample quality. The game's own 8-bit samples (pret's `sc88pro_*`) are crushed versions of these same instruments. |
+| **GB-style waves** (from GXSCC, chosen to match RSE/FRLG's wavetables, at double bit depth) | The PSG-destined leads/pads: Lead 2 "Sawtooth" & Lead 7 & Pads 2/5 (all actually **25% duty squares**), Lead 4 "Chiff" (**12.5% square**), Leads 3/5/8, Pads 1/6, "8-Bit Bass" (single-cycle wavetables) | **The GBA's voice, on purpose, cleaner than hardware.** On the SC-88 these program numbers are analog-synth patches (e.g. 81 = Saw Wave); in the game they became PSG squares/wavetable. The sf2 sides with the game's identity — so these parts sound like the GBA's chip channels, not like the composers' monitoring synth. |
+| **Noise** | "Gunshot" (127) and "Applause" (126): per-key generated noise samples | Same idea for the GBA noise channel: the arrangements use these program slots as noise percussion (Route 104's percussion layer is prog 127). Not the SC-88's actual Gun Shot/Applause effects. |
+| **Drums** | "Power Kit" (drum channel, 134 zones) | From the **Charm soundfont** (Strix Soundfont Team), re-arranged — good GM drums, but *not* SC-88Pro rips: the one part of the kit that is only *similar* to what the composers heard. A few kit slots are square-wave entries (GB-style toms). |
+| **ROM sample** | Lead 6 "Voice" (85) | Literally a sample at the GBA's 13379 Hz DirectSound rate — ripped from the game itself. |
+
+So: **exact composer intent** for the orchestral/melodic core (the SC-88Pro
+patches, which is most notes), **deliberately GBA-flavored** for everything
+that became PSG on the cartridge (squares/wavetable/noise — arguably the
+*final* intent), and **approximated** for drums (Charm kit) plus one square
+lead nuance: the sf2 fills prog 80 with the SC-88's *P5 Square* variation
+patch (bank 16) rather than the capital *Square Wave* the MIDIs literally
+address — a curator's choice, still an SC-88 sound.
+
+Known gaps: `mus_route111` has no MIDI in the leak (no original version at
+all), and `mus_dummy` is silent by design. Everything else is covered.
 
 ---
 
