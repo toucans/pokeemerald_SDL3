@@ -14,6 +14,7 @@ let ctx = null;
 let node = null;          // the AudioWorkletNode hosting the engine
 let playingBtn = null;
 let onPlaying = null;     // one-shot: viz start once the worklet confirms
+let origAudio = null;     // <audio> for the original-MIDI comparison renders
 
 function setStatus(msg) {
   const el = document.getElementById("status");
@@ -23,6 +24,10 @@ function setStatus(msg) {
 function clearPlaying() {
   document.querySelectorAll("button.playing").forEach((b) => b.classList.remove("playing"));
   playingBtn = null;
+}
+
+function stopOriginal() {
+  if (origAudio) { origAudio.pause(); origAudio.src = ""; origAudio = null; }
 }
 
 async function initAudio() {
@@ -54,7 +59,7 @@ async function initAudio() {
 
 async function main() {
   const list = document.getElementById("songs");
-  let songs;
+  let songs, compare = {};
   try {
     songs = await initAudio();
   } catch (err) {
@@ -63,11 +68,19 @@ async function main() {
     setStatus("audio error: " + (err && err.message ? err.message : err));
     return;
   }
+  // local-only A/B renders of the composers' original MIDIs (gitignored;
+  // tools/render_compare.py). Absent on a fresh checkout — buttons just
+  // don't appear.
+  try {
+    const r = await fetch("compare/index.json");
+    if (r.ok) compare = await r.json();
+  } catch (_) { /* no comparison renders present */ }
 
   const play = async (btn, entry) => {
     try {
       const wasPlaying = btn === playingBtn;
       if (ctx.state === "suspended") await ctx.resume();
+      stopOriginal();
       node.port.postMessage({ type: "stop" });
       clearPlaying();
       if (wasPlaying) { M4AViz.stop(); return; }
@@ -80,6 +93,21 @@ async function main() {
       console.error(err);
       setStatus("audio error: " + (err && err.message ? err.message : err));
     }
+  };
+
+  const playOriginal = (btn, entry) => {
+    const wasPlaying = btn === playingBtn;
+    stopOriginal();
+    node.port.postMessage({ type: "stop" });
+    clearPlaying();
+    M4AViz.stop();
+    if (wasPlaying) return;
+    origAudio = new Audio(compare[entry.name].file);
+    origAudio.play().catch((err) => setStatus("audio error: " + err.message));
+    origAudio.onended = clearPlaying;
+    btn.classList.add("playing");
+    playingBtn = btn;
+    setStatus("");
   };
 
   // one section per category, in pak (= category) order
@@ -98,12 +126,14 @@ async function main() {
     }
     const row = document.createElement("div");
     row.className = "song";
+    const hasOrig = !!compare[entry.name];
     row.innerHTML = `<span class="title">${entry.title}</span>
       <span class="file">${entry.name}</span>
-      <span class="btns"><button>play</button></span>`;
+      <span class="btns"><button>play</button>${hasOrig ? "<button>original</button>" : ""}</span>`;
     list.appendChild(row);
-    const btn = row.querySelector("button");
+    const [btn, origBtn] = row.querySelectorAll("button");
     btn.onclick = () => play(btn, entry);
+    if (origBtn) origBtn.onclick = () => playOriginal(origBtn, entry);
     const r = { row, text: (entry.title + " " + entry.name).toLowerCase() };
     rows.push(r);
     section.rows.push(r);
@@ -122,6 +152,7 @@ async function main() {
 
   document.getElementById("stop").onclick = () => {
     if (node) node.port.postMessage({ type: "stop" });
+    stopOriginal();
     clearPlaying();
     M4AViz.stop();
   };

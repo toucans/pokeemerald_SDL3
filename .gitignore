@@ -14,5 +14,8 @@ vendor/
 pokeemerald-music/web/data/
 pokeemerald-music/__pycache__/
 
+# local-only comparison renders of the leaked original MIDIs (never commit)
+pokeemerald-music/web/compare/
+
 # OS junk
 .DS_Store
