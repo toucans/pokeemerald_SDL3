@@ -166,6 +166,7 @@ class M4AProcessor extends AudioWorkletProcessor {
     this.bank = null;
     this.song = null;
     this.playing = false;
+    this.viz = false;          // when on, post a per-frame voice snapshot
     this.port.onmessage = (e) => this.onMessage(e.data);
   }
 
@@ -179,6 +180,8 @@ class M4AProcessor extends AudioWorkletProcessor {
     } else if (msg.type === 'stop') {
       this.playing = false;
       this.song = null;
+    } else if (msg.type === 'viz') {
+      this.viz = !!msg.on;
     }
   }
 
@@ -223,12 +226,13 @@ class M4AProcessor extends AudioWorkletProcessor {
   frameTick() {
     const now = this.frame * FRAME;
     let anyAlive = false;
+    let wrapped = false;
 
     for (const tk of this.tracks) {
       // fire all events whose absolute time has arrived
       while (!tk.done) {
         if (tk.i >= tk.ev.length) {
-          if (this.looping && tk.hasLoop) { tk.i = 0; tk.pass++; continue; }
+          if (this.looping && tk.hasLoop) { tk.i = 0; tk.pass++; wrapped = true; continue; }
           tk.done = true; break;
         }
         const e = tk.ev[tk.i];
@@ -254,6 +258,22 @@ class M4AProcessor extends AudioWorkletProcessor {
       if (allDone) { this.silentFrames++; if (this.silentFrames > 30) this.endSong(); }
       else this.silentFrames = 0;
     }
+
+    // visualization snapshot: [vid, pitch, level, pan] per live voice.
+    // Control-plane traffic (~60/s), not part of the per-sample render path.
+    if (this.viz) {
+      const snap = [];
+      for (const tk of this.tracks) {
+        for (const v of tk.voices) {
+          const g = v.glHeld + v.grHeld;
+          const level = v.t === 'pcm' ? v.envHeld * g * 0.5
+                                      : v.envHeld * g / (2 * PSG_FULL);
+          snap.push(v.vid, v.visPitch,
+                    Math.min(1, level), g > 0 ? (v.grHeld - v.glHeld) / g : 0);
+        }
+      }
+      this.port.postMessage({ type: 'viz', t: now, wrapped, v: snap });
+    }
     this.frame++;
   }
 
@@ -278,11 +298,11 @@ class M4AProcessor extends AudioWorkletProcessor {
     const playKey = voice.rhythm ? voice.base : key;
     const rp = voice.pan !== undefined ? voice.pan : 0;
     const v = {
-      voice, playKey, rp, vel,
+      voice, playKey, rp, vel, vid,
       born: this.frame,                          // frame index at note-on
       phase: 0,                                  // oscillator/sample phase
       env: null, envHeld: 0, glHeld: 0, grHeld: 0, incr: 0,
-      t: voice.t, dead: false,
+      t: voice.t, dead: false, visPitch: playKey,
     };
 
     if (voice.t === 'pcm') {
@@ -328,6 +348,7 @@ class M4AProcessor extends AudioWorkletProcessor {
       vibSemi = (tk.mod * 16 / 256) * tri;
     }
     const bendSemi = tk.bend * tk.bendRange / 64;
+    v.visPitch = v.playKey + bendSemi + vibSemi;   // sounding pitch, for the viz
 
     if (v.t === 'pcm') {
       const e = dsEnv(v, dt);

@@ -28,6 +28,19 @@
   .title { flex: 1; }
   .file { color: var(--dim); font-size: .75rem; font-family: ui-monospace, monospace; }
   .btns { display: flex; gap: .4rem; }
+  #viz-wrap {
+    position: relative; margin: 0 0 1rem;
+    border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+    background: #0c1017;
+  }
+  #viz-wrap canvas { display: block; width: 100%; }
+  #viz-wrap:fullscreen { border: none; border-radius: 0; display: flex; align-items: center; }
+  #viz-wrap:fullscreen canvas { width: 100%; }
+  #viz-fs {
+    position: absolute; top: .5rem; right: .5rem; opacity: .35;
+    border-color: transparent; font-size: 1rem; padding: .1rem .4rem;
+  }
+  #viz-fs:hover { opacity: 1; }
   #search {
     width: 100%; margin: 0 0 .8rem; padding: .45rem .8rem;
     background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
@@ -54,6 +67,10 @@
   <p class="sub">the complete BGM, decoded from the pokeemerald source (MIDI + m4a voicegroups +
   DirectSound samples), synthesized live in the browser by an AudioWorklet reimplementing the GBA m4a sound engine.
   <a href="samples.html">compare the instrument samples →</a></p>
+  <div id="viz-wrap" hidden>
+    <canvas id="viz"></canvas>
+    <button id="viz-fs" title="fullscreen">⛶</button>
+  </div>
   <input id="search" type="search" placeholder="filter songs…" autocomplete="off">
   <div id="songs"></div>
   <button id="stop">stop</button>
@@ -65,6 +82,7 @@
   <code>[</code>/<code>]</code> markers in the game's MIDI files).
   See <code>README.md</code> one directory up for how the engine works and how extraction was done.</footer>
 </main>
+<script src="viz.js"></script>
 <script src="player.js"></script>
 </body>
 </html>

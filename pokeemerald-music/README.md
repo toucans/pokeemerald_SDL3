@@ -11,7 +11,9 @@ emulator, no MP3s. Standalone; nothing here is wired into the SDL3 port.
 | `extract.py` | pokeemerald source → `web/data/` (song JSON + sample bank). Python stdlib only. |
 | `extract_sf2.py` | GBApokemonTestLite.sf2 → `web/data/sf2/` (the optional soundfont sample bank — see *The sf2 mode* below). Python stdlib only. |
 | `web/m4a-worklet.js` | The engine: an `AudioWorkletProcessor` that synthesizes every sample per the m4a rules (vanilla, no build). Needs a secure context (https). |
-| `web/player.js` + `index.html` | Main-thread shim (loads data, drives the worklet) + tiny UI. Each song has a `play` (GBA samples) and an `sf2` (soundfont samples) button. |
+| `web/player.js` + `index.html` | Main-thread shim (loads data, drives the worklet) + tiny UI. Each song has a `play` (GBA samples) button; the 13 overworld themes also an `sf2` one. |
+| `web/viz.js` | Live 16:9 canvas visualization of what the engine is playing (see below). |
+| `web/samples.html` + `samples.js` | The per-sample GBA-vs-sf2 A/B page (see below). |
 | `web/data/` | Committed song JSON + sample bank — self-contained, 13 town/route themes with proper GBA loop points. `data/sf2/` is the alternate bank (~24 MB, fetched only when first used). |
 | `render_previews.py` | Offline WAV renders of the same engine, used to A/B the worklet (needs numpy). |
 
@@ -214,6 +216,27 @@ original mode never pays for it. CPU cost is identical (~1.4% of a core either
 way — same engine, same voice count; only the sample arrays read differ).
 The full soundtrack plays with **original samples only**; the `sf2` A/B
 button exists for the 13 hand-titled overworld themes.
+
+## The visualization (`web/viz.js`)
+
+While a song plays, a 16:9 canvas above the list draws the engine's state
+live — the worklet posts one snapshot per GBA frame (59.7275 Hz) with every
+voice's vid, *sounding* pitch, envelope level and pan, and `viz.js` renders a
+scrolling waterfall (click ⛶ for fullscreen — sized for a YouTube frame):
+
+- one hue per PCM instrument; PSG gets fixed neons (squares cyan, wavetable
+  violet, noise a jittered gray speckle) — legend chips name what's playing
+- stroke thickness/brightness = envelope, so attacks bloom, decays taper,
+  and **pseudo-echo** reads as a long dim streak that cuts off dead
+- **vibrato and pitch bends draw as real wobbles** (the snapshot carries the
+  sounding pitch, not the note key)
+- each stroke's upper half is the right channel, lower half the left — pan
+  and the PSG's hard 3-way switch are visible directly
+- PCM strokes trail a faint ghost at the engine's real **reverb** delay
+  (~117 ms, mono two-tap echo; PSG correctly has none)
+- a dashed gold line marks each `[`/`]` **loop wrap**; octave grid + clock +
+  title round it out. Drawing is output-latency-compensated so it lines up
+  with what you hear.
 
 ### The sample A/B page (`web/samples.html`)
 

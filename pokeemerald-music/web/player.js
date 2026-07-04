@@ -61,8 +61,11 @@ async function ensureAudio() {
     node = new AudioWorkletNode(ctx, "m4a-processor", { outputChannelCount: [2] });
     node.connect(ctx.destination);
     node.port.onmessage = (e) => {
-      if (e.data && e.data.type === "ended") clearPlaying();
+      if (!e.data) return;
+      if (e.data.type === "ended") { clearPlaying(); M4AViz.stop(); }
+      else if (e.data.type === "viz") M4AViz.frame(e.data);
     };
+    node.port.postMessage({ type: "viz", on: true });
   }
   if (ctx.state === "suspended") await ctx.resume();
   if (!bankSent) {
@@ -136,7 +139,7 @@ async function main() {
       await ensureAudio();
       node.port.postMessage({ type: "stop" });
       clearPlaying();
-      if (wasPlaying) return;
+      if (wasPlaying) { M4AViz.stop(); return; }
       if (mode === "sf2") {
         setStatus("loading soundfont…");
         await ensureSf2();
@@ -149,6 +152,7 @@ async function main() {
                                         : songCache[entry.file];
       }
       node.port.postMessage({ type: "play", song: songCache[key] });
+      M4AViz.start({ song: songCache[key], title: entry.title, mode, actx: ctx });
       btn.classList.add("playing");
       playingBtn = btn;
       setStatus("");
@@ -187,7 +191,9 @@ async function main() {
   document.getElementById("stop").onclick = () => {
     if (node) node.port.postMessage({ type: "stop" });
     clearPlaying();
+    M4AViz.stop();
   };
 }
 
+M4AViz.attach(document.getElementById("viz-wrap"));
 main();
