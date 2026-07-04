@@ -3,7 +3,7 @@
  *
  * THE music engine for both the game and the pokeemerald-music site (which
  * runs it compiled to wasm inside an AudioWorklet). Consumes
- * pokeemerald-music/web/music.pak — see pokeemerald-music/README.md for the
+ * docs/music.pak — see pokeemerald-music/README.md for the
  * engine facts and tools/pack_music.py for the pak format.
  *
  * Pure synthesis, no device I/O: audio.c (game) or the worklet (site) call

@@ -34,11 +34,11 @@ static bool haveSC88;
 static char lastName[64];
 
 void audio_init(void) {
-    if (!m4a_init("pokeemerald-music/web/music.pak", RATE)) {
-        SDL_Log("audio: pokeemerald-music/web/music.pak missing - no music");
+    if (!m4a_init("docs/music.pak", RATE)) {
+        SDL_Log("audio: docs/music.pak missing - no music");
         return;
     }
-    haveSC88 = m4a_sc88_init("pokeemerald-music/web/music-sc88.pak");
+    haveSC88 = m4a_sc88_init("docs/music-sc88.pak");
     if (!haveSC88)
         SDL_Log("audio: music-sc88.pak missing - SC-88 soundtrack disabled");
     SDL_AudioSpec spec = { SDL_AUDIO_F32, 2, RATE };

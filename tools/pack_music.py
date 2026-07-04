@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""pack_music.py — extracted music JSON -> pokeemerald-music/web/music.pak.
+"""pack_music.py — extracted music JSON -> docs/music.pak.
 
 music.pak is THE music format: the game (src/m4a.c) loads it directly and the
 pokeemerald-music site plays it through the same engine compiled to wasm. The
@@ -36,8 +36,8 @@ import struct
 import sys
 from pathlib import Path
 
-DATA = Path(__file__).resolve().parent.parent / "pokeemerald-music" / "web" / "data"
-OUT = Path(__file__).resolve().parent.parent / "pokeemerald-music" / "web" / "music.pak"
+DATA = Path(__file__).resolve().parent.parent / "docs" / "data"
+OUT = Path(__file__).resolve().parent.parent / "docs" / "music.pak"
 
 VOICE_T = {"pcm": 0, "sq": 1, "wave": 2, "noise": 3}
 EVENT_T = {"n": 0, "v": 1, "p": 2, "b": 3, "br": 4, "m": 5, "ls": 6, "ev": 7, "el": 8}

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Render preview WAVs from the extracted song JSON.
 
-Mirrors web/player.js (same m4a engine model taken from the decomp source) so
+Mirrors ../docs/player.js (same m4a engine model taken from the decomp source) so
 the WAVs in previews/ are honest previews of what the WebAudio page plays.
 Needs numpy; everything else is stdlib.
 
@@ -20,7 +20,7 @@ FRAME = 1 / 59.7275
 PSG_FULL = 15 * 8 / 1024     # one full PSG channel vs full-scale PCM channel
 MASTER = 0.45
 ROOT = Path(__file__).parent
-DATA = ROOT / "web" / "data"
+DATA = ROOT.parent / "docs" / "data"
 
 
 # ------------------------------------------------------------------ helpers

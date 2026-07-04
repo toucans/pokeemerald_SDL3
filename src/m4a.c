@@ -7,7 +7,7 @@
  * sequencer and envelopes tick once per GBA frame (59.7275 Hz); audio is
  * synthesized per output sample.
  *
- * Data: pokeemerald-music/web/music.pak (the GBA soundtrack,
+ * Data: docs/music.pak (the GBA soundtrack,
  * tools/pack_music.py) and optionally music-sc88.pak (the SC-88 soundtrack,
  * tools/extract_sc88.py); payloads are read in place from the file buffer.
  */

@@ -11,7 +11,7 @@ requested song, resolves the full chain the GBA m4a ("MP2K/Sappy") engine uses:
       -> DirectSound samples (sound/direct_sound_samples/*.aif, 8-bit signed PCM
          with loop markers) and GB PSG voices (square 1/2, wave, noise)
 
-Output (web/data/):
+Output (../docs/data/):
     songs/<name>.json  - flat per-track event lists in seconds + resolved voices
     samples.json       - base64 8-bit signed PCM, rate + loop points
     manifest.json      - song list
@@ -542,7 +542,7 @@ def parse_midi_cfg(src):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--src", required=True, type=Path, help="pokeemerald source root")
-    ap.add_argument("--out", type=Path, default=Path(__file__).parent / "web" / "data")
+    ap.add_argument("--out", type=Path, default=Path(__file__).resolve().parent.parent / "docs" / "data")
     ap.add_argument("songs", nargs="*", default=None)
     args = ap.parse_args()
 

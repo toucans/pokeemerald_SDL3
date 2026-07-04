@@ -10,11 +10,11 @@ poke.wasm
 poke.data
 
 # local-only fluidsynth comparison renders (never commit)
-pokeemerald-music/web/compare/
+docs/compare/
 
 # regenerable caches (see README: sources of truth)
 vendor/
-pokeemerald-music/web/data/
+docs/data/
 __pycache__/
 
 # leaked original sound source + SC-88Pro soundfont: local tooling inputs only

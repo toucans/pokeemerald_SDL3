@@ -2,26 +2,27 @@
 
 Pokémon Emerald's **complete soundtrack** (204 tracks — every `mus_*` in the
 game, overworld to battles to fanfares), decoded straight from the
-`pokeemerald` decompilation source into **`web/music.pak`** — the single
+`pokeemerald` decompilation source into **`../docs/music.pak`** — the single
 committed music format. The game (`src/m4a.c`) loads it directly, and this
 site plays it through the **same C engine compiled to wasm** inside an
 AudioWorklet — no ROM, no emulator, no MP3s, one engine everywhere.
 
 | Piece | What |
 |---|---|
-| `web/music.pak` | **The GBA soundtrack.** All 204 tracks as shipped: sequences, voices, 8-bit samples, loop points, titles/categories. Committed; format documented in `tools/pack_music.py`. |
-| `web/music-sc88.pak` | **The SC-88 soundtrack**: the composers' 480-tpqn MIDIs + the SC-88Pro samples they were written for (trimmed to what's used). Committed; format in `tools/extract_sc88.py`. |
-| `web/m4a.wasm` | The engine: `src/m4a.c` built standalone by `tools/build-m4a-wasm.sh` (committed; ~32 KB). Plays both paks. |
-| `web/m4a-worklet.js` | Thin `AudioWorkletProcessor` that hosts the wasm: feeds it the paks, pulls rendered samples + viz snapshots. No synthesis logic in JS. |
-| `web/player.js` + `index.html` | Main-thread shim + tiny UI: every song has `GBA` (game version) and `SC-88` (engine GM synth) buttons, plus `fluidsynth` (offline opus render from `tools/render_compare.py`, local-only/gitignored) when present — for A/B'ing the engine against a second synth. The SC-88 pak is fetched lazily on first use. |
-| `web/viz.js` | Live 16:9 canvas visualization of what the engine is playing (see below). |
-| `extract.py` | pokeemerald source → `web/data/` JSON (regeneration-time intermediate, gitignored). Python stdlib only. |
-| `../tools/pack_music.py` | `web/data/` JSON → `web/music.pak`. |
-| `../tools/extract_sc88.py` | `../midi-sc88/` + the sf2 → `web/music-sc88.pak`. |
+| `../docs/music.pak` | **The GBA soundtrack.** All 204 tracks as shipped: sequences, voices, 8-bit samples, loop points, titles/categories. Committed; format documented in `tools/pack_music.py`. |
+| `../docs/music-sc88.pak` | **The SC-88 soundtrack**: the composers' 480-tpqn MIDIs + the SC-88Pro samples they were written for (trimmed to what's used). Committed; format in `tools/extract_sc88.py`. |
+| `../docs/m4a.wasm` | The engine: `src/m4a.c` built standalone by `tools/build-m4a-wasm.sh` (committed; ~32 KB). Plays both paks. |
+| `../docs/m4a-worklet.js` | Thin `AudioWorkletProcessor` that hosts the wasm: feeds it the paks, pulls rendered samples + viz snapshots. No synthesis logic in JS. |
+| `../docs/player.js` + `index.html` | Main-thread shim + tiny UI: every song has `GBA` (game version) and `SC-88` (engine GM synth) buttons, plus `fluidsynth` (offline opus render from `tools/render_compare.py`, local-only/gitignored) when present — for A/B'ing the engine against a second synth. The SC-88 pak is fetched lazily on first use. |
+| `../docs/viz.js` | Live 16:9 canvas visualization of what the engine is playing (see below). |
+| `extract.py` | pokeemerald source → `../docs/data/` JSON (regeneration-time intermediate, gitignored). Python stdlib only. |
+| `../tools/pack_music.py` | `../docs/data/` JSON → `../docs/music.pak`. |
+| `../tools/extract_sc88.py` | `../midi-sc88/` + the sf2 → `../docs/music-sc88.pak`. |
 | `render_previews.py` | Offline WAV renders from the JSON intermediate, for A/B checks (needs numpy). |
 
-Listen: serve `web/` with any static server (`cd web && python3 -m http.server`)
-and open the page.
+Listen: serve `../docs/` with any static server (`cd ../docs && python3 -m http.server`)
+and open the page. (`docs/` is the repo's GitHub Pages folder — the same page
+published as the site root.)
 
 ## Where the notes come from (provenance)
 
@@ -80,7 +81,7 @@ all), and `mus_dummy` is silent by design. Everything else is covered.
 # How the music works & how it was extracted
 
 Findings from reading the `pokeemerald` decompilation source tree.
-`extract.py` turns that source into the JSON/sample bank that `web/` plays with WebAudio.
+`extract.py` turns that source into the JSON/sample bank that `../docs/` plays with WebAudio.
 
 ## The sound engine (m4a / "MP2K" / "Sappy")
 
@@ -172,8 +173,8 @@ No ROM and no emulation needed — everything is in the source tree:
    boilerplate INST chunk claiming a sustain loop — a sample is only really looped
    if the MARK chunk with the loop markers exists (that's what `aif2pcm` keys off).
    Trust the INST alone and every one-shot drum machine-guns at ~10 Hz.
-5. Emit `web/data/songs/<name>.json` (per-track event lists in seconds + resolved
-   voices) and one shared `web/data/samples.json` (base64 PCM + rate + loop points).
+5. Emit `../docs/data/songs/<name>.json` (per-track event lists in seconds + resolved
+   voices) and one shared `../docs/data/samples.json` (base64 PCM + rate + loop points).
    13 overworld songs come to ~36 samples / 343 KiB of PCM — the entire overworld
    soundtrack's sample memory.
 
@@ -181,7 +182,7 @@ No ROM and no emulation needed — everything is in the source tree:
 same envelope math; an FFT of the render was cross-checked against the MIDI — the
 pitch classes sounding in each window match the score (8/8 windows for Littleroot).
 
-## Playback (src/m4a.c as web/m4a.wasm, hosted by web/m4a-worklet.js)
+## Playback (src/m4a.c as ../docs/m4a.wasm, hosted by ../docs/m4a-worklet.js)
 
 The engine is **`src/m4a.c` in the game repo** — one per-sample mixing loop
 that follows the decomp's rules exactly, with no browser DSP between it and
@@ -195,11 +196,11 @@ pseudo-echo and the `[`/`]` loop all follow §"engine behaviours" above. The
 PCM sub-mix gets the engine's real reverb (mono two-tap feedback echo at
 `-R`/128); PSG stays dry.
 
-- **`web/m4a.wasm`** — that C file compiled standalone (no emscripten JS
+- **`../docs/m4a.wasm`** — that C file compiled standalone (no emscripten JS
   runtime); `tools/build-m4a-wasm.sh` rebuilds it after engine changes.
-- **`web/m4a-worklet.js`** — hosts the wasm in an `AudioWorkletProcessor`:
+- **`../docs/m4a-worklet.js`** — hosts the wasm in an `AudioWorkletProcessor`:
   passes music.pak into wasm memory, copies rendered blocks out, forwards the
-  engine's per-frame viz snapshots. **`web/player.js`** is UI + fetch only.
+  engine's per-frame viz snapshots. **`../docs/player.js`** is UI + fetch only.
 - **Secure context required.** `AudioWorklet` is only exposed on
   https/localhost — on this box's dashboard that's the local mkcert cert on
   the nginx front door (`https://10.7.0.1/`). Over plain http play surfaces
@@ -222,7 +223,7 @@ PCM sub-mix gets the engine's real reverb (mono two-tap feedback echo at
   `latencyHint: "playback"` — a music player wants a big buffer, not low
   latency.
 
-## The visualization (`web/viz.js`)
+## The visualization (`../docs/viz.js`)
 
 While a song plays, a 16:9 canvas above the list draws the engine's state
 live — the worklet posts one snapshot per GBA frame (59.7275 Hz) with every
@@ -246,18 +247,18 @@ scrolling waterfall (click ⛶ for fullscreen — sized for a YouTube frame):
 ## Regenerating
 
 Only needed when re-extracting from a pret checkout or after changing the
-engine — day to day, `web/music.pak`, `web/music-sc88.pak` and `web/m4a.wasm`
+engine — day to day, `../docs/music.pak`, `../docs/music-sc88.pak` and `../docs/m4a.wasm`
 are committed and ready to go (the game build has **no music build step**).
 
 ```bash
-./extract.py --src ~/pokeemerald          # -> web/data/ JSON (gitignored intermediate)
-../tools/pack_music.py                    # -> web/music.pak
-../tools/extract_sc88.py                  # -> web/music-sc88.pak (needs ../midi-sc88/
+./extract.py --src ~/pokeemerald          # -> ../docs/data/ JSON (gitignored intermediate)
+../tools/pack_music.py                    # -> ../docs/music.pak
+../tools/extract_sc88.py                  # -> ../docs/music-sc88.pak (needs ../midi-sc88/
                                           #    + ../GBApokemonTestLite.sf2; scipy to downsample)
-../tools/build-m4a-wasm.sh                # -> web/m4a.wasm (after src/m4a.c changes)
+../tools/build-m4a-wasm.sh                # -> ../docs/m4a.wasm (after src/m4a.c changes)
 ./render_previews.py --seconds 40 mus_littleroot ...  # optional WAV checks (numpy)
 ```
 
-To listen locally, serve `web/` with any static file server
-(`python3 -m http.server` in `web/`) and open the page — `fetch()` needs
+To listen locally, serve `../docs/` with any static file server
+(`python3 -m http.server` in `../docs/`) and open the page — `fetch()` needs
 http, not file://.

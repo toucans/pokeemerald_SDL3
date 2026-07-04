@@ -8,13 +8,13 @@ here.
 The rules that most often prevent wasted work:
 
 - **Music is done.** Both soundtracks are committed in
-  `pokeemerald-music/web/` (`music.pak` = the GBA soundtrack, `music-sc88.pak`
+  `docs/` (`music.pak` = the GBA soundtrack, `music-sc88.pak`
   = the SC-88 soundtrack from the composers' MIDIs); the game build has no
   music step. Never extract or
   re-derive music from pret/pokeemerald or the ROM; the leak 7z, midi-sc88/
   and the sf2 in the repo root are gitignored regeneration inputs — never
   commit them. `src/m4a.c` is the one engine (game + site wasm); after
-  changing it, re-verify with `tools/m4a_dump.c` and rebuild `web/m4a.wasm`
+  changing it, re-verify with `tools/m4a_dump.c` and rebuild `docs/m4a.wasm`
   with `tools/build-m4a-wasm.sh` (see README "How the music works").
 - **pret/pokeemerald answers behavior questions.** Reference clone at
   `~/pokeemerald`. Don't guess how Emerald does something — read it.

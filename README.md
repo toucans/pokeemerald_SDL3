@@ -29,13 +29,13 @@ first — never introduce a second copy of something listed here.
 | What | Source of truth |
 |---|---|
 | Game data & behavior (maps, graphics, names, mechanics) | [pret/pokeemerald](https://github.com/pret/pokeemerald), the Emerald decompilation. A reference clone lives at `~/pokeemerald` (not part of this repo). When in doubt about how Emerald does something, read it there. |
-| **All music** | `pokeemerald-music/web/music.pak` (the **GBA soundtrack**: game arrangement, 204 tracks) + `music-sc88.pak` (the **SC-88 soundtrack**: the composers' MIDIs with SC-88Pro samples, 210 tracks) — committed, ready to go, no build step. **Never extract music from pret/pokeemerald or from the ROM**; see `pokeemerald-music/README.md` for provenance and regeneration (the leak 7z and soundfont stay gitignored in the repo root). |
+| **All music** | `docs/music.pak` (the **GBA soundtrack**: game arrangement, 204 tracks) + `music-sc88.pak` (the **SC-88 soundtrack**: the composers' MIDIs with SC-88Pro samples, 210 tracks) — committed, ready to go, no build step. **Never extract music from pret/pokeemerald or from the ROM**; see `pokeemerald-music/README.md` for provenance and regeneration (the leak 7z and soundfont stay gitignored in the repo root). |
 | Music engine behavior | `src/m4a.c` **is** the engine, everywhere: the game links it, and the pokeemerald-music site runs the same file compiled to wasm (`tools/build-m4a-wasm.sh`). After changing it, rebuild the wasm and re-verify (below). |
 | Remastered-mp3 comparison material | `music-remaster-mp3/` — the fan "Emerald Remastered" album from [khinsider](https://downloads.khinsider.com/game-soundtracks/album/pokemon-emerald-remastered-complete-original-soundtrack). Kept **only** to A/B against our renders; the game never uses it. |
 | Tile/map data the game currently draws | Extracted **from the ROM** (`p.gba`) at runtime plus generated tables in `pokeemerald/` (this repo's dir, *not* pret). This is legacy — see roadmap: it should move to data generated from pret/pokeemerald. |
 
 Regenerable caches (never edit, never commit): `vendor/`, build outputs,
-`pokeemerald-music/web/data/` (re-extraction intermediate).
+`docs/data/` (re-extraction intermediate).
 
 ## How the music works
 
@@ -50,12 +50,12 @@ The game and the site play the identical committed files through the identical
 C engine:
 
 ```
-pokeemerald-music/web/music.pak        the GBA soundtrack (m4a synthesis)
-pokeemerald-music/web/music-sc88.pak   the SC-88 soundtrack (GM/SC-88Pro
+docs/music.pak        the GBA soundtrack (m4a synthesis)
+docs/music-sc88.pak   the SC-88 soundtrack (GM/SC-88Pro
         │                              synthesis; O key in game, "SC-88"
         │                              buttons on the site, lazily fetched)
         ├── src/m4a.c + src/audio.c    game: one SDL3 audio stream, native + web
-        └── web/m4a.wasm               site: same m4a.c, standalone wasm in an
+        └── docs/m4a.wasm              site: same m4a.c, standalone wasm in an
                                        AudioWorklet (bit-identical output)
 ```
 
@@ -80,7 +80,8 @@ level (diff RMS ≈ 2e-5, correlation ≈ 1.0). Then rerun
 main.c, src/           game: loop, overworld, player, camera, fly map, audio
 include/               shared basic types
 pokeemerald/           generated map/tileset/layout tables (committed C data)
-pokeemerald-music/     soundtrack data + reference JS engine (own README)
+pokeemerald-music/     soundtrack extraction tooling (own README)
+docs/                  the music player site (GitHub Pages root; paks + wasm)
 music-remaster-mp3/    khinsider mp3s, comparison only
 tools/                 pack_music.py, m4a_dump.c, build-sdl3-wasm.sh
 graphics_extractor     legacy macOS binary that generated pokeemerald/*.c;

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """extract_sc88.py — leaked SC-88 Emerald MIDIs + SC-88Pro soundfont
--> pokeemerald-music/web/music-sc88.pak.
+-> docs/music-sc88.pak.
 
 The SC-88 MIDIs in midi-sc88/ are the composers' 480-tpqn sources (GM programs,
 unquantized velocities) that mid2agb consumed to build the game arrangement.
@@ -36,7 +36,7 @@ from collections import defaultdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-WEB = ROOT / "pokeemerald-music" / "web"
+WEB = ROOT / "docs"
 
 # ---------------------------------------------------------------- SMF parsing
 

@@ -3,7 +3,7 @@
 
 Renders each original MIDI (from the leaked Emerald sound source; local only,
 never committed) through the SC-88Pro soundfont with fluidsynth, peak-
-normalizes, encodes to opus, and writes pokeemerald-music/web/compare/
+normalizes, encodes to opus, and writes docs/compare/
 (gitignored) plus its index.json. The site shows an extra "original" button
 for every song that has a render, next to the engine's live playback.
 
@@ -30,7 +30,7 @@ import tempfile
 import wave
 from pathlib import Path
 
-WEB = Path(__file__).resolve().parent.parent / "pokeemerald-music" / "web"
+WEB = Path(__file__).resolve().parent.parent / "docs"
 OUT = WEB / "compare"
 
 
