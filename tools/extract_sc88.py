@@ -6,7 +6,10 @@ The SC-88 MIDIs in midi-sc88/ are the composers' 480-tpqn sources (GM programs,
 unquantized velocities) that mid2agb consumed to build the game arrangement.
 This packs them, plus only the sf2 samples/zones they actually use, into a
 compact pak the C engine (src/m4a.c GM voice path) plays in the game and on
-the site — no 440 MB soundfont shipped, no offline renders.
+the site — no 440 MB soundfont shipped, no offline renders. "Actually use"
+is note-level: after thinning, a zone is kept only if at least one packed
+note's (key, velocity) falls inside it, and only samples referenced by kept
+zones are packed (--no-prune disables).
 
 Matching MIDI names to mus_* uses pret's songs.h original-name comments,
 like render_compare.py. Python stdlib only.
@@ -328,6 +331,14 @@ def thin_zones(zones, bank):
     return out
 
 
+def zone_hit(g, notes):
+    """True if any packed note's (key, vel) falls inside this zone."""
+    kr = g.get(GEN_KEYRANGE, 0x7F00)
+    vr = g.get(GEN_VELRANGE, 0x7F00)
+    return any(kr & 0xFF <= k <= kr >> 8 and vr & 0xFF <= v <= vr >> 8
+               for k, v in notes)
+
+
 ONESHOT_CAP_S = 3.0
 FADE_S = 0.12
 RATE_CAP = 32000
@@ -373,6 +384,7 @@ def build(args):
             midis[mus] = p
 
     used_progs = set()      # (bank, prog)
+    used_notes = defaultdict(set)   # (bank, prog) -> {(key, vel)} for pruning
     songs = []
     for mus, path in sorted(midis.items()):
         chans, loop = parse_midi(path)
@@ -393,6 +405,7 @@ def build(args):
                         vid_of[bp] = len(vids)
                         vids.append(bp)
                     evs.append((t, 0, key, vel, vid_of[bp], dur))
+                    used_notes[bp].add((key, vel))
                 elif e[0] == "prog":
                     prog = e[2]
                 elif e[0] == "bend":
@@ -431,6 +444,8 @@ def build(args):
         name, zones = presets[bp]
         if not args.no_thin:
             zones = thin_zones(zones, bp[0])
+        if not args.no_prune:
+            zones = [g for g in zones if zone_hit(g, used_notes[bp])]
         zrecs = []
         for g in zones:
             sid = g[GEN_SAMPLEID]
@@ -544,6 +559,7 @@ def main():
     ap.add_argument("--pret", type=Path, default=Path("~/pokeemerald"))
     ap.add_argument("--stats", action="store_true")
     ap.add_argument("--no-thin", action="store_true")
+    ap.add_argument("--no-prune", action="store_true")
     ap.add_argument("--no-resample", action="store_true")
     args = ap.parse_args()
     return build(args)

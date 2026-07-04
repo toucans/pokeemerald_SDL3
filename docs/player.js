@@ -31,16 +31,35 @@ function stopFileAudio() {
   if (fileAudio) { fileAudio.pause(); fileAudio.src = ""; fileAudio = null; }
 }
 
-// The SC-88 pak is 70+ MB, so it is fetched only on the first
-// "SC-88" click, then lives in the engine for the session.
+// The SC-88 pak is ~50 MB, so it is fetched only on the first
+// "SC-88" click, then lives in the engine for the session. On GitHub Pages
+// the Opus transport pak (~14 MB, sc88z.js) is fetched instead — strictly a
+// Pages thing; everything local plays the original. ?sc88z forces the
+// compressed path for local testing.
+const sc88Compressed = location.hostname.endsWith(".github.io")
+  || new URLSearchParams(location.search).has("sc88z");
+const sc88DecodeCtxs = {};
+function sc88DecodeBlob(blob, rate) {
+  // an OfflineAudioContext at the pak's own rate pins decodeAudioData's
+  // resampled output to that rate (Opus itself is always 48 kHz inside)
+  const c = sc88DecodeCtxs[rate] ||= new OfflineAudioContext(1, 1, rate);
+  return c.decodeAudioData(blob).then((ab) => ab.getChannelData(0));
+}
 let sc88State = null;     // null -> "loading" -> "ready" | "failed"
 async function ensureSC88() {
   if (sc88State === "ready") return;
   if (sc88State === "loading") throw new Error("still loading the SC-88 soundtrack…");
   sc88State = "loading";
-  setStatus("loading SC-88 soundtrack (~75 MB)…");
+  setStatus(`loading SC-88 soundtrack (~${sc88Compressed ? 14 : 50} MB)…`);
   try {
-    const pak = await (await fetch("music-sc88.pak")).arrayBuffer();
+    let pak;
+    if (sc88Compressed) {
+      const z = await (await fetch("music-sc88-compressed.pak")).arrayBuffer();
+      setStatus("decoding SC-88 samples…");
+      pak = (await reconstructSC88(z, sc88DecodeBlob)).buffer;
+    } else {
+      pak = await (await fetch("music-sc88.pak")).arrayBuffer();
+    }
     const done = new Promise((res, rej) => { onSC88Ready = { res, rej }; });
     node.port.postMessage({ type: "sc88pak", pak }, [pak]);
     await done;

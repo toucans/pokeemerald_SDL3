@@ -9,8 +9,10 @@ The rules that most often prevent wasted work:
 
 - **Music is done.** Both soundtracks are committed in
   `docs/` (`music.pak` = the GBA soundtrack, `music-sc88.pak`
-  = the SC-88 soundtrack from the composers' MIDIs); the game build has no
-  music step. Never extract or
+  = the SC-88 soundtrack from the composers' MIDIs;
+  `music-sc88-compressed.pak` is its Opus transport for GitHub Pages only —
+  regenerate with `tools/compress_sc88.py` whenever `music-sc88.pak`
+  changes); the game build has no music step. Never extract or
   re-derive music from pret/pokeemerald or the ROM; the leak 7z, midi-sc88/
   and the sf2 in the repo root are gitignored regeneration inputs — never
   commit them. `src/m4a.c` is the one engine (game + site wasm); after

@@ -10,10 +10,11 @@ AudioWorklet — no ROM, no emulator, no MP3s, one engine everywhere.
 | Piece | What |
 |---|---|
 | `../docs/music.pak` | **The GBA soundtrack.** All 204 tracks as shipped: sequences, voices, 8-bit samples, loop points, titles/categories. Committed; format documented in `tools/pack_music.py`. |
-| `../docs/music-sc88.pak` | **The SC-88 soundtrack**: the composers' 480-tpqn MIDIs + the SC-88Pro samples they were written for (trimmed to what's used). Committed; format in `tools/extract_sc88.py`. |
+| `../docs/music-sc88.pak` | **The SC-88 soundtrack**: the composers' 480-tpqn MIDIs + the SC-88Pro samples they were written for, trimmed to what's used — note-level: only zones some packed note's key/velocity actually hits, and only samples those zones reference. Committed; format in `tools/extract_sc88.py`. |
+| `../docs/music-sc88-compressed.pak` | The same pak with the sample PCM as Ogg/Opus (96 kbps mono) — **the GitHub Pages transport format only** (~14 MB vs ~50). `sc88z.js` rebuilds the exact M4AO bytes in the browser; distinct `M4AZ` magic so the engine can't load it by mistake. `tools/compress_sc88.py`. |
 | `../docs/m4a.wasm` | The engine: `src/m4a.c` built standalone by `tools/build-m4a-wasm.sh` (committed; ~32 KB). Plays both paks. |
 | `../docs/m4a-worklet.js` | Thin `AudioWorkletProcessor` that hosts the wasm: feeds it the paks, pulls rendered samples + viz snapshots. No synthesis logic in JS. |
-| `../docs/player.js` + `index.html` | Main-thread shim + tiny UI: every song has `GBA` (game version) and `SC-88` (engine GM synth) buttons, plus `fluidsynth` (offline opus render from `tools/render_compare.py`, local-only/gitignored) when present — for A/B'ing the engine against a second synth. The SC-88 pak is fetched lazily on first use. |
+| `../docs/player.js` + `index.html` | Main-thread shim + tiny UI: every song has `GBA` (game version) and `SC-88` (engine GM synth) buttons, plus `fluidsynth` (offline opus render from `tools/render_compare.py`, local-only/gitignored) when present — for A/B'ing the engine against a second synth. The SC-88 pak is fetched lazily on first use — the original locally, the Opus transport pak on github.io (`?sc88z` forces it locally). |
 | `../docs/viz.js` | Live 16:9 canvas visualization of what the engine is playing (see below). |
 | `extract.py` | pokeemerald source → `../docs/data/` JSON (regeneration-time intermediate, gitignored). Python stdlib only. |
 | `../tools/pack_music.py` | `../docs/data/` JSON → `../docs/music.pak`. |
@@ -255,6 +256,8 @@ are committed and ready to go (the game build has **no music build step**).
 ../tools/pack_music.py                    # -> ../docs/music.pak
 ../tools/extract_sc88.py                  # -> ../docs/music-sc88.pak (needs ../midi-sc88/
                                           #    + ../GBApokemonTestLite.sf2; scipy to downsample)
+../tools/compress_sc88.py                 # -> ../docs/music-sc88-compressed.pak (needs
+                                          #    opusenc; rerun after music-sc88.pak changes)
 ../tools/build-m4a-wasm.sh                # -> ../docs/m4a.wasm (after src/m4a.c changes)
 ./render_previews.py --seconds 40 mus_littleroot ...  # optional WAV checks (numpy)
 ```
