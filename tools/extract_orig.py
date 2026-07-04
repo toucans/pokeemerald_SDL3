@@ -292,12 +292,18 @@ def timecents(g, gen, default=-12000):
     return max(-12000, min(8000, v))
 
 
-def thin_zones(zones):
+def thin_zones(zones, bank):
     """Halve dense key multisampling: SC-88 rips carry a sample every 2-4
     semitones; keeping every 2nd split and stretching its key range is
     inaudible in context and halves the pak. Stereo pairs (two zones with the
-    same key range) are kept/dropped together; melodic single-split and drum
-    (per-key) programs pass through unchanged."""
+    same key range) are kept/dropped together.
+
+    Only true melodic multisamples qualify: drum kits (bank 128) and kit-like
+    presets (a different sound per key or two — e.g. the SC-88 'Gunshot'
+    effects bank that Route 104 uses as percussion) must keep every zone, or
+    keys start triggering the neighbouring instrument pitched over."""
+    if bank == 128:
+        return zones
     by_range = {}
     for g in zones:
         kr = g.get(GEN_KEYRANGE, 0x7F00)
@@ -305,6 +311,9 @@ def thin_zones(zones):
     splits = sorted(by_range, key=lambda kr: kr & 0xFF)
     if len(splits) < 4:
         return zones
+    narrow = sum(1 for kr in splits if (kr >> 8) - (kr & 0xFF) < 4)
+    if narrow > len(splits) // 2:
+        return zones                     # mostly per-key sounds (a kit): keep all
     kept = splits[::2]
     if kept[-1] != splits[-1]:
         kept.append(splits[-1])          # keep the top split for the extremes
@@ -421,7 +430,7 @@ def build(args):
             continue
         name, zones = presets[bp]
         if not args.no_thin:
-            zones = thin_zones(zones)
+            zones = thin_zones(zones, bp[0])
         zrecs = []
         for g in zones:
             sid = g[GEN_SAMPLEID]
