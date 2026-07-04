@@ -38,36 +38,39 @@ class M4AHost extends AudioWorkletProcessor {
   }
 
   cstr(ptr) {
+    // manual ASCII decode: AudioWorkletGlobalScope has no TextDecoder
     const u8 = this.views()._u8;
-    let end = ptr;
-    while (u8[end]) end++;
-    return new TextDecoder().decode(u8.subarray(ptr, end));
+    let s = "";
+    for (let q = ptr; u8[q]; q++) s += String.fromCharCode(u8[q]);
+    return s;
   }
 
   async onMessage(msg) {
     if (msg.type === "init") {
-      const { instance } = await WebAssembly.instantiate(msg.wasm, {
-        env: { emscripten_notify_memory_growth: () => {} },
-      });
-      const e = (this.e = instance.exports);
-      if (e._initialize) e._initialize();
-      const pak = new Uint8Array(msg.pak);
-      const p = e.malloc(pak.length);
-      this.views()._u8.set(pak, p);
-      if (!e.m4a_init_mem(p, pak.length, sampleRate)) {
-        this.port.postMessage({ type: "error", message: "bad music.pak" });
+      try {
+        const { instance } = await WebAssembly.instantiate(msg.wasm, {
+          env: { emscripten_notify_memory_growth: () => {} },
+        });
+        const e = (this.e = instance.exports);
+        if (e._initialize) e._initialize();
+        const pak = new Uint8Array(msg.pak);
+        const p = e.malloc(pak.length);
+        this.views()._u8.set(pak, p);
+        if (!e.m4a_init_mem(p, pak.length, sampleRate))
+          throw new Error("bad music.pak");
+        e.m4a_set_viz(1);
+        this.renderPtr = e.malloc(128 * 2 * 4);
+        const songs = [];
+        for (let i = 0; i < e.m4a_song_count(); i++) {
+          songs.push({ i, name: this.cstr(e.m4a_song_name(i)),
+                       title: this.cstr(e.m4a_song_title(i)),
+                       cat: this.cstr(e.m4a_song_cat(i)) });
+        }
+        this.port.postMessage({ type: "ready", songs });
+      } catch (err) {
         this.e = null;
-        return;
+        this.port.postMessage({ type: "error", message: String(err && err.message || err) });
       }
-      e.m4a_set_viz(1);
-      this.renderPtr = e.malloc(128 * 2 * 4);
-      const songs = [];
-      for (let i = 0; i < e.m4a_song_count(); i++) {
-        songs.push({ i, name: this.cstr(e.m4a_song_name(i)),
-                     title: this.cstr(e.m4a_song_title(i)),
-                     cat: this.cstr(e.m4a_song_cat(i)) });
-      }
-      this.port.postMessage({ type: "ready", songs });
     } else if (msg.type === "play" && this.e) {
       const e = this.e, i = msg.i;
       const voices = {};
