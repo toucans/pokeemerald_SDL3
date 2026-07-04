@@ -29,8 +29,8 @@ static void callback(void *userdata, SDL_AudioStream *s, int additional, int tot
     }
 }
 
-static bool origMode;
-static bool haveOrig;
+static bool sc88Mode;
+static bool haveSC88;
 static char lastName[64];
 
 void audio_init(void) {
@@ -38,9 +38,9 @@ void audio_init(void) {
         SDL_Log("audio: pokeemerald-music/web/music.pak missing - no music");
         return;
     }
-    haveOrig = m4a_orig_init("pokeemerald-music/web/music-orig.pak");
-    if (!haveOrig)
-        SDL_Log("audio: music-orig.pak missing - original soundtrack disabled");
+    haveSC88 = m4a_sc88_init("pokeemerald-music/web/music-sc88.pak");
+    if (!haveSC88)
+        SDL_Log("audio: music-sc88.pak missing - SC-88 soundtrack disabled");
     SDL_AudioSpec spec = { SDL_AUDIO_F32, 2, RATE };
     stream = SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK,
                                        &spec, callback, NULL);
@@ -53,8 +53,8 @@ void audio_init(void) {
 
 static void play_locked(const char *name) {
     int oi;
-    if (origMode && haveOrig && (oi = m4a_orig_find(name)) >= 0)
-        m4a_play_orig_index((uint32_t)oi);
+    if (sc88Mode && haveSC88 && (oi = m4a_sc88_find(name)) >= 0)
+        m4a_play_sc88_index((uint32_t)oi);
     else if (!m4a_play_name(name))
         SDL_Log("audio: unknown song %s", name);
 }
@@ -71,10 +71,10 @@ void audio_play_music(const char *name) {
     SDL_UnlockAudioStream(stream);
 }
 
-void audio_toggle_original(void) {
-    if (!stream || !haveOrig) return;
-    origMode = !origMode;
-    SDL_Log("audio: %s soundtrack", origMode ? "original (SC-88Pro)" : "game (m4a)");
+void audio_toggle_sc88(void) {
+    if (!stream || !haveSC88) return;
+    sc88Mode = !sc88Mode;
+    SDL_Log("audio: %s soundtrack", sc88Mode ? "SC-88" : "GBA (m4a)");
     if (lastName[0]) {
         SDL_LockAudioStream(stream);
         play_locked(lastName);

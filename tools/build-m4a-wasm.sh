@@ -11,6 +11,6 @@ set -eu
 cd "$(dirname "$0")/.."
 emcc -O2 -std=c17 -DM4A_NO_STDIO --no-entry -sSTANDALONE_WASM \
     -sALLOW_MEMORY_GROWTH=1 \
-    -sEXPORTED_FUNCTIONS=_malloc,_free,_m4a_init_mem,_m4a_play_name,_m4a_play_index,_m4a_stop,_m4a_is_playing,_m4a_render,_m4a_song_count,_m4a_song_name,_m4a_song_title,_m4a_song_cat,_m4a_song_reverb,_m4a_song_key_lo,_m4a_song_key_hi,_m4a_song_nvoices,_m4a_voice_type,_m4a_voice_duty,_m4a_voice_rhythm,_m4a_voice_base,_m4a_voice_label,_m4a_set_viz,_m4a_viz_seq,_m4a_viz_data,_m4a_orig_mem,_m4a_orig_count,_m4a_orig_name,_m4a_orig_find,_m4a_play_orig_index,_m4a_orig_is_current,_m4a_orig_nvids,_m4a_orig_vid_label \
+    -sEXPORTED_FUNCTIONS=_malloc,_free,_m4a_init_mem,_m4a_play_name,_m4a_play_index,_m4a_stop,_m4a_is_playing,_m4a_render,_m4a_song_count,_m4a_song_name,_m4a_song_title,_m4a_song_cat,_m4a_song_reverb,_m4a_song_key_lo,_m4a_song_key_hi,_m4a_song_nvoices,_m4a_voice_type,_m4a_voice_duty,_m4a_voice_rhythm,_m4a_voice_base,_m4a_voice_label,_m4a_set_viz,_m4a_viz_seq,_m4a_viz_data,_m4a_sc88_mem,_m4a_sc88_count,_m4a_sc88_name,_m4a_sc88_find,_m4a_play_sc88_index,_m4a_sc88_is_current,_m4a_sc88_nvids,_m4a_sc88_vid_label \
     src/m4a.c -o pokeemerald-music/web/m4a.wasm
 ls -la pokeemerald-music/web/m4a.wasm

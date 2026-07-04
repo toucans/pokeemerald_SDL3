@@ -7,10 +7,10 @@
  * block asks the engine to render and forwards its per-GBA-frame viz
  * snapshots. No synthesis logic lives here.
  *
- * Messages in:  {type:'init', wasm, pak}  {type:'origpak', pak}
- *               {type:'play', i, orig}    {type:'stop'}
+ * Messages in:  {type:'init', wasm, pak}  {type:'sc88pak', pak}
+ *               {type:'play', i, sc88}    {type:'stop'}
  * Messages out: {type:'ready', songs:[{i,name,title,cat}]}
- *               {type:'origready', has:{name:true,...}}
+ *               {type:'sc88ready', has:{name:true,...}}
  *               {type:'playing', song:{name,title,reverb,range,voices}}
  *               {type:'viz', t, wrapped, v:[vid,pitch,level,pan,...]}
  *               {type:'ended'}  {type:'error', message}
@@ -73,38 +73,38 @@ class M4AHost extends AudioWorkletProcessor {
         this.e = null;
         this.port.postMessage({ type: "error", message: String(err && err.message || err) });
       }
-    } else if (msg.type === "origpak" && this.e) {
+    } else if (msg.type === "sc88pak" && this.e) {
       try {
         const e = this.e;
         const pak = new Uint8Array(msg.pak);
         const p = e.malloc(pak.length);
         this.views()._u8.set(pak, p);
-        if (!e.m4a_orig_mem(p, pak.length))
-          throw new Error("bad music-orig.pak");
+        if (!e.m4a_sc88_mem(p, pak.length))
+          throw new Error("bad music-sc88.pak");
         const has = {};
-        for (let i = 0; i < e.m4a_orig_count(); i++)
-          has[this.cstr(e.m4a_orig_name(i))] = true;
-        this.port.postMessage({ type: "origready", has });
+        for (let i = 0; i < e.m4a_sc88_count(); i++)
+          has[this.cstr(e.m4a_sc88_name(i))] = true;
+        this.port.postMessage({ type: "sc88ready", has });
       } catch (err) {
         this.port.postMessage({ type: "error", message: String(err && err.message || err) });
       }
     } else if (msg.type === "play" && this.e) {
       const e = this.e, i = msg.i;
       const voices = {};
-      let origIdx = -1;
-      if (msg.orig) {
+      let sc88Idx = -1;
+      if (msg.sc88) {
         const namePtr = e.m4a_song_name(i);
-        origIdx = e.m4a_orig_find(namePtr);
-        if (origIdx < 0) {
+        sc88Idx = e.m4a_sc88_find(namePtr);
+        if (sc88Idx < 0) {
           this.port.postMessage({ type: "error",
-            message: "no original for " + this.cstr(namePtr) });
+            message: "no SC-88 version of " + this.cstr(namePtr) });
           return;
         }
-        for (let v = 0; v < e.m4a_orig_nvids(origIdx); v++) {
+        for (let v = 0; v < e.m4a_sc88_nvids(sc88Idx); v++) {
           voices["v" + v] = { t: "pcm", duty: 0, rhythm: false, base: 60,
-                              sample: this.cstr(e.m4a_orig_vid_label(origIdx, v)) };
+                              sample: this.cstr(e.m4a_sc88_vid_label(sc88Idx, v)) };
         }
-        e.m4a_play_orig_index(origIdx);
+        e.m4a_play_sc88_index(sc88Idx);
       } else {
         for (let v = 0; v < e.m4a_song_nvoices(i); v++) {
           voices["v" + v] = {
@@ -121,7 +121,7 @@ class M4AHost extends AudioWorkletProcessor {
       this.lastVizSeq = e.m4a_viz_seq();
       this.port.postMessage({ type: "playing", song: {
         name: this.cstr(e.m4a_song_name(i)),
-        title: this.cstr(e.m4a_song_title(i)) + (msg.orig ? " (original)" : ""),
+        title: this.cstr(e.m4a_song_title(i)) + (msg.sc88 ? " (SC-88)" : ""),
         reverb: e.m4a_song_reverb(i),
         range: [e.m4a_song_key_lo(i), e.m4a_song_key_hi(i)],
         voices,

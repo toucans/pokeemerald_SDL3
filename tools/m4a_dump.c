@@ -12,15 +12,15 @@
 #include "../src/m4a.h"
 
 int main(int argc, char **argv) {
-    int orig = argc > 1 && strcmp(argv[1], "--orig") == 0;
-    argv += orig; argc -= orig;
-    if (argc < 4) { fprintf(stderr, "usage: %s [--orig] song seconds out.f32\n", argv[0]); return 2; }
+    int sc88 = argc > 1 && strcmp(argv[1], "--sc88") == 0;
+    argv += sc88; argc -= sc88;
+    if (argc < 4) { fprintf(stderr, "usage: %s [--sc88] song seconds out.f32\n", argv[0]); return 2; }
     if (!m4a_init("pokeemerald-music/web/music.pak", 48000)) return 1;
-    if (orig) {
-        if (!m4a_orig_init("pokeemerald-music/web/music-orig.pak")) return 1;
-        int i = m4a_orig_find(argv[1]);
-        if (i < 0) { fprintf(stderr, "no original %s\n", argv[1]); return 1; }
-        m4a_play_orig_index((uint32_t)i);
+    if (sc88) {
+        if (!m4a_sc88_init("pokeemerald-music/web/music-sc88.pak")) return 1;
+        int i = m4a_sc88_find(argv[1]);
+        if (i < 0) { fprintf(stderr, "no SC-88 version of %s\n", argv[1]); return 1; }
+        m4a_play_sc88_index((uint32_t)i);
     } else if (!m4a_play_name(argv[1])) {
         fprintf(stderr, "no song %s\n", argv[1]);
         return 1;

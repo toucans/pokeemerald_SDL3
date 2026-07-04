@@ -14,7 +14,7 @@ let ctx = null;
 let node = null;          // the AudioWorkletNode hosting the engine
 let playingBtn = null;
 let onPlaying = null;     // one-shot: viz start once the worklet confirms
-let onOrigReady = null;   // one-shot: resolves the lazy music-orig.pak load
+let onSC88Ready = null;   // one-shot: resolves the lazy music-sc88.pak load
 let fileAudio = null;     // <audio> for the fluidsynth "rendered" comparisons
 
 function setStatus(msg) {
@@ -31,23 +31,23 @@ function stopFileAudio() {
   if (fileAudio) { fileAudio.pause(); fileAudio.src = ""; fileAudio = null; }
 }
 
-// The originals pak is 70+ MB, so it is fetched only on the first
-// "original" click, then lives in the engine for the session.
-let origState = null;     // null -> "loading" -> "ready" | "failed"
-async function ensureOrig() {
-  if (origState === "ready") return;
-  if (origState === "loading") throw new Error("still loading originals…");
-  origState = "loading";
-  setStatus("loading originals (~70 MB)…");
+// The SC-88 pak is 70+ MB, so it is fetched only on the first
+// "SC-88" click, then lives in the engine for the session.
+let sc88State = null;     // null -> "loading" -> "ready" | "failed"
+async function ensureSC88() {
+  if (sc88State === "ready") return;
+  if (sc88State === "loading") throw new Error("still loading the SC-88 soundtrack…");
+  sc88State = "loading";
+  setStatus("loading SC-88 soundtrack (~75 MB)…");
   try {
-    const pak = await (await fetch("music-orig.pak")).arrayBuffer();
-    const done = new Promise((res, rej) => { onOrigReady = { res, rej }; });
-    node.port.postMessage({ type: "origpak", pak }, [pak]);
+    const pak = await (await fetch("music-sc88.pak")).arrayBuffer();
+    const done = new Promise((res, rej) => { onSC88Ready = { res, rej }; });
+    node.port.postMessage({ type: "sc88pak", pak }, [pak]);
     await done;
-    origState = "ready";
+    sc88State = "ready";
     setStatus("");
   } catch (err) {
-    origState = "failed";
+    sc88State = "failed";
     throw err;
   }
 }
@@ -70,9 +70,9 @@ async function initAudio() {
       const m = e.data;
       if (!m) return;
       if (m.type === "ready") { initDone = true; resolve(m.songs); }
-      else if (m.type === "origready") { if (onOrigReady) onOrigReady.res(); onOrigReady = null; }
+      else if (m.type === "sc88ready") { if (onSC88Ready) onSC88Ready.res(); onSC88Ready = null; }
       else if (m.type === "error") {
-        if (onOrigReady) { onOrigReady.rej(new Error(m.message)); onOrigReady = null; }
+        if (onSC88Ready) { onSC88Ready.rej(new Error(m.message)); onSC88Ready = null; }
         else if (!initDone) reject(new Error(m.message));
         else { clearPlaying(); setStatus(m.message); }
       }
@@ -101,17 +101,17 @@ async function main() {
     if (r.ok) rendered = await r.json();
   } catch (_) { /* no local renders present: no "rendered" buttons */ }
 
-  const play = async (btn, entry, orig) => {
+  const play = async (btn, entry, sc88) => {
     try {
       const wasPlaying = btn === playingBtn;
       if (ctx.state === "suspended") await ctx.resume();
-      if (orig && !wasPlaying) await ensureOrig();
+      if (sc88 && !wasPlaying) await ensureSC88();
       stopFileAudio();
       node.port.postMessage({ type: "stop" });
       clearPlaying();
       if (wasPlaying) { M4AViz.stop(); return; }
       onPlaying = (song) => M4AViz.start({ song, title: song.title, actx: ctx });
-      node.port.postMessage({ type: "play", i: entry.i, orig: !!orig });
+      node.port.postMessage({ type: "play", i: entry.i, sc88: !!sc88 });
       btn.classList.add("playing");
       playingBtn = btn;
       setStatus("");
@@ -121,7 +121,7 @@ async function main() {
     }
   };
 
-  // fluidsynth renders of the same original MIDIs (local-only opus files;
+  // fluidsynth renders of the same SC-88 MIDIs (local-only opus files;
   // tools/render_compare.py). For comparing against the engine's synthesis.
   const playRendered = (btn, entry, file) => {
     const wasPlaying = btn === playingBtn;
@@ -157,13 +157,13 @@ async function main() {
     const hasRender = !!rendered[entry.name];
     row.innerHTML = `<span class="title">${entry.title}</span>
       <span class="file">${entry.name}</span>
-      <span class="btns"><button>play</button><button>original</button>${
-        hasRender ? "<button>rendered</button>" : ""}</span>`;
+      <span class="btns"><button>GBA</button><button>SC-88</button>${
+        hasRender ? "<button>fluidsynth</button>" : ""}</span>`;
     list.appendChild(row);
-    const [btn, origBtn, renBtn] = row.querySelectorAll("button");
-    btn.onclick = () => play(btn, entry, false);
-    origBtn.onclick = () => play(origBtn, entry, true);
-    if (renBtn) renBtn.onclick = () => playRendered(renBtn, entry, rendered[entry.name].file);
+    const [gbaBtn, sc88Btn, flBtn] = row.querySelectorAll("button");
+    gbaBtn.onclick = () => play(gbaBtn, entry, false);
+    sc88Btn.onclick = () => play(sc88Btn, entry, true);
+    if (flBtn) flBtn.onclick = () => playRendered(flBtn, entry, rendered[entry.name].file);
     const r = { row, text: (entry.title + " " + entry.name).toLowerCase() };
     rows.push(r);
     section.rows.push(r);

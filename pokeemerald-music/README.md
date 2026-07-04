@@ -9,15 +9,15 @@ AudioWorklet — no ROM, no emulator, no MP3s, one engine everywhere.
 
 | Piece | What |
 |---|---|
-| `web/music.pak` | **The game soundtrack.** All 204 tracks: sequences, voices, 8-bit samples, loop points, titles/categories. Committed; format documented in `tools/pack_music.py`. |
-| `web/music-orig.pak` | **The original soundtrack**: the composers' 480-tpqn MIDIs + the SC-88Pro samples they were written for (trimmed to what's used). Committed; format in `tools/extract_orig.py`. |
+| `web/music.pak` | **The GBA soundtrack.** All 204 tracks as shipped: sequences, voices, 8-bit samples, loop points, titles/categories. Committed; format documented in `tools/pack_music.py`. |
+| `web/music-sc88.pak` | **The SC-88 soundtrack**: the composers' 480-tpqn MIDIs + the SC-88Pro samples they were written for (trimmed to what's used). Committed; format in `tools/extract_sc88.py`. |
 | `web/m4a.wasm` | The engine: `src/m4a.c` built standalone by `tools/build-m4a-wasm.sh` (committed; ~32 KB). Plays both paks. |
 | `web/m4a-worklet.js` | Thin `AudioWorkletProcessor` that hosts the wasm: feeds it the paks, pulls rendered samples + viz snapshots. No synthesis logic in JS. |
-| `web/player.js` + `index.html` | Main-thread shim + tiny UI: every song has `play` (game version) and `original` (engine GM synth) buttons, plus `rendered` (fluidsynth opus from `tools/render_compare.py`, local-only/gitignored) when present — for A/B'ing the engine against a second synth. The originals pak is fetched lazily on first use. |
+| `web/player.js` + `index.html` | Main-thread shim + tiny UI: every song has `GBA` (game version) and `SC-88` (engine GM synth) buttons, plus `fluidsynth` (offline opus render from `tools/render_compare.py`, local-only/gitignored) when present — for A/B'ing the engine against a second synth. The SC-88 pak is fetched lazily on first use. |
 | `web/viz.js` | Live 16:9 canvas visualization of what the engine is playing (see below). |
 | `extract.py` | pokeemerald source → `web/data/` JSON (regeneration-time intermediate, gitignored). Python stdlib only. |
 | `../tools/pack_music.py` | `web/data/` JSON → `web/music.pak`. |
-| `../tools/extract_orig.py` | `../midi-orig/` + the sf2 → `web/music-orig.pak`. |
+| `../tools/extract_sc88.py` | `../midi-sc88/` + the sf2 → `web/music-sc88.pak`. |
 | `render_previews.py` | Offline WAV renders from the JSON intermediate, for A/B checks (needs numpy). |
 
 Listen: serve `web/` with any static server (`cd web && python3 -m http.server`)
@@ -27,13 +27,13 @@ and open the page.
 
 Two arrangements of the same music, from two sources:
 
-- **Game arrangement** (`music.pak`): extracted from pret/pokeemerald. pret's
+- **GBA soundtrack** (`music.pak`): extracted from pret/pokeemerald. pret's
   MIDIs are machine-derived from the game data (24 ticks/beat — the m4a
   clock — velocities quantized to the game's steps-of-4 LUT), rendered at
   full bandwidth instead of the GBA's 13 kHz output.
-- **Originals** (`music-orig.pak`): the composers' own MIDI sources from the
+- **SC-88 soundtrack** (`music-sc88.pak`): the composers' own MIDI sources from the
   leaked Emerald sound source (`pm_eme_ose`, kept as a gitignored 7z in the
-  repo root; the working MIDIs live in gitignored `../midi-orig/`). Same
+  repo root; the working MIDIs live in gitignored `../midi-sc88/`). Same
   arrangements, but 480 ticks/beat, unquantized velocities, GM programs —
   what Game Freak's composers played on their SC-88 Pro before mid2agb
   squeezed it into the GBA. The samples come from the
@@ -50,7 +50,7 @@ velocity/CC7 curves. (Rendering the bank with fluidsynth, which applies the
 full spec attenuation, puts instruments 10+ dB apart — that experiment is
 why the offline-render approach was dropped.)
 
-### What the originals' sounds actually are
+### What the SC-88 soundtrack's sounds actually are
 
 The XQ++ soundfont is a deliberate hybrid, and it helps to know which class
 each sound falls in (verified against the sf2's own preset/sample data; the
@@ -72,7 +72,7 @@ lead nuance: the sf2 fills prog 80 with the SC-88's *P5 Square* variation
 patch (bank 16) rather than the capital *Square Wave* the MIDIs literally
 address — a curator's choice, still an SC-88 sound.
 
-Known gaps: `mus_route111` has no MIDI in the leak (no original version at
+Known gaps: `mus_route111` has no MIDI in the leak (no SC-88 version at
 all), and `mus_dummy` is silent by design. Everything else is covered.
 
 ---
@@ -246,13 +246,13 @@ scrolling waterfall (click ⛶ for fullscreen — sized for a YouTube frame):
 ## Regenerating
 
 Only needed when re-extracting from a pret checkout or after changing the
-engine — day to day, `web/music.pak`, `web/music-orig.pak` and `web/m4a.wasm`
+engine — day to day, `web/music.pak`, `web/music-sc88.pak` and `web/m4a.wasm`
 are committed and ready to go (the game build has **no music build step**).
 
 ```bash
 ./extract.py --src ~/pokeemerald          # -> web/data/ JSON (gitignored intermediate)
 ../tools/pack_music.py                    # -> web/music.pak
-../tools/extract_orig.py                  # -> web/music-orig.pak (needs ../midi-orig/
+../tools/extract_sc88.py                  # -> web/music-sc88.pak (needs ../midi-sc88/
                                           #    + ../GBApokemonTestLite.sf2; scipy to downsample)
 ../tools/build-m4a-wasm.sh                # -> web/m4a.wasm (after src/m4a.c changes)
 ./render_previews.py --seconds 40 mus_littleroot ...  # optional WAV checks (numpy)

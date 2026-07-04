@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""extract_orig.py — original (leaked) Emerald MIDIs + SC-88Pro soundfont
--> pokeemerald-music/web/music-orig.pak.
+"""extract_sc88.py — leaked SC-88 Emerald MIDIs + SC-88Pro soundfont
+-> pokeemerald-music/web/music-sc88.pak.
 
-The originals in midi-orig/ are the composers' 480-tpqn sources (GM programs,
+The SC-88 MIDIs in midi-sc88/ are the composers' 480-tpqn sources (GM programs,
 unquantized velocities) that mid2agb consumed to build the game arrangement.
 This packs them, plus only the sf2 samples/zones they actually use, into a
 compact pak the C engine (src/m4a.c GM voice path) plays in the game and on
@@ -531,7 +531,7 @@ def build(args):
             out += struct.pack("<H", prog_index.get(bp, 0xFFFF))
         out += b"\0" * (-(len(vids) * 2) % 4)
 
-    dest = WEB / "music-orig.pak"
+    dest = WEB / "music-sc88.pak"
     dest.write_bytes(out)
     print(f"{dest}: {len(songs)} songs, {len(prog_entries)} progs, "
           f"{len(samples)} samples, {len(out)/1e6:.1f} MB")
@@ -539,7 +539,7 @@ def build(args):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--midis", type=Path, default=ROOT / "midi-orig")
+    ap.add_argument("--midis", type=Path, default=ROOT / "midi-sc88")
     ap.add_argument("--sf2", type=Path, default=ROOT / "GBApokemonTestLite.sf2")
     ap.add_argument("--pret", type=Path, default=Path("~/pokeemerald"))
     ap.add_argument("--stats", action="store_true")

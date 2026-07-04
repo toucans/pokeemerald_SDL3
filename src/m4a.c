@@ -1,13 +1,15 @@
-/* m4a.c — the GBA m4a (MP2K/"Sappy") engine as a plain C synthesizer.
+/* m4a.c — THE music engine: the GBA m4a (MP2K/"Sappy") synthesizer in C,
+ * plus a GM/SF2-subset voice path for the SC-88 soundtrack.
  *
- * Line-for-line port of pokeemerald-music/web/m4a-worklet.js, which is the
- * verified reference (A/B'd against offline renders and the official GBA
- * recordings — see pokeemerald-music/README.md). The sequencer and envelopes
- * tick once per GBA frame (59.7275 Hz); audio is synthesized per output
- * sample. Any behavior change belongs in the worklet first, then here.
+ * The m4a path began as a line-for-line port of the retired JS worklet
+ * engine (verified sample-exact against it and the official GBA recordings —
+ * see pokeemerald-music/README.md; the JS engine lives in git history). The
+ * sequencer and envelopes tick once per GBA frame (59.7275 Hz); audio is
+ * synthesized per output sample.
  *
- * Data comes from assets/music.pak (tools/pack_music.py); song/track/sample
- * payloads are read in place from the loaded file buffer.
+ * Data: pokeemerald-music/web/music.pak (the GBA soundtrack,
+ * tools/pack_music.py) and optionally music-sc88.pak (the SC-88 soundtrack,
+ * tools/extract_sc88.py); payloads are read in place from the file buffer.
  */
 #include "m4a.h"
 
@@ -22,7 +24,7 @@
 #define MASTER      0.34f               /* headroom: loudest song peaks ~0.93 */
 #define DS_RATE     13379               /* Emerald DirectSound mix rate (reverb timing) */
 
-#define MAX_TRACKS  16                  /* m4a songs use <=10; MIDI originals <=16 */
+#define MAX_TRACKS  16                  /* m4a songs use <=10; SC-88 MIDIs use <=16 */
 #define MAX_VOICES  48                  /* live voices per track (JS is unbounded) */
 #define REV_MAX     16384               /* reverb ring; needs 7*224/13379*rate + 4 */
 
@@ -66,8 +68,8 @@ typedef struct {
     uint32_t nEv[MAX_TRACKS];
 } Song;
 
-/* ---- music-orig.pak: the composers' original MIDIs + SC-88Pro samples ----
- * (tools/extract_orig.py; GM-subset synthesis, voice type 4) */
+/* ---- music-sc88.pak: the SC-88 soundtrack (composers' MIDIs + SC-88Pro samples)
+ * (tools/extract_sc88.py; GM-subset synthesis, voice type 4) */
 
 typedef struct {
     float rate;
@@ -86,7 +88,7 @@ typedef struct {
     int16_t tc[5];                      /* delay,attack,hold,decay,release timecents */
     uint16_t sus;                       /* sustain attenuation, cB */
 } OZone;
-_Static_assert(sizeof(OZone) == 26, "orig pak zone layout");
+_Static_assert(sizeof(OZone) == 26, "sc88 pak zone layout");
 
 typedef struct {
     char label[32];
@@ -109,7 +111,7 @@ typedef struct {
 typedef struct {
     const VoiceDef *def;
     const Sample *smp;
-    uint8_t t;                          /* voice type; 4 = GM (orig pak) */
+    uint8_t t;                          /* voice type; 4 = GM (sc88 pak) */
     int playKey, rp, vel, vid;
     float visPitch;                     /* sounding pitch, for the viz */
     uint64_t born;                      /* frame index at note-on */
@@ -122,7 +124,7 @@ typedef struct {
     int goal;                                     /* psg */
     int psgCached;
     float psgGl, psgGr;
-    /* GM (orig) voice */
+    /* GM (sc88) voice */
     const OZone *oz;
     const OSample *osmp;
     float gBase;                        /* attenuation x velocity gain */
@@ -148,14 +150,14 @@ static struct {
     uint32_t nSongs;
     int rate;
 
-    uint8_t *opak;                      /* music-orig.pak (optional) */
+    uint8_t *opak;                      /* music-sc88.pak (optional) */
     OSample *oSamples;
     OProg *oProgs;
     OSong *oSongs;
     uint32_t nOSamples, nOProgs, nOSongs;
 
     const Song *song;
-    const OSong *osong;                 /* set instead of song for originals */
+    const OSong *osong;                 /* set instead of song for the SC-88 soundtrack */
     int playing, looping;
     float loopStart, loopEnd, passLen;
     Track tracks[MAX_TRACKS];
@@ -168,7 +170,7 @@ static struct {
     int revA, revB, revN, revIdx;
     float revBuf[REV_MAX];
 
-    /* Freeverb-style room for the originals (SC-88 defaults to a light
+    /* Freeverb-style room for the SC-88 soundtrack (SC-88 defaults to a light
      * hall; the m4a two-tap echo above is a different, GBA-only thing) */
     float gmCombBuf[4][1600], gmCombLP[4];
     float gmApBuf[2][640];
@@ -323,14 +325,14 @@ static float psg_env(const Voice *v, float dt) {
     return rel;
 }
 
-/* --------------------- GM voices (the originals pak) ---------------------- */
-/* SF2-subset synthesis for the composers' original MIDIs. The gain model is
+/* -------------------- GM voices (the SC-88 soundtrack) -------------------- */
+/* SF2-subset synthesis for the composers' SC-88 MIDIs. The gain model is
  * the one the soundfont was authored against: initialAttenuation at the EMU
  * 0.4 convention (players that apply the full spec value are why fluidsynth
  * renders of this bank have instruments 10+ dB apart), and the GM square-law
  * curves for velocity and CC7. */
 
-#define GM_MASTER 0.35f                 /* loudest original (rg_vs_legend) peaks ~0.87 */
+#define GM_MASTER 0.35f                 /* loudest SC-88 song (rg_vs_legend) peaks ~0.87 */
 
 static float cb_to_amp(float cb) { return powf(10.0f, -cb / 200.0f); }
 static float tc_to_sec(int tc) { return tc <= -12000 ? 0 : powf(2.0f, tc / 1200.0f); }
@@ -752,7 +754,7 @@ void m4a_render(float *out, int frames) {
 
         float l, r;
         if (E.osong) {
-            /* originals: dry mix + fixed light room */
+            /* SC-88 soundtrack: dry mix + fixed light room */
             float wet = gm_reverb(0.5f * (pcmL + pcmR));
             l = (pcmL + wet) * GM_MASTER;
             r = (pcmR + wet) * GM_MASTER;
@@ -823,7 +825,7 @@ static void start_song(const Song *s) {
     start_tracks(s->nTracks, s->ev, s->nEv, s->loopStart, s->loopEnd);
 }
 
-static void start_orig_song(const OSong *s) {
+static void start_sc88_song(const OSong *s) {
     E.song = NULL;
     E.osong = s;
     E.reverb = 0;
@@ -863,12 +865,12 @@ const char *m4a_current(void) {
     return E.song ? E.song->name : E.osong ? E.osong->name : NULL;
 }
 
-/* --------------------------- originals (orig pak) -------------------------- */
+/* -------------------------- SC-88 soundtrack pak --------------------------- */
 
-uint32_t m4a_orig_count(void) { return E.nOSongs; }
-const char *m4a_orig_name(uint32_t i) { return i < E.nOSongs ? E.oSongs[i].name : ""; }
+uint32_t m4a_sc88_count(void) { return E.nOSongs; }
+const char *m4a_sc88_name(uint32_t i) { return i < E.nOSongs ? E.oSongs[i].name : ""; }
 
-int m4a_orig_find(const char *name) {
+int m4a_sc88_find(const char *name) {
     for (uint32_t i = 0; i < E.nOSongs; i++) {
         const char *a = E.oSongs[i].name, *b = name;
         for (; *a && *b; a++, b++)
@@ -878,16 +880,16 @@ int m4a_orig_find(const char *name) {
     return -1;
 }
 
-bool m4a_play_orig_index(uint32_t i) {
+bool m4a_play_sc88_index(uint32_t i) {
     if (i >= E.nOSongs) return false;
-    start_orig_song(&E.oSongs[i]);
+    start_sc88_song(&E.oSongs[i]);
     return true;
 }
 
-bool m4a_orig_is_current(void) { return E.osong != NULL; }
+bool m4a_sc88_is_current(void) { return E.osong != NULL; }
 
-uint32_t m4a_orig_nvids(uint32_t i) { return i < E.nOSongs ? E.oSongs[i].nVids : 0; }
-const char *m4a_orig_vid_label(uint32_t i, uint32_t v) {
+uint32_t m4a_sc88_nvids(uint32_t i) { return i < E.nOSongs ? E.oSongs[i].nVids : 0; }
+const char *m4a_sc88_vid_label(uint32_t i, uint32_t v) {
     if (i >= E.nOSongs || v >= E.oSongs[i].nVids) return "";
     uint16_t pi = E.oSongs[i].vids[v];
     return pi < E.nOProgs ? E.oProgs[pi].label : "";
@@ -990,7 +992,7 @@ bool m4a_init_mem(void *buf, long size, int sample_rate) {
     return p - E.pak <= size;
 }
 
-bool m4a_orig_mem(void *buf, long size) {
+bool m4a_sc88_mem(void *buf, long size) {
     E.opak = buf;
     const uint8_t *p = E.opak;
     uint32_t magic, version;
@@ -1061,12 +1063,12 @@ static void *read_file(const char *path, long *size) {
     return buf;
 }
 
-bool m4a_orig_init(const char *pak_path) {
+bool m4a_sc88_init(const char *pak_path) {
     long size;
     void *buf = read_file(pak_path, &size);
     if (!buf) return false;
-    if (!m4a_orig_mem(buf, size)) {
-        fprintf(stderr, "m4a: bad orig pak %s\n", pak_path);
+    if (!m4a_sc88_mem(buf, size)) {
+        fprintf(stderr, "m4a: bad sc88 pak %s\n", pak_path);
         return false;
     }
     return true;

@@ -19,7 +19,7 @@ __pycache__/
 
 # leaked original sound source + SC-88Pro soundfont: local tooling inputs only
 pm_eme_ose.7z
-midi-orig/
+midi-sc88/
 GBApokemonTestLite.sf2
 
 # OS junk
