@@ -12,7 +12,7 @@ poke.data
 # regenerable caches (see README: sources of truth)
 vendor/
 pokeemerald-music/web/data/
-pokeemerald-music/__pycache__/
+__pycache__/
 
 # leaked original sound source + SC-88Pro soundfont: local tooling inputs only
 pm_eme_ose.7z
