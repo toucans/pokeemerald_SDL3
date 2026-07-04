@@ -65,6 +65,10 @@ function makeLfsr(period7) {
 }
 const LFSR15 = makeLfsr(false), LFSR7 = makeLfsr(true);
 
+// Square duty fractions (hoisted: the render loop runs per output sample and
+// must not allocate — GC pauses on the audio thread are audible dropouts).
+const DUTY = [0.125, 0.25, 0.5, 0.75];
+
 /* ---- volume / pan (ChnVolSetAsm; linear pan; CgbModVol/CgbPan for PSG) ---- */
 
 function sideVols(vel, vol, pan, rp) {
@@ -86,10 +90,11 @@ function psgGains(vel, vol, pan, rp) {
 }
 
 // PCM per-side gain: float decomposition (matches render_previews / player.js).
-function pcmGains(vol, pan, rp) {
+// Writes straight into the voice (no array allocation — runs every frame).
+function pcmGainsInto(v, vol, pan, rp) {
   const y = Math.max(-128, Math.min(127, 2 * pan));
-  return [((127 - y) / 128) * ((127 - rp) / 128) * (vol / 127),
-          ((y + 128) / 128) * ((rp + 128) / 128) * (vol / 127)];
+  v.glHeld = ((127 - y) / 128) * ((127 - rp) / 128) * (vol / 127);
+  v.grHeld = ((y + 128) / 128) * ((rp + 128) / 128) * (vol / 127);
 }
 
 /* ------------------------------- envelopes -------------------------------- */
@@ -130,7 +135,8 @@ function psgEnv(v, dt) {
   const sus = goal > 0 ? susLevel / goal : 0;
   const t_a = a * goal * FRAME;
   const gated = (x) => {
-    const att = a ? Math.min(x / t_a, 1) : 1;
+    // t_a is 0 when goal quantises to 0 (near-silent note): 0/0 = NaN there
+    const att = (a && t_a > 0) ? Math.min(x / t_a, 1) : 1;
     const t_d = d * Math.max(0, goal - susLevel) * FRAME;
     let dec;
     if (d === 0) dec = x >= t_a ? sus : 1;
@@ -165,7 +171,9 @@ class M4AProcessor extends AudioWorkletProcessor {
 
   onMessage(msg) {
     if (msg.type === 'bank') {
-      this.bank = msg.bank;                     // {label:{rate,loop,loopStart,data:Int8Array}}
+      // {label:{rate,loop,loopStart,scale,data:TypedArray}} — merged, so the
+      // player can send additional banks (e.g. the soundfont one) later.
+      this.bank = Object.assign(this.bank || {}, msg.bank);
     } else if (msg.type === 'play') {
       this.startSong(msg.song);
     } else if (msg.type === 'stop') {
@@ -286,7 +294,9 @@ class M4AProcessor extends AudioWorkletProcessor {
       const tau_d = d === 0 ? 0 : FRAME / Math.log(256 / d);
       const tau_r = r === 0 ? 0 : FRAME / Math.log(256 / r);
       const env = { a, d, s: ss, r, gate: dur, t_a, sus, tau_d, tau_r,
-                    echoV: tk.echoV, echoL: tk.echoL, peak: vel / 127, valOff: 0 };
+                    echoV: tk.echoV, echoL: tk.echoL,
+                    // gain: sf2 initialAttenuation baked in by extract_sf2.py
+                    peak: (vel / 127) * (voice.gain || 1), valOff: 0 };
       // env value at end of gate (start of release)
       let vo;
       if (dur < t_a) vo = t_a > 0 ? dur / t_a : 1;
@@ -323,9 +333,9 @@ class M4AProcessor extends AudioWorkletProcessor {
       const e = dsEnv(v, dt);
       if (e < 0) return false;
       v.envHeld = e;
-      const [gl, gr] = pcmGains(tk.vol, tk.pan, v.rp);   // live vol/pan
-      v.glHeld = gl; v.grHeld = gr;
-      const ratio = voice.fixed ? 1 : Math.pow(2, (v.playKey - 60 + bendSemi + vibSemi) / 12);
+      pcmGainsInto(v, tk.vol, tk.pan, v.rp);             // live vol/pan
+      let ratio = voice.fixed ? 1 : Math.pow(2, (v.playKey - 60 + bendSemi + vibSemi) / 12);
+      if (voice.tune) ratio *= voice.tune;               // sf2 root-key/cents correction
       v.incr = v.smp.rate * ratio / sampleRate;          // source samples / output sample
     } else {
       const e = psgEnv(v, dt);
@@ -373,10 +383,10 @@ class M4AProcessor extends AudioWorkletProcessor {
         return 0;                                // one-shot finished (keeps envelope tail silent)
       }
       const i = p | 0, frac = p - i, j = i + 1 < n ? i + 1 : i;
-      s = (data[i] * (1 - frac) + data[j] * frac) / 128;
+      s = (data[i] * (1 - frac) + data[j] * frac) * smp.scale;
       v.phase = p + v.incr;
     } else if (v.t === 'sq') {
-      const duty = [0.125, 0.25, 0.5, 0.75][voice.duty];
+      const duty = DUTY[voice.duty];
       // 4x oversampled naive pulse, box-averaged (matches render_previews)
       const inc = v.incr / 4;
       let acc = 0;
@@ -411,8 +421,11 @@ class M4AProcessor extends AudioWorkletProcessor {
       }
 
       let pcmL = 0, pcmR = 0, psgL = 0, psgR = 0;
-      for (const tk of this.tracks) {
-        for (const v of tk.voices) {
+      const tracks = this.tracks;
+      for (let ti = 0; ti < tracks.length; ti++) {
+        const voices = tracks[ti].voices;
+        for (let vi = 0; vi < voices.length; vi++) {
+          const v = voices[vi];
           const smp = this.renderSample(v) * v.envHeld;
           if (v.t === 'pcm') { pcmL += smp * v.glHeld; pcmR += smp * v.grHeld; }
           else { psgL += smp * v.glHeld; psgR += smp * v.grHeld; }
@@ -426,7 +439,12 @@ class M4AProcessor extends AudioWorkletProcessor {
         const a = buf[(this.revIdx - this.revA + sz) % sz];
         const b = buf[(this.revIdx - this.revB + sz) % sz];
         e = this.revG * (a + b);
-        buf[this.revIdx] = 0.5 * (pcmL + pcmR) + e;
+        let w = 0.5 * (pcmL + pcmR) + e;
+        // flush denormals: the feedback tail otherwise decays into subnormal
+        // floats, whose arithmetic is 10-100x slower on x86 — a CPU spike in
+        // the middle of silence, i.e. an audible glitch.
+        if (w < 1e-15 && w > -1e-15) w = 0;
+        buf[this.revIdx] = w;
         this.revIdx = (this.revIdx + 1) % sz;
       }
 

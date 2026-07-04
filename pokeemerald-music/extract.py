@@ -412,6 +412,7 @@ def extract_song(bank, src, name, cfg):
         v = bank.resolve(cfg["group"], prog, key)
         if v is None:
             return None
+        v["prog"] = prog   # MIDI program — lets extract_sf2.py map onto sf2 presets
         sig = json.dumps(v, sort_keys=True)
         if sig not in voice_ids:
             voice_ids[sig] = f"v{len(voice_ids)}"

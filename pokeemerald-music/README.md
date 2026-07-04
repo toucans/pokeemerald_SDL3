@@ -8,9 +8,10 @@ emulator, no MP3s. Standalone; nothing here is wired into the SDL3 port.
 | Piece | What |
 |---|---|
 | `extract.py` | pokeemerald source → `web/data/` (song JSON + sample bank). Python stdlib only. |
+| `extract_sf2.py` | GBApokemonTestLite.sf2 → `web/data/sf2/` (the optional soundfont sample bank — see *The sf2 mode* below). Python stdlib only. |
 | `web/m4a-worklet.js` | The engine: an `AudioWorkletProcessor` that synthesizes every sample per the m4a rules (vanilla, no build). Needs a secure context (https). |
-| `web/player.js` + `index.html` | Main-thread shim (loads data, drives the worklet) + tiny UI. |
-| `web/data/` | Committed song JSON + sample bank — self-contained, 13 town/route themes with proper GBA loop points. |
+| `web/player.js` + `index.html` | Main-thread shim (loads data, drives the worklet) + tiny UI. Each song has a `play` (GBA samples) and an `sf2` (soundfont samples) button. |
+| `web/data/` | Committed song JSON + sample bank — self-contained, 13 town/route themes with proper GBA loop points. `data/sf2/` is the alternate bank (~24 MB, fetched only when first used). |
 | `render_previews.py` | Offline WAV renders of the same engine, used to A/B the worklet (needs numpy). |
 
 Listen: serve `web/` with any static server (`cd web && python3 -m http.server`)
@@ -156,11 +157,55 @@ keeps the whole signal path in code we own (no browser DSP black boxes).
   high-band ticks, and seamless loops. No build step, no deps: two small vanilla
   JS files. Plain JS was chosen over C→WASM — the workload is <1% of a core, so
   WASM's edge is imperceptible while its toolchain/binary are pure overhead.
+- **Real-time robustness** (the "tiny glitches sometimes" class of bug): the
+  per-sample render path allocates nothing (GC pauses on the audio thread are
+  audible dropouts — this is also the only real advantage a WASM build would
+  have had); the reverb feedback tail flushes subnormal floats (10–100×
+  slower arithmetic on x86 = a CPU spike mid-silence); a PSG note whose
+  quantised volume goal is 0 no longer computes a 0/0 = NaN attack (NaN
+  poisoned ~67 ms of output per occurrence); and the `AudioContext` uses
+  `latencyHint: "playback"` — a music player wants a big buffer, not low
+  latency, and the default interactive-size buffer underruns when the
+  listening machine is busy.
+
+## The sf2 mode
+
+Each song row has a second button, `sf2`: same sequence data, same engine,
+same envelopes/velocity/pan law — only the **PCM instruments and drums** are
+swapped for the ones in *GBApokemonTestLite.sf2* (SC-88-quality Roland
+instruments; drums from the Charm soundfont). The PSG squares/wave/noise are
+**not** substituted: they're already synthesized bit-faithfully, and sampled
+copies of square waves would be a downgrade. That makes original-vs-sf2 a pure
+samples A/B.
+
+`extract_sf2.py` (stdlib only) resolves every `(voice, key)` the 13 songs
+actually play against the sf2's preset/instrument zones and emits
+`web/data/sf2/`:
+
+- `samples.json` — 16-bit PCM, **only the ~120 samples the songs touch**
+  (~17 MB of the sf2's 440 MB), with three trims: looped samples cut at their
+  loop end; unlooped natural-decay samples cut at the most any song can make
+  audible (longest gate + m4a release ring-out, × pitch ratio); trailing
+  content below −54 dB dropped. Stereo zone pairs are mono-mixed (m4a is a
+  mono-source engine).
+- `overlays.json` — per song: replacement voices + a `{vid: [[keyLo, keyHi,
+  newVid], …]}` remap the player applies to note events at play time. Each
+  replacement voice carries `tune` (sf2 root key + cents, folded into the
+  pitch ratio) and `gain` — each sf2 sample is **loudness-matched to the GBA
+  sample it replaces** (sustained-RMS match, capped at the original's peak):
+  the m4a mix law treats sample amplitude as the reference and the GBA's
+  8-bit samples are normalized hot, while GM fonts carry headroom, so without
+  this the untouched PSG layer would sit too loud over the sf2 instruments.
+
+The sf2 bank is fetched lazily on the first `sf2` play (~24 MB as JSON); the
+original mode never pays for it. CPU cost is identical (~1.4% of a core either
+way — same engine, same voice count; only the sample arrays read differ).
 
 ## Regenerating
 
 ```bash
 ./extract.py --src <path to a pokeemerald checkout>   # -> web/data/ (13 songs)
+./extract_sf2.py --sf2 <GBApokemonTestLite.sf2>       # -> web/data/sf2/ (soundfont bank; run after extract.py)
 ./render_previews.py --seconds 40 mus_littleroot ...  # -> previews/*.wav (needs numpy+scipy)
 ```
 
